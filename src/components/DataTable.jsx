@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useCallback, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
+import PropTypes from "prop-types";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
@@ -172,3 +173,11 @@ export default function DataTable(props) {
     </div>
   );
 }
+
+DataTable.propTypes = {
+  columns: PropTypes.array.isRequired,
+  rowKey: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  endpoint: PropTypes.string.isRequired,
+  serverPagination: PropTypes.bool,
+};
