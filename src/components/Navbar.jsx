@@ -90,7 +90,11 @@ const Navbar = () => {
         {navigationItems.map((item) => (
           <div key={item.name} className="relative">
             {item.children ? (
-              <div className="relative">
+              <div
+                className="relative"
+                // onMouseEnter={() => setDropdownOpen(item.name)}
+                // onMouseLeave={() => setDropdownOpen(null)}
+              >
                 <button
                   onClick={() =>
                     setDropdownOpen(
@@ -134,7 +138,7 @@ const Navbar = () => {
                           }`}
                         >
                           <child.icon className="w-4 h-4 mr-3" />
-                          {child.name}
+                          {child.name} {dropdownOpen}
                         </Link>
                       ))}
                     </div>
