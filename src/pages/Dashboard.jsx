@@ -2,6 +2,10 @@ import React, { useState } from 'react'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
+import LineChart from '../components/LineChart'
+import BarChart from '../components/BarChart'
+import PieChart from '../components/PieChart'
+import AreaChart from '../components/AreaChart'
 import {
   UsersIcon,
   ShoppingBagIcon,
@@ -71,6 +75,34 @@ const Dashboard = () => {
     },
   ]
 
+  // Données pour les graphiques
+  const salesData = [
+    { month: 'Jan', ventes: 4000, commandes: 240 },
+    { month: 'Fév', ventes: 3000, commandes: 139 },
+    { month: 'Mar', ventes: 2000, commandes: 980 },
+    { month: 'Avr', ventes: 2780, commandes: 390 },
+    { month: 'Mai', ventes: 1890, commandes: 480 },
+    { month: 'Jun', ventes: 2390, commandes: 380 },
+  ]
+
+  const categoryData = [
+    { category: 'Électronique', value: 35 },
+    { category: 'Vêtements', value: 25 },
+    { category: 'Maison', value: 20 },
+    { category: 'Sports', value: 15 },
+    { category: 'Autres', value: 5 },
+  ]
+
+  const trafficData = [
+    { day: 'Lun', visiteurs: 1200, pages: 2400 },
+    { day: 'Mar', visiteurs: 1900, pages: 1398 },
+    { day: 'Mer', visiteurs: 800, pages: 9800 },
+    { day: 'Jeu', visiteurs: 1390, pages: 3908 },
+    { day: 'Ven', visiteurs: 1490, pages: 4800 },
+    { day: 'Sam', visiteurs: 1390, pages: 3800 },
+    { day: 'Dim', visiteurs: 1490, pages: 4300 },
+  ]
+
   const getStatColor = (color) => {
     const colors = {
       blue: 'bg-blue-500',
@@ -130,72 +162,74 @@ const Dashboard = () => {
 
       {/* Charts and Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart Placeholder */}
+        {/* Sales Chart */}
         <Card title="Ventes Mensuelles" className="lg:col-span-2">
-          <div className="h-64 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <ChartBarIcon className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <p className="text-blue-600 font-medium">Graphique des ventes</p>
-              <p className="text-blue-500 text-sm">Données en temps réel</p>
-            </div>
-          </div>
+          <LineChart
+            data={salesData}
+            xKey="month"
+            series={[
+              { yKey: 'ventes', label: 'Ventes (€)', color: '#3B82F6' },
+              { yKey: 'commandes', label: 'Commandes', color: '#10B981' }
+            ]}
+            height={250}
+            axes={{
+              yTitle: 'Montant (€)',
+              xTitle: 'Mois'
+            }}
+          />
         </Card>
 
-        {/* Recent Activity */}
-        <Card
-          title="Activités Récentes"
-          headerAction={
-            <Button variant="outline" size="sm">
-              <EyeIcon className="w-4 h-4 mr-2" />
-              Voir tout
-            </Button>
-          }
-        >
-          <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors"
-              >
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">
-                    {activity.action}
-                  </p>
-                  <p className="text-sm text-gray-600">{activity.user}</p>
-                </div>
-                <div className="text-xs text-gray-500">{activity.time}</div>
-              </div>
-            ))}
-          </div>
+        {/* Categories Pie Chart */}
+        <Card title="Répartition par Catégorie">
+          <PieChart
+            data={categoryData}
+            angleKey="value"
+            labelKey="category"
+            height={250}
+            showLegend={false}
+          />
         </Card>
-        <Card
-          title="Activités Récentes"
-          headerAction={
-            <Button variant="outline" size="sm">
-              <EyeIcon className="w-4 h-4 mr-2" />
-              Voir tout
-            </Button>
-          }
-        >
-          <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors"
-              >
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">
-                    {activity.action}
-                  </p>
-                  <p className="text-sm text-gray-600">{activity.user}</p>
-                </div>
-                <div className="text-xs text-gray-500">{activity.time}</div>
-              </div>
-            ))}
-          </div>
+      </div>
+
+      {/* Additional Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Bar Chart */}
+        <Card title="Ventes par Catégorie">
+          <BarChart
+            data={categoryData}
+            xKey="category"
+            series={[
+              { yKey: 'value', label: 'Pourcentage (%)', color: '#8B5CF6' }
+            ]}
+            height={250}
+            axes={{
+              yTitle: 'Pourcentage (%)',
+              xTitle: 'Catégories'
+            }}
+          />
         </Card>
+
+        {/* Area Chart */}
+        <Card title="Trafic Hebdomadaire">
+          <AreaChart
+            data={trafficData}
+            xKey="day"
+            series={[
+              { yKey: 'visiteurs', label: 'Visiteurs', color: '#F59E0B', opacity: 0.6 },
+              { yKey: 'pages', label: 'Pages vues', color: '#EF4444', opacity: 0.6 }
+            ]}
+            height={250}
+            stacked={false}
+            axes={{
+              yTitle: 'Nombre',
+              xTitle: 'Jour'
+            }}
+          />
+        </Card>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 gap-6">
         <Card
           title="Activités Récentes"
           headerAction={

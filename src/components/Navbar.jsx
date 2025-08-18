@@ -84,7 +84,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <hr class="h-px bg-gray-200 border-0"></hr>
+      <hr className="h-px bg-gray-200 border-0"></hr>
 
       <div className="ml-10 flex space-x-1 p-2">
         {navigationItems.map((item) => (
