@@ -64,9 +64,21 @@ const BarChart: React.FC<BarChartProps> = ({
       cornerRadius: serie.cornerRadius || 4,
       tooltip: showTooltip
         ? {
-            renderer: ({ datum, xKey, yKey, yName }: { datum: Record<string, unknown>; xKey: string; yKey: string; yName: string }) => ({
+            renderer: ({
+              datum,
+              xKey,
+              yKey,
+              yName,
+            }: {
+              datum: Record<string, unknown>
+              xKey: string
+              yKey: string
+              yName: string
+            }) => ({
               title: datum[xKey],
-              content: `${yName}: ${datum[yKey]?.toLocaleString?.() || datum[yKey]}`,
+              content: `${yName}: ${
+                datum[yKey]?.toLocaleString?.() || datum[yKey]
+              }`,
             }),
           }
         : undefined,
@@ -104,7 +116,9 @@ const BarChart: React.FC<BarChartProps> = ({
 
   return (
     <div style={{ height: `${height}px`, width: '100%' }}>
-      <AgCharts options={{ ...chartOptions, ...options } as Record<string, unknown>} />
+      <AgCharts
+        options={{ ...chartOptions, ...options } as Record<string, unknown>}
+      />
     </div>
   )
 }
