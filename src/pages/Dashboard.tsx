@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
@@ -6,6 +6,8 @@ import LineChart from '../components/LineChart'
 import BarChart from '../components/BarChart'
 import PieChart from '../components/PieChart'
 import AreaChart from '../components/AreaChart'
+import { getAll } from '../functions/acteurs/gets'
+
 import {
   UsersIcon,
   ShoppingBagIcon,
@@ -51,7 +53,9 @@ interface TrafficData extends Record<string, unknown> {
 
 const Dashboard: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
-
+  useEffect(() => {
+    getAll()
+  })
   const stats: Stat[] = [
     {
       title: 'Utilisateurs Total',
@@ -203,12 +207,12 @@ const Dashboard: React.FC = () => {
             xKey="month"
             series={[
               { yKey: 'ventes', label: 'Ventes (€)', color: '#3B82F6' },
-              { yKey: 'commandes', label: 'Commandes', color: '#10B981' }
+              { yKey: 'commandes', label: 'Commandes', color: '#10B981' },
             ]}
             height={250}
             axes={{
               yTitle: 'Montant (€)',
-              xTitle: 'Mois'
+              xTitle: 'Mois',
             }}
           />
         </Card>
@@ -233,12 +237,12 @@ const Dashboard: React.FC = () => {
             data={categoryData}
             xKey="category"
             series={[
-              { yKey: 'value', label: 'Pourcentage (%)', color: '#8B5CF6' }
+              { yKey: 'value', label: 'Pourcentage (%)', color: '#8B5CF6' },
             ]}
             height={250}
             axes={{
               yTitle: 'Pourcentage (%)',
-              xTitle: 'Catégories'
+              xTitle: 'Catégories',
             }}
           />
         </Card>
@@ -249,14 +253,24 @@ const Dashboard: React.FC = () => {
             data={trafficData}
             xKey="day"
             series={[
-              { yKey: 'visiteurs', label: 'Visiteurs', color: '#F59E0B', opacity: 0.6 },
-              { yKey: 'pages', label: 'Pages vues', color: '#EF4444', opacity: 0.6 }
+              {
+                yKey: 'visiteurs',
+                label: 'Visiteurs',
+                color: '#F59E0B',
+                opacity: 0.6,
+              },
+              {
+                yKey: 'pages',
+                label: 'Pages vues',
+                color: '#EF4444',
+                opacity: 0.6,
+              },
             ]}
             height={250}
             stacked={false}
             axes={{
               yTitle: 'Nombre',
-              xTitle: 'Jour'
+              xTitle: 'Jour',
             }}
           />
         </Card>
