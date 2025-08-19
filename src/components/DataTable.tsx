@@ -1,43 +1,37 @@
 import React, { useMemo, useRef, useCallback, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
-import PropTypes from "prop-types";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
-import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+import { AllCommunityModule, ModuleRegistry, GridApi } from "ag-grid-community";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "../lib/api";
+import { apiClient } from "../lib/api";
 import { AG_GRID_LOCALE_FR } from "@ag-grid-community/locale";
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-/**
- * @typedef {Object} DataTableColumn
- * @property {string} header - Titre affiché dans l'entête de la colonne.
- * @property {string|function(Object):React.ReactNode} [accessor] - Nom de la clé dans les données ou fonction de rendu personnalisée.
- * @property {string} [className] - Classe CSS optionnelle appliquée à la colonne.
- */
+interface DataTableColumn {
+  header: string;
+  accessor: string | ((row: Record<string, unknown>) => React.ReactNode);
+  className?: string;
+}
 
-/**
- * @typedef {Object} DataTableProps
- * @property {DataTableColumn[]} columns - Liste des colonnes à afficher.
- * @property {function(Object):string|number} rowKey - Fonction qui retourne une clé unique pour chaque ligne.
- * @property {string} [className] - Classe CSS appliquée au wrapper.
- * @property {string} endpoint - URL API pour récupérer les données (ex: `"admin/users"`).
- * @property {boolean} [serverPagination=false] - Active la pagination côté serveur si `true`.
- */
+interface DataTableProps {
+  columns: DataTableColumn[];
+  rowKey: (row: Record<string, unknown>) => string | number;
+  className?: string;
+  endpoint: string;
+  serverPagination?: boolean;
+}
 
-/**
- * Tableau générique basé sur AG Grid.
- *
- * - Supporte la pagination côté client ou côté serveur.
- * - Colonnes configurables avec des clés ou des renderers personnalisés.
- * - Affiche les états `Chargement`, `Erreur` et `Aucune donnée`.
- *
- * @param {DataTableProps} props - Props du composant DataTable.
- * @returns {JSX.Element}
- */
-export default function DataTable(props) {
+interface ApiResponse {
+  rows?: Record<string, unknown>[];
+  total?: number;
+  isPaginated?: boolean;
+  [key: string]: unknown;
+}
+
+export default function DataTable(props: DataTableProps) {
   const {
     columns,
     rowKey,
@@ -51,16 +45,16 @@ export default function DataTable(props) {
   const [pageSize, setPageSize] = useState(10);
 
   // 🔹 Grid API ref
-  const gridApiRef = useRef(null);
+  const gridApiRef = useRef<GridApi | null>(null);
 
   // 🔹 Récupération des données depuis le backend
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<ApiResponse>({
     queryKey: [
       endpoint,
       serverPagination ? page : "all",
       serverPagination ? pageSize : "all",
     ],
-    queryFn: async () => {
+    queryFn: async (): Promise<ApiResponse> => {
       let url = endpoint;
 
       if (serverPagination) {
@@ -68,7 +62,7 @@ export default function DataTable(props) {
         url = `${endpoint}?page=${backendPage}&limit=${pageSize}`;
       }
 
-      const response = await api.request(url, { requireAuth: true });
+      const response = await apiClient.request<ApiResponse>(url, { requireAuth: true });
 
       const entityKey = Object.keys(response).find((key) =>
         Array.isArray(response[key])
@@ -89,7 +83,7 @@ export default function DataTable(props) {
   // 🔹 Colonnes
   const columnDefs = useMemo(() => {
     return columns.map((col) => {
-      const def = {
+      const def: Record<string, unknown> = {
         headerName: col.header,
         sortable: true,
         filter: true,
@@ -98,14 +92,14 @@ export default function DataTable(props) {
 
       if (typeof col.accessor === "string") {
         const key = col.accessor;
-        def.valueGetter = (params) => {
+        def.valueGetter = (params: { data?: Record<string, unknown> }) => {
           const record = params.data || {};
           const v = record[key];
           return typeof v === "number" || typeof v === "string" ? v : "";
         };
       } else if (typeof col.accessor === "function") {
         const accessor = col.accessor;
-        def.cellRenderer = (params) => accessor(params.data);
+        def.cellRenderer = (params: { data?: Record<string, unknown> }) => accessor(params.data || {});
       }
       return def;
     });
@@ -122,7 +116,7 @@ export default function DataTable(props) {
     []
   );
 
-  const onGridReady = useCallback((e) => {
+  const onGridReady = useCallback((e: { api: GridApi }) => {
     gridApiRef.current = e.api;
   }, []);
 
@@ -150,7 +144,9 @@ export default function DataTable(props) {
           paginationPageSize={pageSize}
           paginationPageSizeSelector={[10, 20, 50, 100]}
           onGridReady={onGridReady}
-          onPaginationChanged={serverPagination ? onPaginationChanged : undefined}
+          onPaginationChanged={
+            serverPagination ? onPaginationChanged : undefined
+          }
           suppressPaginationPanel={false}
         />
         {isLoading && <p className="p-4 text-center">Chargement...</p>}
@@ -173,11 +169,3 @@ export default function DataTable(props) {
     </div>
   );
 }
-
-DataTable.propTypes = {
-  columns: PropTypes.array.isRequired,
-  rowKey: PropTypes.func.isRequired,
-  className: PropTypes.string,
-  endpoint: PropTypes.string.isRequired,
-  serverPagination: PropTypes.bool,
-};

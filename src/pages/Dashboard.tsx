@@ -13,12 +13,46 @@ import {
   TrendingUpIcon,
   PlusIcon,
   EyeIcon,
+  LucideIcon,
 } from 'lucide-react'
 
-const Dashboard = () => {
-  const [showModal, setShowModal] = useState(false)
+interface Stat {
+  title: string
+  value: string
+  change: string
+  changeType: string
+  icon: LucideIcon
+  color: 'blue' | 'green' | 'purple' | 'indigo'
+}
 
-  const stats = [
+interface Activity {
+  id: number
+  action: string
+  user: string
+  time: string
+}
+
+interface SalesData extends Record<string, unknown> {
+  month: string
+  ventes: number
+  commandes: number
+}
+
+interface CategoryData extends Record<string, unknown> {
+  category: string
+  value: number
+}
+
+interface TrafficData extends Record<string, unknown> {
+  day: string
+  visiteurs: number
+  pages: number
+}
+
+const Dashboard: React.FC = () => {
+  const [showModal, setShowModal] = useState<boolean>(false)
+
+  const stats: Stat[] = [
     {
       title: 'Utilisateurs Total',
       value: '2,847',
@@ -53,7 +87,7 @@ const Dashboard = () => {
     },
   ]
 
-  const recentActivities = [
+  const recentActivities: Activity[] = [
     {
       id: 1,
       action: 'Nouvel utilisateur inscrit',
@@ -76,7 +110,7 @@ const Dashboard = () => {
   ]
 
   // Données pour les graphiques
-  const salesData = [
+  const salesData: SalesData[] = [
     { month: 'Jan', ventes: 4000, commandes: 240 },
     { month: 'Fév', ventes: 3000, commandes: 139 },
     { month: 'Mar', ventes: 2000, commandes: 980 },
@@ -85,7 +119,7 @@ const Dashboard = () => {
     { month: 'Jun', ventes: 2390, commandes: 380 },
   ]
 
-  const categoryData = [
+  const categoryData: CategoryData[] = [
     { category: 'Électronique', value: 35 },
     { category: 'Vêtements', value: 25 },
     { category: 'Maison', value: 20 },
@@ -93,7 +127,7 @@ const Dashboard = () => {
     { category: 'Autres', value: 5 },
   ]
 
-  const trafficData = [
+  const trafficData: TrafficData[] = [
     { day: 'Lun', visiteurs: 1200, pages: 2400 },
     { day: 'Mar', visiteurs: 1900, pages: 1398 },
     { day: 'Mer', visiteurs: 800, pages: 9800 },
@@ -103,8 +137,8 @@ const Dashboard = () => {
     { day: 'Dim', visiteurs: 1490, pages: 4300 },
   ]
 
-  const getStatColor = (color) => {
-    const colors = {
+  const getStatColor = (color: Stat['color']): string => {
+    const colors: Record<Stat['color'], string> = {
       blue: 'bg-blue-500',
       green: 'bg-green-500',
       purple: 'bg-purple-500',
