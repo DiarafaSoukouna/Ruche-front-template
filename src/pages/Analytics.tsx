@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import LineChart from "../components/LineChart";
@@ -7,18 +7,16 @@ import PieChart from "../components/PieChart";
 import {
   TrendingUpIcon,
   TrendingDownIcon,
-  DollarSignIcon,
   UsersIcon,
   ShoppingCartIcon,
-  PackageIcon,
-  TargetIcon,
+  DollarSignIcon,
   CalendarIcon,
   DownloadIcon,
+  AlertTriangleIcon,
   FilterIcon,
   EyeIcon,
-  AlertTriangleIcon,
-} from "lucide-react";
-import { authStore } from "../stores/auth";
+} from 'lucide-react';
+// import { authStore } from '../stores/auth' // Unused for now
 import DataTable from "../components/DataTable";
 
 const Analytics = () => {
@@ -67,7 +65,7 @@ const Analytics = () => {
       trend: "up",
       target: "3.0%",
       progress: 107,
-      icon: TargetIcon,
+      icon: TrendingUpIcon,
       color: "purple",
       description: "amélioration",
     },
@@ -112,16 +110,17 @@ const Analytics = () => {
     { value: "1y", label: "1 an" },
   ];
 
-  const getTrendIcon = (trend) => {
-    return trend === "up" ? TrendingUpIcon : TrendingDownIcon;
+  const getTrendIcon = (trend: string) => {
+    const IconComponent = trend === "up" ? TrendingUpIcon : TrendingDownIcon;
+    return <IconComponent className="w-4 h-4 mr-1" />;
   };
 
-  const getTrendColor = (trend) => {
+  const getTrendColor = (trend: string) => {
     return trend === "up" ? "text-green-600" : "text-red-600";
   };
 
-  const getKpiColor = (color) => {
-    const colors = {
+  const getKpiColor = (color: string) => {
+    const colors: Record<string, string> = {
       green: "bg-green-500",
       blue: "bg-blue-500",
       orange: "bg-orange-500",
@@ -130,7 +129,7 @@ const Analytics = () => {
     return colors[color] || colors.blue;
   };
 
-  const getProgressColor = (progress) => {
+  const getProgressColor = (progress: number) => {
     if (progress >= 100) return "bg-green-500";
     if (progress >= 80) return "bg-yellow-500";
     return "bg-red-500";
@@ -181,26 +180,24 @@ const Analytics = () => {
 
       {/* KPIs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpis.map((kpi) => {
-          const TrendIcon = getTrendIcon(kpi.trend);
-          return (
-            <Card
-              key={kpi.title}
-              className="hover:scale-105 transform transition-all duration-300"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-lg ${getKpiColor(kpi.color)}`}>
-                  <kpi.icon className="w-6 h-6 text-white" />
-                </div>
-                <div
-                  className={`flex items-center ${getTrendColor(kpi.trend)}`}
-                >
-                  <TrendIcon className="w-4 h-4 mr-1" />
-                  <span className="text-sm font-medium">{kpi.change}</span>
-                </div>
+        {kpis.map((kpi, index) => (
+          <Card
+            key={index}
+            className="hover:scale-105 transform transition-all duration-300"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className={`p-3 rounded-lg ${getKpiColor(kpi.color)}`}>
+                <kpi.icon className="w-6 h-6 text-white" />
               </div>
+              <div
+                className={`flex items-center ${getTrendColor(kpi.trend)}`}
+              >
+                {getTrendIcon(kpi.trend)}
+                <span className="text-sm font-medium">{kpi.change}</span>
+              </div>
+            </div>
 
-              <div className="space-y-3">
+            <div className="space-y-3">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
                     {kpi.title}
@@ -228,10 +225,9 @@ const Analytics = () => {
                     />
                   </div>
                 </div>
-              </div>
-            </Card>
-          );
-        })}
+            </div>
+          </Card>
+        ))}
       </div>
 
       {/* Graphiques principaux */}
@@ -256,7 +252,7 @@ const Analytics = () => {
         {/* Conversion Funnel */}
         <Card title="Entonnoir de Conversion">
           <div className="space-y-4">
-            {conversionFunnel.map((stage, index) => (
+            {conversionFunnel.map((stage) => (
               <div key={stage.stage} className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">{stage.stage}</span>
@@ -393,12 +389,12 @@ const Analytics = () => {
             },
             {
               header: "Client",
-              accessor: (row) => (
+              accessor: (row: Record<string, unknown>) => (
                 <div>
                   <div className="font-medium text-gray-900">
-                    {row.customer}
+                    {String(row.customer)}
                   </div>
-                  <div className="text-sm text-gray-500">{row.email}</div>
+                  <div className="text-sm text-gray-500">{String(row.email)}</div>
                 </div>
               ),
             },
@@ -408,7 +404,7 @@ const Analytics = () => {
             },
             {
               header: "Catégorie",
-              accessor: (row) => (
+              accessor: (row: Record<string, unknown>) => (
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     row.category === "Électronique"
@@ -420,21 +416,21 @@ const Analytics = () => {
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >
-                  {row.category}
+                  {String(row.category)}
                 </span>
               ),
             },
             {
               header: "Montant",
-              accessor: (row) => (
+              accessor: (row: Record<string, unknown>) => (
                 <span className="font-medium text-gray-900">
-                  €{row.amount.toLocaleString()}
+                  €{Number(row.amount).toLocaleString()}
                 </span>
               ),
             },
             {
               header: "Statut",
-              accessor: (row) => (
+              accessor: (row: Record<string, unknown>) => (
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     row.status === "Payé"
@@ -446,21 +442,21 @@ const Analytics = () => {
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >
-                  {row.status}
+                  {String(row.status)}
                 </span>
               ),
             },
             {
               header: "Date",
-              accessor: (row) => (
+              accessor: (row: Record<string, unknown>) => (
                 <span className="text-sm text-gray-600">
-                  {new Date(row.date).toLocaleDateString("fr-FR")}
+                  {new Date(String(row.date)).toLocaleDateString("fr-FR")}
                 </span>
               ),
             },
             {
               header: "Actions",
-              accessor: (row) => (
+              accessor: () => (
                 <div className="flex items-center space-x-2">
                   <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
                     Voir
@@ -472,7 +468,7 @@ const Analytics = () => {
               ),
             },
           ]}
-          rowKey={(row) => row.id}
+          rowKey={(row: Record<string, unknown>) => String(row.id)}
           endpoint="mock/transactions"
           className="h-96"
         />

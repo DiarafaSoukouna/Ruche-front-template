@@ -1,39 +1,38 @@
-import React from "react"
-import { AgCharts } from "ag-charts-react"
-import type {
-  AgCartesianAxisOptions,
-  AgAreaSeriesOptions,
-  AgChartOptions,
-} from "ag-charts-community"
+import React from 'react'
+import { AgCharts } from 'ag-charts-react'
 
-interface SerieConfig {
+interface ChartSeries {
   yKey: string
   label?: string
   color?: string
-  opacity?: number
   strokeColor?: string
   strokeWidth?: number
+  opacity?: number
   showMarkers?: boolean
   markerSize?: number
 }
 
-interface AxesConfig {
+interface ChartAxes {
   xTitle?: string
   yTitle?: string
-  x?: Partial<AgCartesianAxisOptions>
-  y?: Partial<AgCartesianAxisOptions>
+  x?: Record<string, unknown>
+  y?: Record<string, unknown>
 }
 
 interface AreaChartProps {
-  data?: any[]
+  data?: Record<string, unknown>[]
   xKey: string
-  series?: SerieConfig[]
+  series?: ChartSeries[]
   title?: string
   subtitle?: string
   colors?: string[]
   height?: number
-  axes?: AxesConfig
+  axes?: ChartAxes
   stacked?: boolean
+  showTooltip?: boolean
+  showLegend?: boolean
+  legendPosition?: string
+  options?: Record<string, unknown>
 }
 
 const AreaChart: React.FC<AreaChartProps> = ({
@@ -42,60 +41,54 @@ const AreaChart: React.FC<AreaChartProps> = ({
   series = [],
   title,
   subtitle,
-  colors = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"],
-  height = 300,
+  colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'],
+  height = 400,
   axes = {},
   stacked = false,
+  showTooltip = true,
+  showLegend = true,
+  legendPosition = 'bottom',
+  options = {},
 }) => {
-  const options: AgChartOptions = {
+  const chartOptions: Record<string, unknown> = {
     data,
     title: title ? { text: title } : undefined,
     subtitle: subtitle ? { text: subtitle } : undefined,
-    series: series.map<AgAreaSeriesOptions>((serie, index) => ({
-      type: "area",
+    series: series.map((s, index) => ({
+      type: 'area',
       xKey,
-      yKey: serie.yKey,
-      yName: serie.label || serie.yKey,
-      fill: serie.color || colors[index % colors.length],
-      fillOpacity: serie.opacity ?? 0.7,
-      stroke: serie.strokeColor || serie.color || colors[index % colors.length],
-      strokeWidth: serie.strokeWidth ?? 2,
+      yKey: s.yKey,
+      yName: s.label || s.yKey,
+      fill: s.color || colors[index % colors.length],
+      stroke: s.strokeColor || s.color || colors[index % colors.length],
+      strokeWidth: s.strokeWidth || 2,
+      fillOpacity: s.opacity || 0.7,
       marker: {
-        enabled: serie.showMarkers !== false,
-        fill: serie.color || colors[index % colors.length],
-        stroke: serie.color || colors[index % colors.length],
-        size: serie.markerSize ?? 4,
+        enabled: s.showMarkers !== false,
+        size: s.markerSize || 4,
       },
       stacked,
-      tooltip: {
-        renderer: ({ datum, xKey, yKey, yName }) => ({
-          title: datum[xKey],
-          content: `${yName}: ${
-            datum[yKey]?.toLocaleString?.() ?? datum[yKey]
-          }`,
-        }),
-      },
-    })),
+    } as Record<string, unknown>)),
     axes: [
       {
-        type: "category",
-        position: "bottom",
+        type: 'category',
+        position: 'bottom',
         title: axes.xTitle ? { text: axes.xTitle } : undefined,
-        ...(axes.x || {}),
-      } as AgCartesianAxisOptions,
+        ...axes.x,
+      },
       {
-        type: "number",
-        position: "left",
+        type: 'number',
+        position: 'left',
         title: axes.yTitle ? { text: axes.yTitle } : undefined,
-        ...(axes.y || {}),
-      } as AgCartesianAxisOptions,
+        ...axes.y,
+      },
     ],
     legend: {
-      enabled: series.length > 1,
-      position: "bottom",
+      enabled: showLegend,
+      position: legendPosition,
     },
     background: {
-      fill: "transparent",
+      fill: 'transparent',
     },
     padding: {
       top: 20,
@@ -103,11 +96,19 @@ const AreaChart: React.FC<AreaChartProps> = ({
       bottom: 40,
       left: 60,
     },
+    tooltip: showTooltip
+      ? {
+          renderer: ({ datum, xKey, yKey, yName }: { datum: Record<string, unknown>; xKey: string; yKey: string; yName: string }) => ({
+            title: datum[xKey],
+            content: `${yName}: ${typeof datum[yKey] === 'number' ? datum[yKey].toLocaleString() : datum[yKey]}`,
+          }),
+        }
+      : undefined,
   }
 
   return (
-    <div style={{ height: `${height}px`, width: "100%" }}>
-      <AgCharts options={options} />
+    <div style={{ height: `${height}px`, width: '100%' }}>
+      <AgCharts options={{ ...chartOptions, ...options } as Record<string, unknown>} />
     </div>
   )
 }

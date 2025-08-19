@@ -1,12 +1,7 @@
-import React from "react"
-import { AgCharts } from "ag-charts-react"
-import type {
-  AgCartesianAxisOptions,
-  AgBarSeriesOptions,
-  AgChartOptions,
-} from "ag-charts-community"
+import React from 'react'
+import { AgCharts } from 'ag-charts-react'
 
-interface SerieConfig {
+interface ChartSeries {
   yKey: string
   label?: string
   color?: string
@@ -15,23 +10,27 @@ interface SerieConfig {
   cornerRadius?: number
 }
 
-interface AxesConfig {
+interface ChartAxes {
   xTitle?: string
   yTitle?: string
-  x?: Partial<AgCartesianAxisOptions>
-  y?: Partial<AgCartesianAxisOptions>
+  x?: Record<string, unknown>
+  y?: Record<string, unknown>
 }
 
 interface BarChartProps {
-  data?: any[]
+  data?: Record<string, unknown>[]
   xKey: string
-  series?: SerieConfig[]
+  series?: ChartSeries[]
   title?: string
   subtitle?: string
   colors?: string[]
   height?: number
-  axes?: AxesConfig
+  axes?: ChartAxes
+  options?: Record<string, unknown>
   horizontal?: boolean
+  showTooltip?: boolean
+  showLegend?: boolean
+  legendPosition?: string
 }
 
 const BarChart: React.FC<BarChartProps> = ({
@@ -40,54 +39,60 @@ const BarChart: React.FC<BarChartProps> = ({
   series = [],
   title,
   subtitle,
-  colors = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"],
-  height = 300,
+  colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'],
+  height = 400,
   axes = {},
   horizontal = false,
+  showTooltip = true,
+  showLegend = true,
+  legendPosition = 'bottom',
+  options = {},
 }) => {
-  const options: AgChartOptions = {
+  const chartOptions: Record<string, unknown> = {
     data,
     title: title ? { text: title } : undefined,
     subtitle: subtitle ? { text: subtitle } : undefined,
-    series: series.map<AgBarSeriesOptions>((serie, index) => ({
-      type: "bar",
-      direction: horizontal ? "horizontal" : "vertical",
+    series: series.map((serie, index) => ({
+      type: 'bar',
+      direction: horizontal ? 'horizontal' : 'vertical',
       xKey,
       yKey: serie.yKey,
       yName: serie.label || serie.yKey,
       fill: serie.color || colors[index % colors.length],
-      stroke: serie.strokeColor || "transparent",
-      strokeWidth: serie.strokeWidth ?? 0,
-      cornerRadius: serie.cornerRadius ?? 4,
-      tooltip: {
-        renderer: ({ datum, xKey, yKey, yName }) => ({
-          title: datum[xKey],
-          content: `${yName}: ${
-            datum[yKey]?.toLocaleString?.() ?? datum[yKey]
-          }`,
-        }),
-      },
+      stroke: serie.strokeColor || 'transparent',
+      strokeWidth: serie.strokeWidth || 0,
+      cornerRadius: serie.cornerRadius || 4,
+      tooltip: showTooltip
+        ? {
+            renderer: ({ datum, xKey, yKey, yName }: { datum: Record<string, unknown>; xKey: string; yKey: string; yName: string }) => ({
+              title: datum[xKey],
+              content: `${yName}: ${datum[yKey]?.toLocaleString?.() || datum[yKey]}`,
+            }),
+          }
+        : undefined,
     })),
     axes: [
       {
-        type: "category",
-        position: horizontal ? "left" : "bottom",
+        type: 'category',
+        position: horizontal ? 'left' : 'bottom',
         title: axes.xTitle ? { text: axes.xTitle } : undefined,
-        ...(axes.x || {}),
-      } as AgCartesianAxisOptions,
+        ...axes.x,
+      },
       {
-        type: "number",
-        position: horizontal ? "bottom" : "left",
+        type: 'number',
+        position: horizontal ? 'bottom' : 'left',
         title: axes.yTitle ? { text: axes.yTitle } : undefined,
-        ...(axes.y || {}),
-      } as AgCartesianAxisOptions,
+        ...axes.y,
+      },
     ],
-    legend: {
-      enabled: series.length > 1,
-      position: "bottom",
-    },
+    legend: showLegend
+      ? {
+          enabled: series.length > 1,
+          position: legendPosition,
+        }
+      : undefined,
     background: {
-      fill: "transparent",
+      fill: 'transparent',
     },
     padding: {
       top: 20,
@@ -98,8 +103,8 @@ const BarChart: React.FC<BarChartProps> = ({
   }
 
   return (
-    <div style={{ height: `${height}px`, width: "100%" }}>
-      <AgCharts options={options} />
+    <div style={{ height: `${height}px`, width: '100%' }}>
+      <AgCharts options={{ ...chartOptions, ...options } as Record<string, unknown>} />
     </div>
   )
 }
