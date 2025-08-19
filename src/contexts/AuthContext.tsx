@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { instance } from '../axios';
 
 interface User {
   name: string;
-  email: string;
+  id_personnel_perso: string;
 }
 
 interface AuthContextType {
@@ -22,14 +23,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Simulation d'une authentification
-    if (email === 'admin@example.com' && password === 'password') {
-      setIsAuthenticated(true);
-      setUser({ name: 'Admin User', email });
-      return true;
+  const login = async (id_personnel_perso: string, password: string): Promise<any> => {
+    const data = {
+      id_personnel_perso : id_personnel_perso,
+      password : password,
     }
-    return false;
+    try {
+      const res = await instance.post('token/', data)
+      if (res){
+        localStorage.setItem('loggedUser', res.data)
+        setIsAuthenticated(true);
+        setUser({ name: 'Admin User', id_personnel_perso });
+        return true
+      }
+    } catch (error) {
+      return false ;
+    }
+    // // Simulation d'une authentification
+    // if (email === 'admin@example.com' && password === 'password') {
+    //   setIsAuthenticated(true);
+    //   setUser({ name: 'Admin User', email });
+    //   return true;
+    // }
+    // return false;
   };
 
   const logout = (): void => {
