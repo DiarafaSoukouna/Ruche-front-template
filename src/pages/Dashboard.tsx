@@ -248,7 +248,7 @@ const Dashboard: React.FC = () => {
         </Card>
 
         {/* Area Chart */}
-        <Card title="Trafic Hebdomadaire">
+        <Card title="Trafic Hebdomadaire" className="" headerAction="">
           <AreaChart
             data={trafficData}
             xKey="day"

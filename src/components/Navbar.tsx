@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
-import { href, Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   HomeIcon,
   UsersIcon,
@@ -8,17 +7,28 @@ import {
   BarChartIcon as ChartBarIcon,
   CogIcon,
   ChevronDownIcon,
-  LogOutIcon,
   BellIcon,
-  SearchIcon,
-} from 'lucide-react'
+  Search,
+} from 'lucide-react';
 
-const Navbar = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(null)
-  const { user, logout } = useAuth()
-  const location = useLocation()
+interface NavigationChild {
+  name: string;
+  href: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}
 
-  const navigationItems = [
+interface NavigationItem {
+  name: string;
+  href?: string | boolean;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  children?: NavigationChild[];
+}
+
+const Navbar: React.FC = () => {
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const location = useLocation();
+
+  const navigationItems: NavigationItem[] = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
     {
       name: 'Gestion',
@@ -30,9 +40,10 @@ const Navbar = () => {
       href: true,
     },
     { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  ]
+  ];
 
-  const isActive = (href) => location.pathname === href
+  const isActive = (href?: string | boolean) =>
+    typeof href === 'string' ? location.pathname === href : false;
 
   return (
     <nav className="bg-white shadow-lg border-b border-blue-100 sticky top-0 z-50">
@@ -52,7 +63,7 @@ const Navbar = () => {
           <form className="mx-auto w-full max-w-md mt-3">
             <div className="relative">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <SearchIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <Search className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               </div>
               <input
                 type="search"
@@ -67,19 +78,11 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3 gap-3">
               <BellIcon className="w-5 h-5 text-gray-600 hover:text-blue-700 cursor-pointer" />
-
               <div className="flex items-center space-x-2">
                 <div className="rounded-full w-10 h-10 bg-gray-300 flex items-center justify-center">
                   <p className="text-sm font-medium">AD</p>
                 </div>
               </div>
-              {/* <button
-                onClick={logout}
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
-              >
-                <LogOutIcon className="w-4 h-4" />
-                <span>Déconnexion</span>
-              </button> */}
             </div>
           </div>
         </div>
@@ -146,7 +149,7 @@ const Navbar = () => {
               </div>
             ) : (
               <Link
-                to={item.href}
+                to={item.href as string}
                 className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 ${
                   isActive(item.href)
                     ? 'bg-blue-600 text-white shadow-md'
@@ -162,7 +165,7 @@ const Navbar = () => {
         ))}
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

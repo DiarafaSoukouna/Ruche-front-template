@@ -2,21 +2,35 @@ import React, { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import Button from './Button';
 
-const Table = ({ 
-  columns, 
-  data, 
-  itemsPerPage = 10, 
+interface Column<T> {
+  key: keyof T;
+  title: string;
+  render?: (value: T[keyof T], row: T) => React.ReactNode;
+}
+
+interface TableProps<T> {
+  columns: Column<T>[];
+  data: T[];
+  itemsPerPage?: number;
+  className?: string;
+  onRowClick?: (row: T) => void;
+}
+
+function Table<T extends { id?: string | number }>({
+  columns,
+  data,
+  itemsPerPage = 10,
   className = '',
-  onRowClick 
-}) => {
+  onRowClick,
+}: TableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentData = data.slice(startIndex, endIndex);
 
-  const goToPage = (page) => {
+  const goToPage = (page: number) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
   };
 
@@ -28,7 +42,7 @@ const Table = ({
             <tr>
               {columns.map((column) => (
                 <th
-                  key={column.key}
+                  key={String(column.key)}
                   className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                 >
                   {column.title}
@@ -40,14 +54,21 @@ const Table = ({
             {currentData.map((row, index) => (
               <tr
                 key={row.id || index}
-                className={`hover:bg-blue-50 transition-colors duration-150 ${onRowClick ? 'cursor-pointer' : ''}`}
+                className={`hover:bg-blue-50 transition-colors duration-150 ${onRowClick ? 'cursor-pointer' : ''
+                  }`}
                 onClick={() => onRowClick && onRowClick(row)}
               >
                 {columns.map((column) => (
-                  <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    {column.render ? column.render(row[column.key], row) : row[column.key]}
+                  <td
+                    key={String(column.key)}
+                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                  >
+                    {column.render
+                      ? column.render(row[column.key], row)
+                      : (row[column.key] as unknown as React.ReactNode)}
                   </td>
                 ))}
+
               </tr>
             ))}
           </tbody>
@@ -57,7 +78,8 @@ const Table = ({
       {totalPages > 1 && (
         <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200 bg-gray-50">
           <div className="text-sm text-gray-600">
-            Affichage de {startIndex + 1} à {Math.min(endIndex, data.length)} sur {data.length} résultats
+            Affichage de {startIndex + 1} à {Math.min(endIndex, data.length)} sur {data.length}{' '}
+            résultats
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -68,12 +90,10 @@ const Table = ({
             >
               <ChevronLeftIcon className="w-4 h-4" />
             </Button>
-            
+
             {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter(page => 
-                page === 1 || 
-                page === totalPages || 
-                Math.abs(page - currentPage) <= 1
+              .filter(
+                (page) => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1
               )
               .map((page, index, array) => (
                 <React.Fragment key={page}>
@@ -81,7 +101,7 @@ const Table = ({
                     <span className="text-gray-400">...</span>
                   )}
                   <Button
-                    variant={currentPage === page ? "primary" : "outline"}
+                    variant={currentPage === page ? 'primary' : 'outline'}
                     size="sm"
                     onClick={() => goToPage(page)}
                   >
@@ -103,6 +123,6 @@ const Table = ({
       )}
     </div>
   );
-};
+}
 
 export default Table;
