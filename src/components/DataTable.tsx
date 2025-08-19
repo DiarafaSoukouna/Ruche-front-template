@@ -1,9 +1,8 @@
 import React, { useMemo, useRef, useCallback, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
-import PropTypes from "prop-types";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
-import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+import { AllCommunityModule, ModuleRegistry, GridReadyEvent, ColDef } from "ag-grid-community";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { AG_GRID_LOCALE_FR } from "@ag-grid-community/locale";
@@ -11,50 +10,45 @@ import { AG_GRID_LOCALE_FR } from "@ag-grid-community/locale";
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-/**
- * @typedef {Object} DataTableColumn
- * @property {string} header - Titre affiché dans l'entête de la colonne.
- * @property {string|function(Object):React.ReactNode} [accessor] - Nom de la clé dans les données ou fonction de rendu personnalisée.
- * @property {string} [className] - Classe CSS optionnelle appliquée à la colonne.
- */
+// 🔹 Types pour les colonnes
+export interface DataTableColumn<T = any> {
+  header: string;
+  accessor?: keyof T | ((row: T) => React.ReactNode);
+  className?: string;
+}
 
-/**
- * @typedef {Object} DataTableProps
- * @property {DataTableColumn[]} columns - Liste des colonnes à afficher.
- * @property {function(Object):string|number} rowKey - Fonction qui retourne une clé unique pour chaque ligne.
- * @property {string} [className] - Classe CSS appliquée au wrapper.
- * @property {string} endpoint - URL API pour récupérer les données (ex: `"admin/users"`).
- * @property {boolean} [serverPagination=false] - Active la pagination côté serveur si `true`.
- */
+// 🔹 Types des props
+export interface DataTableProps<T = any> {
+  columns: DataTableColumn<T>[];
+  rowKey: (row: T) => string | number;
+  className?: string;
+  endpoint: string;
+  serverPagination?: boolean;
+}
 
-/**
- * Tableau générique basé sur AG Grid.
- *
- * - Supporte la pagination côté client ou côté serveur.
- * - Colonnes configurables avec des clés ou des renderers personnalisés.
- * - Affiche les états `Chargement`, `Erreur` et `Aucune donnée`.
- *
- * @param {DataTableProps} props - Props du composant DataTable.
- * @returns {JSX.Element}
- */
-export default function DataTable(props) {
-  const {
-    columns,
-    rowKey,
-    className,
-    endpoint,
-    serverPagination = false,
-  } = props;
+// 🔹 Type pour la réponse API
+interface ApiResponse<T> {
+  rows: T[];
+  total: number;
+  isPaginated?: boolean;
+}
 
+export default function DataTable<T = any>({
+  columns,
+  rowKey,
+  className,
+  endpoint,
+  serverPagination = false,
+}: DataTableProps<T>) {
   // 🔹 États de pagination
   const [page, setPage] = useState(0); // index basé sur 0 pour ag-grid
   const [pageSize, setPageSize] = useState(10);
 
   // 🔹 Grid API ref
-  const gridApiRef = useRef(null);
+  const gridApiRef = useRef<any>(null);
 
   // 🔹 Récupération des données depuis le backend
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<ApiResponse<T>>({
     queryKey: [
       endpoint,
       serverPagination ? page : "all",
@@ -81,15 +75,19 @@ export default function DataTable(props) {
         };
       }
 
-      return response;
+      return {
+        rows: [],
+        total: 0,
+        isPaginated: false,
+      };
     },
     placeholderData: (previousData) => previousData,
   });
 
   // 🔹 Colonnes
-  const columnDefs = useMemo(() => {
+  const columnDefs: ColDef[] = useMemo(() => {
     return columns.map((col) => {
-      const def = {
+      const def: ColDef = {
         headerName: col.header,
         sortable: true,
         filter: true,
@@ -97,21 +95,21 @@ export default function DataTable(props) {
       };
 
       if (typeof col.accessor === "string") {
-        const key = col.accessor;
+        const key = col.accessor as keyof T;
         def.valueGetter = (params) => {
-          const record = params.data || {};
-          const v = record[key];
+          const record = params.data as T;
+          const v = record?.[key];
           return typeof v === "number" || typeof v === "string" ? v : "";
         };
       } else if (typeof col.accessor === "function") {
-        const accessor = col.accessor;
-        def.cellRenderer = (params) => accessor(params.data);
+        const accessor = col.accessor as (row: T) => React.ReactNode;
+        def.cellRenderer = (params) => accessor(params.data as T);
       }
       return def;
     });
   }, [columns]);
 
-  const defaultColDef = useMemo(
+  const defaultColDef: ColDef = useMemo(
     () => ({
       sortable: true,
       filter: true,
@@ -122,7 +120,7 @@ export default function DataTable(props) {
     []
   );
 
-  const onGridReady = useCallback((e) => {
+  const onGridReady = useCallback((e: GridReadyEvent) => {
     gridApiRef.current = e.api;
   }, []);
 
@@ -137,7 +135,7 @@ export default function DataTable(props) {
   return (
     <div className={className}>
       <div className="ag-theme-quartz" style={{ width: "100%" }}>
-        <AgGridReact
+        <AgGridReact<T>
           localeText={AG_GRID_LOCALE_FR}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
@@ -173,11 +171,3 @@ export default function DataTable(props) {
     </div>
   );
 }
-
-DataTable.propTypes = {
-  columns: PropTypes.array.isRequired,
-  rowKey: PropTypes.func.isRequired,
-  className: PropTypes.string,
-  endpoint: PropTypes.string.isRequired,
-  serverPagination: PropTypes.bool,
-};
