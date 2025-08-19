@@ -54,7 +54,11 @@ interface TrafficData extends Record<string, unknown> {
 const Dashboard: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
   useEffect(() => {
-    getAll()
+    const fetch = async () => {
+      const response = await getAll()
+      console.log('hello', response)
+    }
+    fetch()
   })
   const stats: Stat[] = [
     {
