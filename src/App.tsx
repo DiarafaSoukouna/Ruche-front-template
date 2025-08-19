@@ -12,9 +12,10 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Users from './pages/Users'
 import Products from './pages/Products'
+import Analytics from './pages/Analytics'
 
-const AppContent = () => {
-  const [loading, setLoading] = useState(true)
+const AppContent: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true)
   const { isAuthenticated } = useAuth()
 
   useEffect(() => {
@@ -48,6 +49,10 @@ const AppContent = () => {
             element={isAuthenticated ? <Users /> : <Navigate to="/login" />}
           />
           <Route
+            path="/analytics"
+            element={isAuthenticated ? <Analytics /> : <Navigate to="/login" />}
+          />
+          <Route
             path="/products"
             element={isAuthenticated ? <Products /> : <Navigate to="/login" />}
           />
@@ -63,7 +68,7 @@ const AppContent = () => {
   )
 }
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router>
