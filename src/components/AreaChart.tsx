@@ -54,21 +54,24 @@ const AreaChart: React.FC<AreaChartProps> = ({
     data,
     title: title ? { text: title } : undefined,
     subtitle: subtitle ? { text: subtitle } : undefined,
-    series: series.map((s, index) => ({
-      type: 'area',
-      xKey,
-      yKey: s.yKey,
-      yName: s.label || s.yKey,
-      fill: s.color || colors[index % colors.length],
-      stroke: s.strokeColor || s.color || colors[index % colors.length],
-      strokeWidth: s.strokeWidth || 2,
-      fillOpacity: s.opacity || 0.7,
-      marker: {
-        enabled: s.showMarkers !== false,
-        size: s.markerSize || 4,
-      },
-      stacked,
-    } as Record<string, unknown>)),
+    series: series.map(
+      (s, index) =>
+        ({
+          type: 'area',
+          xKey,
+          yKey: s.yKey,
+          yName: s.label || s.yKey,
+          fill: s.color || colors[index % colors.length],
+          stroke: s.strokeColor || s.color || colors[index % colors.length],
+          strokeWidth: s.strokeWidth || 2,
+          fillOpacity: s.opacity || 0.7,
+          marker: {
+            enabled: s.showMarkers !== false,
+            size: s.markerSize || 4,
+          },
+          stacked,
+        } as Record<string, unknown>)
+    ),
     axes: [
       {
         type: 'category',
@@ -98,9 +101,23 @@ const AreaChart: React.FC<AreaChartProps> = ({
     },
     tooltip: showTooltip
       ? {
-          renderer: ({ datum, xKey, yKey, yName }: { datum: Record<string, unknown>; xKey: string; yKey: string; yName: string }) => ({
+          renderer: ({
+            datum,
+            xKey,
+            yKey,
+            yName,
+          }: {
+            datum: Record<string, unknown>
+            xKey: string
+            yKey: string
+            yName: string
+          }) => ({
             title: datum[xKey],
-            content: `${yName}: ${typeof datum[yKey] === 'number' ? datum[yKey].toLocaleString() : datum[yKey]}`,
+            content: `${yName}: ${
+              typeof datum[yKey] === 'number'
+                ? datum[yKey].toLocaleString()
+                : datum[yKey]
+            }`,
           }),
         }
       : undefined,
@@ -108,7 +125,9 @@ const AreaChart: React.FC<AreaChartProps> = ({
 
   return (
     <div style={{ height: `${height}px`, width: '100%' }}>
-      <AgCharts options={{ ...chartOptions, ...options } as Record<string, unknown>} />
+      <AgCharts
+        options={{ ...chartOptions, ...options } as Record<string, unknown>}
+      />
     </div>
   )
 }

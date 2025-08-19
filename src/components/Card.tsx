@@ -1,6 +1,11 @@
 import React from 'react';
-
-const Card = ({ title, children, className = '', headerAction }) => {
+interface CardProps {
+  title: String
+  children: React.ReactNode
+  headerAction: String
+  className: String
+}
+const Card:React.FC<CardProps> = ({ title, children, className = '', headerAction }) => {
   return (
     <div className={`bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 ${className}`}>
       {title && (
