@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import {
   HomeIcon,
   UsersIcon,
@@ -9,41 +9,42 @@ import {
   ChevronDownIcon,
   BellIcon,
   Search,
-} from 'lucide-react';
+} from 'lucide-react'
 
 interface NavigationChild {
-  name: string;
-  href: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  name: string
+  href: string
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
 interface NavigationItem {
-  name: string;
-  href?: string | boolean;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  children?: NavigationChild[];
+  name: string
+  href?: string | boolean
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  children?: NavigationChild[]
 }
 
 const Navbar: React.FC = () => {
-  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
-  const location = useLocation();
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
+  const location = useLocation()
 
   const navigationItems: NavigationItem[] = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
     {
-      name: 'Gestion',
+      name: 'Paramétrages',
       icon: CogIcon,
       children: [
         { name: 'Utilisateurs', href: '/users', icon: UsersIcon },
         { name: 'Produits', href: '/products', icon: ShoppingBagIcon },
+        { name: 'Acteurs', href: '/acteurs', icon: UsersIcon },
       ],
       href: true,
     },
     { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  ];
+  ]
 
   const isActive = (href?: string | boolean) =>
-    typeof href === 'string' ? location.pathname === href : false;
+    typeof href === 'string' ? location.pathname === href : false
 
   return (
     <nav className="bg-white shadow-lg border-b border-blue-100 sticky top-0 z-50">
@@ -165,7 +166,7 @@ const Navbar: React.FC = () => {
         ))}
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
