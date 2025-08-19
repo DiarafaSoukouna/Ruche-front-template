@@ -96,11 +96,7 @@ const Navbar = () => {
                 // onMouseLeave={() => setDropdownOpen(null)}
               >
                 <button
-                  onClick={() =>
-                    setDropdownOpen(
-                      dropdownOpen === item.name ? null : item.name
-                    )
-                  }
+                  onMouseEnter={() => setDropdownOpen(item.name)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-1 transition-all duration-200
                    ${
                      item.children
@@ -125,7 +121,10 @@ const Navbar = () => {
 
                 {dropdownOpen === item.name && (
                   <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-blue-100 z-50">
-                    <div className="py-2">
+                    <div
+                      className="py-2"
+                      onMouseLeave={() => setDropdownOpen(null)}
+                    >
                       {item.children.map((child) => (
                         <Link
                           key={child.name}
@@ -138,7 +137,7 @@ const Navbar = () => {
                           }`}
                         >
                           <child.icon className="w-4 h-4 mr-3" />
-                          {child.name} {dropdownOpen}
+                          {child.name}
                         </Link>
                       ))}
                     </div>
@@ -153,6 +152,7 @@ const Navbar = () => {
                     ? 'bg-blue-600 text-white shadow-md'
                     : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
                 }`}
+                onClick={() => setDropdownOpen(null)}
               >
                 <item.icon className="w-4 h-4" />
                 <span>{item.name}</span>
