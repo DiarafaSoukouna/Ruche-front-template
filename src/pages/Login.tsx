@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { EyeIcon, EyeOffIcon, LockIcon, User } from 'lucide-react';
-import { getAll } from '../functions/niveauLocaleConfig/gets';
+import { getAll } from '../functions/localites/gets';
 
 const Login = () => {
   const [formData, setFormData] = useState({
