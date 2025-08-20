@@ -14,6 +14,7 @@ import Users from './pages/Users'
 import Products from './pages/Products'
 import Analytics from './pages/Analytics'
 import Acteurs from './pages/Acteurs'
+import Localites from './pages/Localites'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
