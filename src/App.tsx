@@ -13,7 +13,7 @@ import Dashboard from './pages/Dashboard'
 import Users from './pages/Users'
 import Products from './pages/Products'
 import Analytics from './pages/Analytics'
-import Localites from './pages/Localites'
+import Acteurs from './pages/Acteurs'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -66,6 +66,10 @@ const AppContent: React.FC = () => {
             element={
               <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />
             }
+          />
+          <Route
+            path="/acteurs"
+            element={isAuthenticated ? <Acteurs /> : <Navigate to="/login" />}
           />
         </Routes>
       </main>
