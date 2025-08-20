@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback, useState } from "react";
+import React, { useMemo, useRef, useCallback } from "react";
 import type { ValueGetterParams, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -12,100 +12,54 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "../lib/api";
 import { AG_GRID_LOCALE_FR } from "@ag-grid-community/locale";
-interface DataTableColumn<T> {
-  header: string;
-  accessor: keyof T | ((row: T) => React.ReactNode);
-  className?: string;
-}
 
-// Register all Community features
-ModuleRegistry.registerModules([AllCommunityModule]);
-
-// ✅ Définition des colonnes
+// ✅ Colonnes génériques
 interface DataTableColumn<T = Record<string, unknown>> {
   header: string;
   accessor: keyof T | ((row: T) => React.ReactNode);
   className?: string;
 }
 
-// ✅ Props génériques
+// ✅ Props du tableau
 interface DataTableProps<T = Record<string, unknown>> {
   columns: DataTableColumn<T>[];
   rowKey: (row: T) => string | number;
   className?: string;
   endpoint: string;
-  serverPagination?: boolean;
 }
 
-// ✅ Réponse API standardisée
-interface ApiResponse<T = Record<string, unknown>> {
-  rows: T[];
-  total: number;
-  isPaginated?: boolean;
-  [key: string]: unknown;
-}
+// ✅ Réponse API → tableau brut
+type ApiResponse<T> = T[];
 
-// ✅ Composant
+// Enregistre tous les modules communautaires d'ag-grid
+ModuleRegistry.registerModules([AllCommunityModule]);
+
+// ✅ Composant principal
 export default function DataTable<T extends Record<string, unknown>>(
   props: DataTableProps<T>
 ) {
-  const {
-    columns,
-    rowKey,
-    className,
-    endpoint,
-    serverPagination = false,
-  } = props;
+  const { columns, rowKey, className, endpoint } = props;
 
-  // 🔹 États de pagination
-  const [page, setPage] = useState(0); // index basé sur 0 pour ag-grid
-  const [pageSize, setPageSize] = useState(10);
-
-  // 🔹 Grid API ref
+  // 🔹 Référence à l’API Ag-Grid
   const gridApiRef = useRef<GridApi | null>(null);
 
-  // 🔹 Récupération des données depuis le backend
+  // 🔹 Récupération des données depuis ton API
   const { data, isLoading, error } = useQuery<ApiResponse<T>>({
-    queryKey: [
-      endpoint,
-      serverPagination ? page : "all",
-      serverPagination ? pageSize : "all",
-    ],
+    queryKey: [endpoint],
     queryFn: async (): Promise<ApiResponse<T>> => {
-      let url = endpoint;
+      const response = (await apiClient.request(endpoint)) as unknown;
 
-      if (serverPagination) {
-        const backendPage = page + 1; // Le backend attend une pagination basée sur 1
-        url = `${endpoint}?page=${backendPage}&limit=${pageSize}`;
+      if (Array.isArray(response)) {
+        return response as T[];
       }
 
-      const response = (await apiClient.request(url, { requireAuth: true })) as Record<string, unknown>;
-
-      // ✅ On peut maintenant utiliser Object.keys
-      const entityKey = Object.keys(response).find(
-        (key) => Array.isArray(response[key])
-      );
-
-      if (entityKey && Array.isArray(response[entityKey])) {
-        return {
-          rows: response[entityKey] as T[],
-          total: (response.total as number) || (response[entityKey] as T[]).length,
-          isPaginated: response.isPaginated as boolean,
-        };
-      }
-
-
-      // 🔹 Retour fallback valide (même si vide)
-      return {
-        rows: [],
-        total: 0,
-        isPaginated: false,
-      };
+      // 🔹 fallback si jamais ce n’est pas un tableau
+      return [];
     },
-    placeholderData: (previousData) => previousData,
+    placeholderData: (prev) => prev,
   });
 
-  // 🔹 Colonnes
+  // 🔹 Colonnes dynamiques
   const columnDefs = useMemo<ColDef<T>[]>(() => {
     return columns.map((col) => {
       const def: ColDef<T> = {
@@ -118,21 +72,21 @@ export default function DataTable<T extends Record<string, unknown>>(
       if (typeof col.accessor === "string") {
         const key = col.accessor;
         def.valueGetter = (params: ValueGetterParams<T>) => {
-          const record = params.data || {} as T;
+          const record = (params.data || {}) as T;
           const v = record[key];
           return typeof v === "number" || typeof v === "string" ? v : "";
         };
       } else if (typeof col.accessor === "function") {
         const accessor = col.accessor;
-        def.cellRenderer = (params: ICellRendererParams<T>) => accessor(params.data as T);
+        def.cellRenderer = (params: ICellRendererParams<T>) =>
+          accessor(params.data as T);
       }
-
-
 
       return def;
     });
   }, [columns]);
 
+  // 🔹 Définition par défaut des colonnes
   const defaultColDef = useMemo<ColDef<T>>(
     () => ({
       sortable: true,
@@ -144,16 +98,9 @@ export default function DataTable<T extends Record<string, unknown>>(
     []
   );
 
+  // 🔹 Callback quand la grille est prête
   const onGridReady = useCallback((e: { api: GridApi }) => {
     gridApiRef.current = e.api;
-  }, []);
-
-  const onPaginationChanged = useCallback(() => {
-    if (!gridApiRef.current) return;
-    const currentPage = gridApiRef.current.paginationGetCurrentPage();
-    const size = gridApiRef.current.paginationGetPageSize();
-    setPage(currentPage);
-    setPageSize(size);
   }, []);
 
   return (
@@ -163,22 +110,19 @@ export default function DataTable<T extends Record<string, unknown>>(
           localeText={AG_GRID_LOCALE_FR}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
-          rowData={data?.rows || []}
+          rowData={data || []}
           getRowId={(p) => String(rowKey(p.data))}
           domLayout="autoHeight"
           rowHeight={44}
           headerHeight={40}
           pagination={true}
-          paginationPageSize={pageSize}
+          paginationPageSize={10}
           paginationPageSizeSelector={[10, 20, 50, 100]}
           onGridReady={onGridReady}
-          onPaginationChanged={
-            serverPagination ? onPaginationChanged : undefined
-          }
           suppressPaginationPanel={false}
         />
         {isLoading && <p className="p-4 text-center">Chargement...</p>}
-        {!isLoading && data?.rows?.length === 0 && (
+        {!isLoading && (data?.length || 0) === 0 && (
           <div className="p-4 text-center text-sm text-muted-foreground">
             Aucune donnée trouvée
           </div>
@@ -186,11 +130,6 @@ export default function DataTable<T extends Record<string, unknown>>(
         {error && (
           <div className="p-4 text-center text-sm text-red-500">
             Erreur de chargement
-          </div>
-        )}
-        {serverPagination && (
-          <div className="p-2 text-sm text-muted-foreground">
-            Page {page + 1} sur {Math.ceil((data?.total || 0) / pageSize)}
           </div>
         )}
       </div>
