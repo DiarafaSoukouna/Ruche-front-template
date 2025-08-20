@@ -13,7 +13,7 @@ import Dashboard from './pages/Dashboard'
 import Users from './pages/Users'
 import Products from './pages/Products'
 import Analytics from './pages/Analytics'
-import Acteurs from './pages/Acteurs'
+import Acteurs from './pages/Parametrages/Acteurs/index'
 import Localites from './pages/Localites'
 
 const AppContent: React.FC = () => {
