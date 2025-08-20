@@ -109,7 +109,7 @@ const mockTransactions = [
 export const api = axios.create({
   baseURL:
     (import.meta.env.VITE_API_BASE_URL as string) ||
-    "http://localhost:3000/api/v1",
+    "https://adsms.simro-cmr.net/api",
   timeout: 10000,
   withCredentials: true,
 });
