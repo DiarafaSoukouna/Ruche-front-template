@@ -1,6 +1,6 @@
 import { instance } from '../../axios'
 
-export const getAll = () => {
+export const getAllActeurs = () => {
   try {
     const data = instance.get('acteur')
     console.log('helloooo', data)

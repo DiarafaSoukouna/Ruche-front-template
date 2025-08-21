@@ -1,11 +1,31 @@
 import { useState } from 'react'
 import DataTable from '../../../components/DataTable'
 import Card from '../../../components/Card'
-import { Eye, Trash } from 'lucide-react'
+import { Pencil, Trash, PlusIcon } from 'lucide-react'
+import Button from '../../../components/Button'
+import Form from './form'
+import { ActeurType } from './types'
 
 const Acteurs = () => {
   //   const [acteurs, setActeurs] = useState([])
   // const [acteurs, set]
+  const [showModal, setShowModal] = useState(false)
+  const [editActeur, setEditActeur] = useState<ActeurType>({
+    id_acteur: undefined,
+    code_acteur: '',
+    nom_acteur: '',
+    description_acteur: '',
+    personne_responsable: '',
+    contact: '',
+    adresse_email: '',
+    categorie_acteur: 1,
+  })
+  const [isEdit, setIsEdit] = useState(false)
+  const onEdit = (acteur: any) => {
+    setEditActeur(acteur)
+    setShowModal(true)
+    setIsEdit(true)
+  }
 
   return (
     <div className="space-y-8">
@@ -14,7 +34,27 @@ const Acteurs = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Acteurs</h1>
         </div>
+        <div>
+          <Button
+            onClick={() => {
+              setShowModal(true)
+            }}
+            size="sm"
+          >
+            <PlusIcon className="w-4 h-4 mr-2" />
+            Nouvel acteur
+          </Button>
+        </div>
       </div>
+
+      <Form
+        showModal={showModal}
+        setShowModal={setShowModal}
+        editActeur={editActeur}
+        setEditActeur={setEditActeur}
+        isEdit={isEdit}
+        setIsEdit={setIsEdit}
+      />
 
       <Card title="Liste des acteurs" className="overflow-hidden">
         <DataTable
@@ -66,20 +106,23 @@ const Acteurs = () => {
 
             {
               header: 'Actions',
-              accessor: () => (
-                <div className="flex items-center space-x-2">
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    <Eye />
+              accessor: (row: Record<string, unknown>) => (
+                <div className="flex items-center justify-center space-x-2 gap-2">
+                  <button
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    onClick={() => onEdit(row)}
+                  >
+                    <Pencil size={18} />
                   </button>
                   <button className="text-red-400 hover:text-gray-600 text-sm">
-                    <Trash />
+                    <Trash size={20} />
                   </button>
                 </div>
               ),
             },
           ]}
           rowKey={(row: Record<string, unknown>) => String(row.id)}
-          endpoint="mock/transactions"
+          endpoint="acteur/"
           className="h-96"
         />
       </Card>
