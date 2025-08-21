@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import Card from "../../../components/Card"
-import { getAll } from "../../../functions/niveauLocalites/gets"
 import Table from "../../../components/Table";
 import Button from "../../../components/Button";
 import { EditIcon, PlusIcon, TrashIcon } from "lucide-react";
-import FormNiveau from "./form";
-import { deleteN } from "../../../functions/niveauLocalites/delete";
+import FormNiveau from "./form";import { allNiveauLocalite } from "../../../functions/niveauLocalites/gets";
+import { deleteNiveauLocalite } from "../../../functions/niveauLocalites/delete";
+
 
 const NiveauLocalite = () => {
     const [niveauLocalites, setNiveauLocalites] = useState([])
     const [showForm, setShowForm] = useState<Boolean>(false)
     const [editRow, setEditRow] = useState(null);
+    
 
     const columns = [
         {
@@ -82,7 +83,7 @@ const NiveauLocalite = () => {
     ]
     const all = async () => {
         try {
-            const res = await getAll();
+            const res = await allNiveauLocalite();
             setNiveauLocalites(res)
         } catch (error) {
             console.error(error)
@@ -90,7 +91,7 @@ const NiveauLocalite = () => {
     }
     const del = async (id:number) => {
         try {
-            const res = await deleteN(id);
+            const res = await deleteNiveauLocalite(id);
             all()
         } catch (error) {
             console.error(error)

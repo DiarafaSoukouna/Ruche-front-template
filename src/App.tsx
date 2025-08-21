@@ -18,7 +18,8 @@ import Localites from './pages/Localites'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
-  const { isAuthenticated } = useAuth()
+  const  isAuthenticated  =useState<boolean>(true)
+  // const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     // Simulate initial loading

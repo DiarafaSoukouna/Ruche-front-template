@@ -1,8 +1,8 @@
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
-import { add } from "../../../functions/niveauLocalites/post";
+import { addNiveauLocalite } from "../../../functions/niveauLocalites/post";
 import { typeNiveauLocalite } from "../../../functions/niveauLocalites/types";
-import { update } from "../../../functions/niveauLocalites/update";
+import { updateNiveauLocalite } from "../../../functions/niveauLocalites/update";
 
 interface Props {
     showModal: () => void;
@@ -28,10 +28,10 @@ const FormNiveau: React.FC<Props> = ({ showModal, editRow, all }) => {
         try {
             let res;
             if (editRow) {
-                res = await update(payload);
+                res = await updateNiveauLocalite(payload);
                 console.log("Updated:", res);
             } else {
-                res = await add(payload);
+                res = await addNiveauLocalite(payload);
                 form.reset();
                 console.log("Created:", res);
             }
