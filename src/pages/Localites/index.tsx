@@ -7,6 +7,7 @@ import Tabs from "../../components/Tabs";
 import { allNiveauLocalite } from "../../functions/niveauLocalites/gets";
 import { typeNiveauLocalite } from "../../functions/niveauLocalites/types";
 import LoadingScreen from "../../components/LoadingScreen";
+import Card from "../../components/Card";
 
 const Localites: React.FC = () => {
     const [niveauLocalites, setNiveauLocalites] = useState<typeNiveauLocalite[]>([]);
@@ -43,7 +44,7 @@ const Localites: React.FC = () => {
             </Modal>
             {loading ? (<LoadingScreen />) :
 
-                <div className="p-1">
+                <Card>
                     <Tabs
                         defaultActiveTab={niveauLocalites.length > 0 ? "tab" + niveauLocalites[0].id_nlc : "tab1"}
                         onAddTab={handleAddTab}
@@ -70,7 +71,7 @@ const Localites: React.FC = () => {
 
 
                     </Tabs>
-                </div>
+                </Card>
             }
 
         </div>
