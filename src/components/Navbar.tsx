@@ -9,6 +9,8 @@ import {
   ChevronDownIcon,
   BellIcon,
   Search,
+  MapPinIcon,
+  User,
 } from 'lucide-react';
 
 interface NavigationChild {
@@ -31,11 +33,13 @@ const Navbar: React.FC = () => {
   const navigationItems: NavigationItem[] = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
     {
-      name: 'Gestion',
+      name: 'Paramétrage',
       icon: CogIcon,
       children: [
         { name: 'Utilisateurs', href: '/users', icon: UsersIcon },
         { name: 'Produits', href: '/products', icon: ShoppingBagIcon },
+        { name: 'Localités', href: '/localites', icon: MapPinIcon },
+        { name: 'Acteurs', href: '/acteurs', icon: User },
       ],
       href: true,
     },

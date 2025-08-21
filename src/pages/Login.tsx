@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
-import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, LockIcon, User } from 'lucide-react';
+import { getAll } from '../functions/localites/gets';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: 'admin@example.com',
-    password: 'password'
+    id_personnel_perso: '',
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,10 +20,11 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
     setError('');
 
     try {
-      const success = await login(formData.email, formData.password);
+      const success = await login(formData.id_personnel_perso, formData.password);
       if (success) {
         navigate('/dashboard');
       } else {
@@ -57,21 +59,21 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
+                Identifiants
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                  <MailIcon className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
+                  id="id_personnel_perso"
+                  name="id_personnel_perso"
+                  type="text"
                   required
-                  value={formData.email}
+                  value={formData.id_personnel_perso}
                   onChange={handleChange}
                   className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  placeholder="votre@email.com"
+                  placeholder="user!@#$"
                 />
               </div>
             </div>
@@ -116,19 +118,12 @@ const Login = () => {
 
             <Button
               type="submit"
-              loading={loading}
               className="w-full py-3"
               size="lg"
             >
               Se connecter
             </Button>
           </form>
-
-          <div className="mt-6 text-center text-sm text-gray-600">
-            <p>Compte de test:</p>
-            <p>Email: <span className="font-medium">admin@example.com</span></p>
-            <p>Password: <span className="font-medium">password</span></p>
-          </div>
         </div>
       </div>
     </div>
