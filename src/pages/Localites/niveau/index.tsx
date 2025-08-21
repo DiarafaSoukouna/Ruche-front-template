@@ -3,7 +3,8 @@ import Card from "../../../components/Card"
 import Table from "../../../components/Table";
 import Button from "../../../components/Button";
 import { EditIcon, PlusIcon, TrashIcon } from "lucide-react";
-import FormNiveau from "./form";import { allNiveauLocalite } from "../../../functions/niveauLocalites/gets";
+import FormNiveau from "./form";
+import { allNiveauLocalite } from "../../../functions/niveauLocalites/gets";
 import { deleteNiveauLocalite } from "../../../functions/niveauLocalites/delete";
 
 
