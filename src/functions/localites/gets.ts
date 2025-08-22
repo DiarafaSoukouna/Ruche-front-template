@@ -1,19 +1,18 @@
 import { instance } from '../../axios'
 
-export const getAll = () => {
+export const allLocalite = async () => {
   try {
-    const res = instance.get('niveau_localite_config')
-    console.log('data', res)
-    return res
+    const res = await instance.get('localite')
+    return res.data
   } catch (error){
     console.log(error)
     return error
   }
 }
 
-export const getOne = (id:number) => {
+export const oneLocalite = (id:number) => {
   try {
-    const res = instance.get('niveau_localite_config/'+ id)
+    const res = instance.get('localite/'+ id)
     console.log('data', res)
     return res
   } catch (error){

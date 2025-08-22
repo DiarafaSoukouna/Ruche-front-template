@@ -1,3 +1,4 @@
+import { PlusIcon } from 'lucide-react';
 import { useState, ReactNode, Children, isValidElement, cloneElement } from 'react';
 
 interface TabProps {
@@ -11,32 +12,29 @@ interface TabsProps {
   children: ReactNode;
   defaultActiveTab?: string;
   className?: string;
-  onAddTab?: () => void;
-  addButtonLabel?: string;
+  defaulBoutonLabel?: string;
+  onAddTab?: (bool:boolean, niv:number) => void;
+  setAddBoutonLabel: (label:string) => void ;
 }
 
-// Composant Tab (pour wrapper le contenu de chaque onglet)
 export const Tab = ({ children }: TabProps) => {
   return <>{children}</>;
 };
 
-// Composant Tabs principal
 const Tabs = ({ 
   children, 
   defaultActiveTab, 
   className = '', 
+  defaulBoutonLabel,
+  setAddBoutonLabel,
   onAddTab,
-  addButtonLabel = 'Ajouter' 
 }: TabsProps) => {
   const [activeTab, setActiveTab] = useState<string>(defaultActiveTab || '');
-
-  // Récupérer les tabs valides
   const tabs = Children.toArray(children).filter(
     (child): child is React.ReactElement<TabProps> => 
       isValidElement(child) && child.type === Tab
   );
 
-  // Si aucun defaultActiveTab n'est fourni, prendre le premier tab
   if (!activeTab && tabs.length > 0) {
     setActiveTab(tabs[0].props.id);
   }
@@ -46,40 +44,36 @@ const Tabs = ({
   return (
     <div className={`w-full ${className}`}>
       <div className="flex border-b border-gray-200 items-center">
-        {/* Boutons des tabs à gauche */}
         <div className="flex flex-1">
           {tabs.map((tab) => {
             const { id, label, count } = tab.props;
             return (
               <button
                 key={id}
-                onClick={() => setActiveTab(id)}
+                onClick={() => (setActiveTab(id), setAddBoutonLabel(label))}
                 className={`py-2 px-4 font-medium text-sm focus:outline-none transition-all duration-200 flex items-center gap-2 ${
                   activeTab === id
                     ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50'
                     : 'text-gray-500 hover:text-blue-500 hover:bg-gray-50'
                 }`}
               >
-                
-                {label}
                 {count !== undefined && (
                   <span className="bg-gray-200 text-gray-700 text-xs font-semibold px-2 py-1 rounded-full">
                     {count}
                   </span>
                 )}
+                {label}
               </button>
             );
           })}
         </div>
-
-        {/* Bouton Ajouter à droite */}
         {onAddTab && (
           <button
-            onClick={onAddTab}
+            onClick={()=>onAddTab(true, Number(activeTabContent))}
             className="ml-auto py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none transition-colors duration-200 flex items-center gap-1"
           >
-            <span>+</span>
-            {addButtonLabel}
+            <PlusIcon/>
+           Ajouter {defaulBoutonLabel}
           </button>
         )}
       </div>

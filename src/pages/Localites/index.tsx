@@ -8,31 +8,56 @@ import { allNiveauLocalite } from "../../functions/niveauLocalites/gets";
 import { typeNiveauLocalite } from "../../functions/niveauLocalites/types";
 import LoadingScreen from "../../components/LoadingScreen";
 import Card from "../../components/Card";
+import FormLocalite from "./form";
+import { allLocalite } from "../../functions/localites/gets";
+import { typeLocalite } from "../../functions/localites/types";
 
 const Localites: React.FC = () => {
     const [niveauLocalites, setNiveauLocalites] = useState<typeNiveauLocalite[]>([]);
+    const [localites, setLocalites] = useState<typeLocalite[]>([]);
     const [loading, setLoading] = useState<boolean>(true)
+    const [showForm, setShowForm] = useState<Boolean>(false)
+    const [editRow, setEditRow] = useState(null);
+    const [addBoutonLabel, setAddBoutonLabel] = useState<string>('')
+    const [tabActive, setTabActive] = useState<number>(0)
     const AllNiveau = async () => {
         try {
             const res = await allNiveauLocalite();
-            setLoading(false)
             setNiveauLocalites(res)
+            setAddBoutonLabel(res[0].libelle_nlc)
+            setLoading(false)
         } catch (error) {
             console.log('error', error)
         }
     }
+    const AllLocalite = async () => {
+        try {
+            const res = await allLocalite();
+            setLocalites(res)
+            setLoading(false)
+        } catch (error) {
+            console.log('error', error)
+        }
+    }
+
     useEffect(() => {
         AllNiveau();
+        AllLocalite();
     }, [])
-    const handleAddTab = () => {
-        console.log(4);
+    const handleAddBoutonLabel = (label: string) => {
+        setAddBoutonLabel(label)
+    };
+    const handleAddTab = (bool:boolean, niveau:number) => {
+        setShowForm(bool);
+        setTabActive(niveau);
+        console.log(showForm)
     };
     const [loadNiveau, setLoadNiveau] = useState<Boolean>(false)
     return (
         <div>
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Localités{niveauLocalites.length > 0 ? "tab" + niveauLocalites[0].id_nlc : "tab1"}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Localités</h1>
                 </div>
                 <Button variant="outline" onClick={() => setLoadNiveau(true)}>
                     <MapPinIcon className="w-4 h-4 mr-2" />
@@ -43,22 +68,23 @@ const Localites: React.FC = () => {
                 <NiveauLocalite />
             </Modal>
             {loading ? (<LoadingScreen />) :
-
                 <Card>
                     <Tabs
-                        defaultActiveTab={niveauLocalites.length > 0 ? "tab" + niveauLocalites[0].id_nlc : "tab1"}
-                        onAddTab={handleAddTab}
-                        addButtonLabel="Nouvel onglet"
+                        defaultActiveTab={String(niveauLocalites[0].id_nlc)}
+                        onAddTab={(bool:boolean, niveau:number)=>handleAddTab(bool, niveau)}
+                        defaulBoutonLabel={addBoutonLabel}
+                        setAddBoutonLabel={(label: string) => handleAddBoutonLabel(label)}
                     >
                         {niveauLocalites.length > 0 ?
 
                             niveauLocalites.map((nivLoc: typeNiveauLocalite) =>
-                            (<Tabs.Tab id={"tab" + nivLoc.id_nlc} label={nivLoc.libelle_nlc} count={5}>
+                            (<Tabs.Tab key={nivLoc.id_nlc} id={String(nivLoc.id_nlc)} label={nivLoc.libelle_nlc}>
                                 <div>
                                     <h3>Contenu du premier onglet</h3>
-                                    {"tab" + nivLoc.id_nlc}
-                                    <p>5 éléments dans cet onglet</p>
+                                    {nivLoc.id_nlc}
+                                    <p>5 éléments dans cet onglet</p> {tabActive}
                                 </div>
+
                             </Tabs.Tab>
                             )
                             ) :
@@ -68,12 +94,13 @@ const Localites: React.FC = () => {
                                 </div>
                             </Tabs.Tab>
                         }
-
-
                     </Tabs>
                 </Card>
             }
 
+            <Modal onClose={() => setShowForm(false)} isOpen={showForm} title={`Ajout d'une ${addBoutonLabel}`} size="lg">
+                <FormLocalite onClose={() => setShowForm(false)} editRow={editRow || null} all={() => AllLocalite()} />
+            </Modal>
         </div>
     )
 }
