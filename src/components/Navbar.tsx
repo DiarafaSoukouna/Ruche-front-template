@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   HomeIcon,
   UsersIcon,
@@ -11,7 +11,8 @@ import {
   Search,
   MapPinIcon,
   User,
-} from 'lucide-react';
+  Building2,
+} from "lucide-react";
 
 interface NavigationChild {
   name: string;
@@ -31,23 +32,26 @@ const Navbar: React.FC = () => {
   const location = useLocation();
 
   const navigationItems: NavigationItem[] = [
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+    { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
     {
-      name: 'Paramétrage',
+      name: "Paramétrage",
       icon: CogIcon,
       children: [
-        { name: 'Utilisateurs', href: '/users', icon: UsersIcon },
-        { name: 'Produits', href: '/products', icon: ShoppingBagIcon },
-        { name: 'Localités', href: '/localites', icon: MapPinIcon },
-        { name: 'Acteurs', href: '/acteurs', icon: User },
+        { name: "Utilisateurs", href: "/users", icon: UsersIcon },
+        { name: "Produits", href: "/products", icon: ShoppingBagIcon },
+        { name: "Localités", href: "/localites", icon: MapPinIcon },
+        { name: "Acteurs", href: "/acteurs", icon: User },
+        { name: "Personnel", href: "/personnel", icon: UsersIcon },
+        { name: "Plans de Site", href: "/plan-site", icon: Building2 },
+        { name: "Types de Zone", href: "/type-zone", icon: MapPinIcon },
       ],
       href: true,
     },
-    { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
+    { name: "Analytics", href: "/analytics", icon: ChartBarIcon },
   ];
 
   const isActive = (href?: string | boolean) =>
-    typeof href === 'string' ? location.pathname === href : false;
+    typeof href === "string" ? location.pathname === href : false;
 
   return (
     <nav className="bg-white shadow-lg border-b border-blue-100 sticky top-0 z-50">
@@ -109,19 +113,19 @@ const Navbar: React.FC = () => {
                      item.children
                        .map((child) => isActive(child.href))
                        .includes(true)
-                       ? 'bg-blue-600 text-white shadow-md'
-                       : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
+                       ? "bg-blue-600 text-white shadow-md"
+                       : "text-gray-600 hover:text-blue-700 hover:bg-blue-50"
                    } ${
                     dropdownOpen === item.name
-                      ? 'bg-blue-50 text-blue-900'
-                      : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
+                      ? "bg-blue-50 text-blue-900"
+                      : "text-gray-600 hover:text-blue-700 hover:bg-blue-50"
                   }`}
                 >
                   <item.icon className="w-4 h-4" />
                   <span>{item.name}</span>
                   <ChevronDownIcon
                     className={`w-4 h-4 transition-transform ${
-                      dropdownOpen === item.name ? 'rotate-180' : ''
+                      dropdownOpen === item.name ? "rotate-180" : ""
                     }`}
                   />
                 </button>
@@ -139,8 +143,8 @@ const Navbar: React.FC = () => {
                           onClick={() => setDropdownOpen(null)}
                           className={`flex items-center px-4 py-2 text-sm transition-colors ${
                             isActive(child.href)
-                              ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
-                              : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700'
+                              ? "bg-blue-50 text-blue-700 border-r-2 border-blue-600"
+                              : "text-gray-600 hover:bg-blue-50 hover:text-blue-700"
                           }`}
                         >
                           <child.icon className="w-4 h-4 mr-3" />
@@ -156,8 +160,8 @@ const Navbar: React.FC = () => {
                 to={item.href as string}
                 className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 ${
                   isActive(item.href)
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "text-gray-600 hover:text-blue-700 hover:bg-blue-50"
                 }`}
                 onClick={() => setDropdownOpen(null)}
               >

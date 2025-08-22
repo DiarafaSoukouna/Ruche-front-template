@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback } from "react";
+import React, { useMemo, useRef, useCallback, useEffect } from "react";
 import type { ValueGetterParams, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -9,18 +9,20 @@ import {
   GridApi,
   ColDef,
 } from "ag-grid-community";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "../lib/api";
 import { AG_GRID_LOCALE_FR } from "@ag-grid-community/locale";
+import Button from "./Button";
+import { toast } from "react-toastify";
 
-// ✅ Colonnes génériques
+// Colonnes génériques
 interface DataTableColumn<T = Record<string, unknown>> {
   header: string;
   accessor: keyof T | ((row: T) => React.ReactNode);
   className?: string;
 }
 
-// ✅ Props du tableau
+// Props du tableau
 interface DataTableProps<T = Record<string, unknown>> {
   columns: DataTableColumn<T>[];
   rowKey: (row: T) => string | number;
@@ -28,23 +30,24 @@ interface DataTableProps<T = Record<string, unknown>> {
   endpoint: string;
 }
 
-// ✅ Réponse API → tableau brut
+// Réponse API → tableau brut
 type ApiResponse<T> = T[];
 
 // Enregistre tous les modules communautaires d'ag-grid
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-// ✅ Composant principal
+// Composant principal
 export default function DataTable<T extends Record<string, unknown>>(
   props: DataTableProps<T>
 ) {
   const { columns, rowKey, className, endpoint } = props;
+  const queryClient = useQueryClient();
 
-  // 🔹 Référence à l’API Ag-Grid
+  // Référence à l’API Ag-Grid
   const gridApiRef = useRef<GridApi | null>(null);
 
-  // 🔹 Récupération des données depuis ton API
-  const { data, isLoading, error } = useQuery<ApiResponse<T>>({
+  // Récupération des données depuis ton API
+  const { data, error } = useQuery<ApiResponse<T>>({
     queryKey: [endpoint],
     queryFn: async (): Promise<ApiResponse<T>> => {
       const response = (await apiClient.request(endpoint)) as unknown;
@@ -53,13 +56,19 @@ export default function DataTable<T extends Record<string, unknown>>(
         return response as T[];
       }
 
-      // 🔹 fallback si jamais ce n’est pas un tableau
+      // fallback si jamais ce n’est pas un tableau
       return [];
     },
     placeholderData: (prev) => prev,
   });
 
-  // 🔹 Colonnes dynamiques
+  useEffect(() => {
+    if (error) {
+      toast.error("Erreur lors du chargement des données");
+    }
+  }, [error]);
+
+  // Colonnes dynamiques
   const columnDefs = useMemo<ColDef<T>[]>(() => {
     return columns.map((col) => {
       const def: ColDef<T> = {
@@ -86,7 +95,7 @@ export default function DataTable<T extends Record<string, unknown>>(
     });
   }, [columns]);
 
-  // 🔹 Définition par défaut des colonnes
+  // Définition par défaut des colonnes
   const defaultColDef = useMemo<ColDef<T>>(
     () => ({
       sortable: true,
@@ -98,13 +107,25 @@ export default function DataTable<T extends Record<string, unknown>>(
     []
   );
 
-  // 🔹 Callback quand la grille est prête
+  // Callback quand la grille est prête
   const onGridReady = useCallback((e: { api: GridApi }) => {
     gridApiRef.current = e.api;
   }, []);
 
   return (
     <div className={className}>
+      {/* Bouton Actualiser */}
+      <div className="flex justify-end mb-2">
+        <Button
+          onClick={() =>
+            queryClient.invalidateQueries({ queryKey: [endpoint] })
+          }
+          className="px-3 py-1 text-sm rounded"
+        >
+          Actualiser
+        </Button>
+      </div>
+
       <div className="ag-theme-quartz" style={{ width: "100%" }}>
         <AgGridReact<T>
           localeText={AG_GRID_LOCALE_FR}
@@ -121,17 +142,6 @@ export default function DataTable<T extends Record<string, unknown>>(
           onGridReady={onGridReady}
           suppressPaginationPanel={false}
         />
-        {isLoading && <p className="p-4 text-center">Chargement...</p>}
-        {!isLoading && (data?.length || 0) === 0 && (
-          <div className="p-4 text-center text-sm text-muted-foreground">
-            Aucune donnée trouvée
-          </div>
-        )}
-        {error && (
-          <div className="p-4 text-center text-sm text-red-500">
-            Erreur de chargement
-          </div>
-        )}
       </div>
     </div>
   );
