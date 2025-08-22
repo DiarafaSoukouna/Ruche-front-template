@@ -1,8 +1,5 @@
 import Button from "../../components/Button";
 import Input from "../../components/Input";
-import { addNiveauLocalite } from "../../functions/niveauLocalites/post";
-import { typeNiveauLocalite } from "../../functions/niveauLocalites/types";
-import { updateNiveauLocalite } from "../../functions/niveauLocalites/put";
 import { typeLocalite } from "../../functions/localites/types";
 import { addLocalite } from "../../functions/localites/post";
 import { updateLocalite } from "../../functions/localites/put";
@@ -11,10 +8,11 @@ import { updateLocalite } from "../../functions/localites/put";
 interface Props {
     all: () => void;
     onClose: () => void;
+    niveau: number;
     editRow: typeLocalite | null;
 }
 
-const FormLocalite: React.FC<Props> = ({ editRow, all, onClose }) => {
+const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, niveau }) => {
 
     const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -27,7 +25,7 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose }) => {
             code_national_loca: data.code_national_loca as string,
             code_loca: data.code_loca as string,
             parent_loca: data.parent_loca as string,
-            niveau_loca: data.niveau_loca as number,
+            niveau_loca: niveau,
             id_loca: editRow?.id_loca,
         };
         console.log("Form values:", payload);

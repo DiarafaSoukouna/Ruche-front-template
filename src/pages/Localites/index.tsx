@@ -99,7 +99,7 @@ const Localites: React.FC = () => {
             }
 
             <Modal onClose={() => setShowForm(false)} isOpen={showForm} title={`Ajout d'une ${addBoutonLabel}`} size="lg">
-                <FormLocalite onClose={() => setShowForm(false)} editRow={editRow || null} all={() => AllLocalite()} />
+                <FormLocalite onClose={() => setShowForm(false)} niveau={tabActive} editRow={editRow || null} all={() => AllLocalite()} />
             </Modal>
         </div>
     )
