@@ -9,10 +9,8 @@ export interface ActeurType {
   categorie_acteur: number
 }
 export interface FormProps {
-  showModal: boolean
-  setShowModal: (value: boolean) => void
-  editActeur: ActeurType
-  setEditActeur: (value: ActeurType) => void
+  acteur: ActeurType
+  setActeur: (value: ActeurType) => void
   isEdit: boolean
-  setIsEdit: (value: boolean) => void
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
 }

@@ -1,9 +1,9 @@
 import { api } from '../../lib/api'
 import { ActeurType } from '../../pages/Parametrages/Acteurs/types'
 
-export const add = async (data: ActeurType) => {
+export const addActeur = async (data: ActeurType) => {
   try {
-    const res = await api.post('acteur', data)
+    const res = await api.post('acteur/', data)
     if (res) {
       return res
     }

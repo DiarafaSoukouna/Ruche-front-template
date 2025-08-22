@@ -1,5 +1,4 @@
 import axios, { AxiosError, type AxiosRequestConfig } from 'axios'
-import { authStore } from '../stores/auth'
 import { handleApiError } from './errors'
 
 // Mock data for demonstration
@@ -106,19 +105,11 @@ const mockTransactions = [
   },
 ]
 
-export const api_old = axios.create({
-  baseURL:
-    (import.meta.env.VITE_API_BASE_URL as string) ||
-    'http://localhost:3000/api/v1',
-  timeout: 10000,
-  withCredentials: true,
-})
 export const api = axios.create({
   baseURL:
     (import.meta.env.VITE_API_BASE_URL as string) ||
-    'https:/adsms.simro-cmr.net/api/',
+    'https://adsms.simro-cmr.net/api',
   timeout: 10000,
-  withCredentials: true,
 })
 
 // ----- Gestion du refresh -----
@@ -134,9 +125,29 @@ function onRefreshed() {
   refreshSubscribers = []
 }
 
+// Token management utilities
+const TOKEN_KEYS = {
+  ACCESS: 'access_token',
+  REFRESH: 'refresh_token',
+}
+
+export const tokenManager = {
+  getAccessToken: () => localStorage.getItem(TOKEN_KEYS.ACCESS),
+  getRefreshToken: () => localStorage.getItem(TOKEN_KEYS.REFRESH),
+  setTokens: (access: string, refresh: string) => {
+    localStorage.setItem(TOKEN_KEYS.ACCESS, access)
+    localStorage.setItem(TOKEN_KEYS.REFRESH, refresh)
+  },
+  clearTokens: () => {
+    localStorage.removeItem(TOKEN_KEYS.ACCESS)
+    localStorage.removeItem(TOKEN_KEYS.REFRESH)
+  },
+}
+
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
+    console.log(error)
     const originalRequest = error.config as AxiosRequestConfig & {
       _retry?: boolean
     }
@@ -153,14 +164,29 @@ api.interceptors.response.use(
       }
 
       isRefreshing = true
+      const refreshToken = tokenManager.getRefreshToken()
+
+      if (!refreshToken) {
+        isRefreshing = false
+        tokenManager.clearTokens()
+        window.location.href = '/login'
+        return Promise.reject(error)
+      }
+
       try {
-        await api.post('/auth/refresh', null, { withCredentials: true })
+        const response = await api.post('/token/refresh/', {
+          refresh: refreshToken,
+        })
+
+        const { access } = response.data
+        tokenManager.setTokens(access, refreshToken)
+
         isRefreshing = false
         onRefreshed()
         return api(originalRequest)
       } catch (refreshError: unknown) {
         isRefreshing = false
-        authStore.getState().logout()
+        tokenManager.clearTokens()
         window.location.href = '/login'
         return Promise.reject(refreshError as Error)
       }
@@ -177,7 +203,7 @@ export const apiClient = {
     endpoint: string,
     options: AxiosRequestConfig & { retries?: number } = {}
   ): Promise<T> {
-    // Handle mock endpoints
+    // Handle mock endpoints (only transactions)
     if (endpoint.startsWith('mock/')) {
       return new Promise((resolve) => {
         setTimeout(() => {
@@ -192,7 +218,7 @@ export const apiClient = {
     const { retries = 3, ...axiosConfig } = options
 
     // Add auth token if required
-    const token = authStore.getState().accessToken
+    const token = tokenManager.getAccessToken()
     if (token) {
       axiosConfig.headers = {
         ...axiosConfig.headers,

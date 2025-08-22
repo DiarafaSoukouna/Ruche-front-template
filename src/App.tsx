@@ -5,6 +5,8 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import LoadingScreen from './components/LoadingScreen'
 import Navbar from './components/Navbar'
@@ -15,6 +17,9 @@ import Products from './pages/Products'
 import Analytics from './pages/Analytics'
 import Acteurs from './pages/Parametrages/Acteurs/index'
 import Localites from './pages/Localites'
+import PersonnelPage from './pages/parametrage/personnel/PersonnelPage'
+import PlanSitePage from './pages/parametrage/plan-site/PlanSitePage'
+import TypeZonePage from './pages/parametrage/type-zone/TypeZonePage'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -72,6 +77,18 @@ const AppContent: React.FC = () => {
             path="/acteurs"
             element={isAuthenticated ? <Acteurs /> : <Navigate to="/login" />}
           />
+          <Route
+            path="/personnel"
+            element={isAuthenticated ? <PersonnelPage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/plan-site"
+            element={isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/type-zone"
+            element={isAuthenticated ? <TypeZonePage /> : <Navigate to="/login" />}
+          />
         </Routes>
       </main>
     </div>
@@ -83,6 +100,18 @@ const App: React.FC = () => {
     <AuthProvider>
       <Router>
         <AppContent />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </Router>
     </AuthProvider>
   )

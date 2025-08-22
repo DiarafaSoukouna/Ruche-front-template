@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { instance } from '../axios';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { authService } from '../services/authService';
 
 interface User {
   name: string;
@@ -9,8 +9,13 @@ interface User {
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (id_personnel_perso: string, password: string) => Promise<boolean>;
+  loginWithGoogle: () => Promise<boolean>;
   logout: () => void;
+  getAccessToken: () => string | null;
+  getRefreshToken: () => string | null;
+  setTokens: (access: string, refresh: string) => void;
+  clearTokens: () => void;
 }
 
 interface AuthProviderProps {
@@ -19,42 +24,92 @@ interface AuthProviderProps {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const TOKEN_KEYS = {
+  ACCESS: 'access_token',
+  REFRESH: 'refresh_token'
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return !!localStorage.getItem(TOKEN_KEYS.ACCESS);
+  });
   const [user, setUser] = useState<User | null>(null);
 
-  const login = async (id_personnel_perso: string, password: string): Promise<any> => {
-    const data = {
-      id_personnel_perso : id_personnel_perso,
-      password : password,
+  useEffect(() => {
+    const token = localStorage.getItem(TOKEN_KEYS.ACCESS);
+    if (token) {
+      setIsAuthenticated(true);
+      // Optionally fetch user data here
     }
+  }, []);
+
+  // Token management methods
+  const getAccessToken = (): string | null => {
+    return localStorage.getItem(TOKEN_KEYS.ACCESS);
+  };
+
+  const getRefreshToken = (): string | null => {
+    return localStorage.getItem(TOKEN_KEYS.REFRESH);
+  };
+
+  const setTokens = (access: string, refresh: string): void => {
+    localStorage.setItem(TOKEN_KEYS.ACCESS, access);
+    localStorage.setItem(TOKEN_KEYS.REFRESH, refresh);
+  };
+
+  const clearTokens = (): void => {
+    localStorage.removeItem(TOKEN_KEYS.ACCESS);
+    localStorage.removeItem(TOKEN_KEYS.REFRESH);
+  };
+
+  const login = async (id_personnel_perso: string, password: string): Promise<boolean> => {
     try {
-      const res = await instance.post('token/', data)
-      if (res){
-        localStorage.setItem('loggedUser', res.data)
+      const response = await authService.login({ id_personnel_perso, password });
+      if (response.access && response.refresh) {
+        setTokens(response.access, response.refresh);
         setIsAuthenticated(true);
-        setUser({ name: 'Admin User', id_personnel_perso });
-        return true
+        setUser({ name: response.user?.name || 'User', id_personnel_perso });
+        return true;
       }
-    } catch (error) {
-      return false ;
+      return false;
+    } catch {
+      return false;
     }
-    // // Simulation d'une authentification
-    // if (email === 'admin@example.com' && password === 'password') {
-    //   setIsAuthenticated(true);
-    //   setUser({ name: 'Admin User', email });
-    //   return true;
-    // }
-    // return false;
+  };
+
+  const loginWithGoogle = async (): Promise<boolean> => {
+    try {
+      const response = await authService.loginWithGoogle();
+      if (response.access && response.refresh) {
+        setTokens(response.access, response.refresh);
+        setIsAuthenticated(true);
+        setUser({ name: response.user?.name || 'Google User', id_personnel_perso: response.user?.id_personnel_perso || '' });
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
   };
 
   const logout = (): void => {
+    clearTokens();
     setIsAuthenticated(false);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ 
+      isAuthenticated, 
+      user, 
+      login, 
+      loginWithGoogle, 
+      logout,
+      getAccessToken,
+      getRefreshToken,
+      setTokens,
+      clearTokens
+    }}>
       {children}
     </AuthContext.Provider>
   );

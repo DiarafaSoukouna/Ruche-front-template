@@ -1,9 +1,12 @@
 import { instance } from '../../axios'
 
-export const getAllActeurs = () => {
+export const getAllActeurs = async () => {
   try {
-    const data = instance.get('acteur')
-    console.log('helloooo', data)
-    return data
-  } catch {}
+    const res = await instance.get('acteur/')
+    if (res) {
+      return res
+    }
+  } catch (error) {
+    console.error(error)
+  }
 }
