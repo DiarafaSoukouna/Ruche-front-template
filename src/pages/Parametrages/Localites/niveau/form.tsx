@@ -1,8 +1,9 @@
-import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import { addNiveauLocalite } from "../../../functions/niveauLocalites/post";
-import { updateNiveauLocalite } from "../../../functions/niveauLocalites/put";
-import { typeNiveauLocalite } from "../../../functions/niveauLocalites/types";
+import Button from "../../../../components/Button";
+import Input from "../../../../components/Input";
+import { addNiveauLocalite } from "../../../../functions/niveauLocalites/post";
+import { updateNiveauLocalite } from "../../../../functions/niveauLocalites/put";
+import { typeNiveauLocalite } from "../../../../functions/niveauLocalites/types";
+
 
 interface Props {
     showModal: () => void;

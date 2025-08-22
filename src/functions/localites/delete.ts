@@ -1,8 +1,8 @@
 import { instance } from "../../axios"
 
-export const deleteLocalite = async (id: number) => {
+export const deletePartFinancier = async (id: number) => {
     try {
-        const res = await instance.delete("localite/" + id + "/")
+        const res = await instance.delete("PartFinancier/" + id + "/")
         return res
     } catch (error) {
         return error

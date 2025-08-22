@@ -1,17 +1,17 @@
 import React, { lazy, useEffect, useState } from "react";
-import Button from "../../components/Button";
 import { EditIcon, MapPinIcon, PlusIcon, TrashIcon } from "lucide-react";
-import Modal from "../../components/Modal";
 import NiveauLocalite from "./niveau";
-import Tabs from "../../components/TabLocalites";
-import Table from "../../components/Table";
-import { allNiveauLocalite } from "../../functions/niveauLocalites/gets";
-import { typeNiveauLocalite } from "../../functions/niveauLocalites/types";
-import LoadingScreen from "../../components/LoadingScreen";
-import Card from "../../components/Card";
 import FormLocalite from "./form";
-import { allLocalite } from "../../functions/localites/gets";
-import { typeLocalite } from "../../functions/localites/types";
+import { typeNiveauLocalite } from "../../../functions/niveauLocalites/types";
+import { typeLocalite } from "../../../functions/localites/types";
+import Button from "../../../components/Button";
+import { allNiveauLocalite } from "../../../functions/niveauLocalites/gets";
+import { allLocalite } from "../../../functions/localites/gets";
+import Modal from "../../../components/Modal";
+import LoadingScreen from "../../../components/LoadingScreen";
+import Card from "../../../components/Card";
+import Tabs from "../../../components/TabLocalites";
+import Table from "../../../components/Table";
 
 const Localites: React.FC = () => {
     const [niveauLocalites, setNiveauLocalites] = useState<typeNiveauLocalite[]>([]);

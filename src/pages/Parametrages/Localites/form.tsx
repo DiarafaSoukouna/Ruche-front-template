@@ -1,9 +1,8 @@
-import Button from "../../components/Button";
-import Input from "../../components/Input";
-import { typeLocalite } from "../../functions/localites/types";
-import { addLocalite } from "../../functions/localites/post";
-import { updateLocalite } from "../../functions/localites/put";
-
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import { addLocalite } from "../../../functions/localites/post";
+import { updateLocalite } from "../../../functions/localites/put";
+import { typeLocalite } from "../../../functions/localites/types";
 
 interface Props {
     all: () => void;
