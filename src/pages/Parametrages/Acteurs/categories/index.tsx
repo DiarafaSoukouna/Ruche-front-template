@@ -5,11 +5,31 @@ import Button from '../../../../components/Button'
 import { EditIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { getAllCategories } from '../../../../functions/categoriesActeurs/gets'
 import { updateCategorie } from '../../../../functions/categoriesActeurs/put'
+import Form from '../categories/form'
 
 const CategorieActeur = () => {
-  const [categorieActeur, setCategorieActeur] = useState([])
+  const [categories, setCategories] = useState<any[]>([])
+  const [categorieActeur, setCategorieActeur] = useState({
+    id_categorie: 0,
+    code_cat: '',
+    nom_categorie: '',
+  })
   const [showForm, setShowForm] = useState<Boolean>(false)
   const [editRow, setEditRow] = useState(null)
+  const [isEdit, setIsEdit] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      if (isEdit) {
+        console.log(categorieActeur)
+      } else {
+        console.log(categorieActeur)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const columns = [
     {
@@ -67,7 +87,7 @@ const CategorieActeur = () => {
   const fetchCategories = async () => {
     try {
       const res = await getAllCategories()
-      setCategorieActeur(res)
+      setCategories(res)
     } catch (error) {
       console.error(error)
     }
@@ -98,10 +118,15 @@ const CategorieActeur = () => {
               Ajouter
             </Button>
           </div>
-          <Table columns={columns} data={categorieActeur} itemsPerPage={5} />
+          <Table columns={columns} data={categories} itemsPerPage={5} />
         </>
       ) : (
-        <div>Hello</div>
+        <Form
+          categorie={categorieActeur}
+          setCategorie={setCategorieActeur}
+          isEdit={isEdit}
+          handleSubmit={handleSubmit}
+        />
       )}
     </Card>
   )
