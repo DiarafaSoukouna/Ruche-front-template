@@ -78,15 +78,22 @@ const FormNiveau: React.FC<Props> = ({ showModal, editRow, all }) => {
                         />
                     </div>
                 </div>
-
-                <div className="flex space-x-3 pt-4">
+                <div className="flex space-x-3 pt-4 justify-end">
+                    <Button variant="outline" onClick={showModal} className="">
+                        Annuler
+                    </Button>
+                    <Button className="" type="submit">
+                        {editRow ? "Mettre à jour" : "Valider"}
+                    </Button>
+                </div>
+                {/* <div className="flex space-x-3 pt-4">
                     <Button className="flex-1" type="submit">
                         {editRow ? "Mettre à jour" : "Créer"}
                     </Button>
                     <Button variant="secondary" onClick={showModal}  className="flex-1" type="button">
                         Annuler
                     </Button>
-                </div>
+                </div> */}
             </form>
         </div>
     );

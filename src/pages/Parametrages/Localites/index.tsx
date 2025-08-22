@@ -12,6 +12,7 @@ import LoadingScreen from "../../../components/LoadingScreen";
 import Card from "../../../components/Card";
 import Tabs from "../../../components/TabLocalites";
 import Table from "../../../components/Table";
+import { RiseLoader } from "react-spinners";
 
 const Localites: React.FC = () => {
     const [niveauLocalites, setNiveauLocalites] = useState<typeNiveauLocalite[]>([]);
@@ -102,8 +103,8 @@ const Localites: React.FC = () => {
     };
 
     return (
-        <div>
-            <div className="flex items-center justify-between">
+        <div className="space-y-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Gestion des Localités</h1>
                 </div>
@@ -115,8 +116,12 @@ const Localites: React.FC = () => {
             <Modal onClose={() => setLoadNiveau(false)} isOpen={loadNiveau} title="Espace de configuration des niveau de localité" size="xl">
                 <NiveauLocalite />
             </Modal>
-            {loading ? (<LoadingScreen />) :
-                <Card>
+            {loading ?
+                (<div className="text-center">
+                    <RiseLoader color='blue' />
+                </div>
+                ) :
+                <Card >
                     <Tabs
                         defaultActiveTab={String(niveauLocalites[0].id_nlc)}
                         onAddTab={(bool: boolean, niveau: number) => handleAddTab(bool, niveau)}

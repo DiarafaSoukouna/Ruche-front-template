@@ -90,15 +90,22 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, niveau }) => {
                         />
                     </div>
                 </div>
-
-                <div className="flex space-x-3 pt-4">
+                <div className="flex space-x-3 pt-4 justify-end">
+                    <Button variant="outline" onClick={onClose} className="">
+                        Annuler
+                    </Button>
+                    <Button className="" type="submit">
+                        {editRow ? "Mettre à jour" : "Valider"}
+                    </Button>
+                </div>
+                {/* <div className="flex space-x-3 pt-4">
                     <Button className="flex-1" type="submit">
                         {editRow ? "Mettre à jour" : "Créer"}
                     </Button>
                     <Button variant="secondary" className="flex-1" type="button" onClick={onClose}>
                         Annuler
                     </Button>
-                </div>
+                </div> */}
             </form>
         </div>
     );

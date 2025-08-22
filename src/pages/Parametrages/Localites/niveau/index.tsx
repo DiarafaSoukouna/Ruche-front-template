@@ -6,13 +6,15 @@ import { allNiveauLocalite } from "../../../../functions/niveauLocalites/gets";
 import { deleteNiveauLocalite } from "../../../../functions/niveauLocalites/delete";
 import Card from "../../../../components/Card";
 import Table from "../../../../components/Table";
+import { RiseLoader } from "react-spinners";
 
 
 const NiveauLocalite = () => {
     const [niveauLocalites, setNiveauLocalites] = useState([])
     const [showForm, setShowForm] = useState<Boolean>(false)
+    const [loading, setLoading] = useState<Boolean>(false)
     const [editRow, setEditRow] = useState(null);
-    
+
 
     const columns = [
         {
@@ -51,7 +53,7 @@ const NiveauLocalite = () => {
         {
             key: 'actions',
             title: 'Actions',
-            render: (_:any, row:any) => (
+            render: (_: any, row: any) => (
                 <div className="flex space-x-2">
                     <Button
                         variant="outline"
@@ -72,14 +74,16 @@ const NiveauLocalite = () => {
         }
     ]
     const all = async () => {
+        setLoading(true)
         try {
             const res = await allNiveauLocalite();
             setNiveauLocalites(res)
+            setLoading(false)
         } catch (error) {
             console.error(error)
         }
     }
-    const del = async (id:number) => {
+    const del = async (id: number) => {
         try {
             const res = await deleteNiveauLocalite(id);
             all()
@@ -91,7 +95,7 @@ const NiveauLocalite = () => {
         all()
     }, [])
     return (
-        <Card>
+        <div className="overflow-hidden">
             {!showForm ? (
                 <>
                     <div className="flex items-center justify-between mb-3">
@@ -103,16 +107,23 @@ const NiveauLocalite = () => {
                             Ajouter
                         </Button>
                     </div>
-                    <Table
-                        columns={columns}
-                        data={niveauLocalites}
-                        itemsPerPage={5}
-                    />
+                    {
+                        loading ?
+                            (<div className="text-center">
+                                <RiseLoader color='blue' />
+                            </div>
+                            ) :
+                            <Table
+                                columns={columns}
+                                data={niveauLocalites}
+                                itemsPerPage={5}
+                            />
+                    }
                 </>
             ) : <FormNiveau showModal={() => setShowForm(false)} editRow={editRow || null} all={() => all()} />
             }
 
-        </Card>
+        </div>
     )
 }
 export default NiveauLocalite;

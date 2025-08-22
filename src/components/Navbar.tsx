@@ -12,6 +12,7 @@ import {
   MapPinIcon,
   User,
   Building2,
+  HandshakeIcon,
 } from "lucide-react";
 
 interface NavigationChild {
@@ -44,6 +45,7 @@ const Navbar: React.FC = () => {
         { name: "Personnel", href: "/personnel", icon: UsersIcon },
         { name: "Plans de Site", href: "/plan-site", icon: Building2 },
         { name: "Types de Zone", href: "/type-zone", icon: MapPinIcon },
+        { name: "Partenaire Financier", href: "/part_financier", icon: HandshakeIcon },
       ],
       href: true,
     },
