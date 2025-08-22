@@ -16,17 +16,6 @@ const NiveauLocalite = () => {
 
     const columns = [
         {
-            key: 'id_nlc',
-            title: 'ID',
-            render: (value: String) => (
-                <div className="flex items-center">
-                    <div>
-                        <div className="font-medium text-gray-900">{value}</div>
-                    </div>
-                </div>
-            )
-        },
-        {
             key: 'libelle_nlc',
             title: 'Libellé',
             render: (value: String) => (

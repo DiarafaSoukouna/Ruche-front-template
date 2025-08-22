@@ -1,9 +1,10 @@
 import React, { lazy, useEffect, useState } from "react";
 import Button from "../../components/Button";
-import { MapPinIcon, PlusIcon } from "lucide-react";
+import { EditIcon, MapPinIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Modal from "../../components/Modal";
 import NiveauLocalite from "./niveau";
-import Tabs from "../../components/Tabs";
+import Tabs from "../../components/TabLocalites";
+import Table from "../../components/Table";
 import { allNiveauLocalite } from "../../functions/niveauLocalites/gets";
 import { typeNiveauLocalite } from "../../functions/niveauLocalites/types";
 import LoadingScreen from "../../components/LoadingScreen";
@@ -20,6 +21,53 @@ const Localites: React.FC = () => {
     const [editRow, setEditRow] = useState(null);
     const [addBoutonLabel, setAddBoutonLabel] = useState<string>('')
     const [tabActive, setTabActive] = useState<number>(0)
+    const [loadNiveau, setLoadNiveau] = useState<Boolean>(false)
+    const columns = [
+        {
+            key: 'code_national_loca',
+            title: 'Code',
+            render: (value: string) => (
+                <div className="flex items-center">
+                    <div>
+                        <div className="font-medium text-gray-900">{value}</div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            key: 'intitule_loca',
+            title: 'Libellé',
+            render: (value: string) => (
+                <div className="flex items-center">
+                    <div>
+                        <div className="font-medium text-gray-900">{value}</div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            key: 'actions',
+            title: 'Actions',
+            render: (_: any, row: any) => (
+                <div className="flex space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => (setEditRow(row), setShowForm(true))}
+                    >
+                        <EditIcon className="w-3 h-3" />
+                    </Button>
+                    <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => console.log(0)}
+                    >
+                        <TrashIcon className="w-3 h-3" />
+                    </Button>
+                </div>
+            )
+        }
+    ]
     const AllNiveau = async () => {
         try {
             const res = await allNiveauLocalite();
@@ -47,12 +95,12 @@ const Localites: React.FC = () => {
     const handleAddBoutonLabel = (label: string) => {
         setAddBoutonLabel(label)
     };
-    const handleAddTab = (bool:boolean, niveau:number) => {
+    const handleAddTab = (bool: boolean, niveau: number) => {
         setShowForm(bool);
         setTabActive(niveau);
         console.log(showForm)
     };
-    const [loadNiveau, setLoadNiveau] = useState<Boolean>(false)
+
     return (
         <div>
             <div className="flex items-center justify-between">
@@ -71,7 +119,7 @@ const Localites: React.FC = () => {
                 <Card>
                     <Tabs
                         defaultActiveTab={String(niveauLocalites[0].id_nlc)}
-                        onAddTab={(bool:boolean, niveau:number)=>handleAddTab(bool, niveau)}
+                        onAddTab={(bool: boolean, niveau: number) => handleAddTab(bool, niveau)}
                         defaulBoutonLabel={addBoutonLabel}
                         setAddBoutonLabel={(label: string) => handleAddBoutonLabel(label)}
                     >
@@ -79,11 +127,11 @@ const Localites: React.FC = () => {
 
                             niveauLocalites.map((nivLoc: typeNiveauLocalite) =>
                             (<Tabs.Tab key={nivLoc.id_nlc} id={String(nivLoc.id_nlc)} label={nivLoc.libelle_nlc}>
-                                <div>
-                                    <h3>Contenu du premier onglet</h3>
-                                    {nivLoc.id_nlc}
-                                    <p>5 éléments dans cet onglet</p> {tabActive}
-                                </div>
+                                <Table
+                                    columns={columns}
+                                    data={localites}
+                                    itemsPerPage={5}
+                                />
 
                             </Tabs.Tab>
                             )

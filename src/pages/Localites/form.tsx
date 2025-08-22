@@ -24,7 +24,8 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, niveau }) => {
             intitule_loca: data.intitule_loca as string,
             code_national_loca: data.code_national_loca as string,
             code_loca: data.code_loca as string,
-            parent_loca: data.parent_loca as string,
+            parent_loca: "0",
+            // parent_loca: data.parent_loca as string,
             niveau_loca: niveau,
             id_loca: editRow?.id_loca,
         };
@@ -78,7 +79,7 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, niveau }) => {
                             defaultValue={editRow?.code_loca || ""}
                         />
                     </div>
-                    {/* <div className="col-span-6">
+                    <div className="col-span-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Parent
                         </label>
@@ -88,7 +89,7 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, niveau }) => {
                             placeholder="Entrer le nombre"
                             defaultValue={editRow?.parent_loca?.toString() || ""}
                         />
-                    </div> */}
+                    </div>
                 </div>
 
                 <div className="flex space-x-3 pt-4">
