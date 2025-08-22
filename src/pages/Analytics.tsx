@@ -15,7 +15,7 @@ import {
   AlertTriangleIcon,
   FilterIcon,
   EyeIcon,
-} from 'lucide-react';
+} from "lucide-react";
 // import { authStore } from '../stores/auth' // Unused for now
 import DataTable from "../components/DataTable";
 
@@ -189,42 +189,34 @@ const Analytics = () => {
               <div className={`p-3 rounded-lg ${getKpiColor(kpi.color)}`}>
                 <kpi.icon className="w-6 h-6 text-white" />
               </div>
-              <div
-                className={`flex items-center ${getTrendColor(kpi.trend)}`}
-              >
+              <div className={`flex items-center ${getTrendColor(kpi.trend)}`}>
                 {getTrendIcon(kpi.trend)}
                 <span className="text-sm font-medium">{kpi.change}</span>
               </div>
             </div>
 
             <div className="space-y-3">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    {kpi.title}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {kpi.value}
-                  </p>
-                  <p className="text-xs text-gray-500">{kpi.description}</p>
-                </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">{kpi.title}</p>
+                <p className="text-2xl font-bold text-gray-900">{kpi.value}</p>
+                <p className="text-xs text-gray-500">{kpi.description}</p>
+              </div>
 
-                {/* Barre de progression vers objectif */}
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-500">
-                      Objectif: {kpi.target}
-                    </span>
-                    <span className="font-medium">{kpi.progress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full ${getProgressColor(
-                        kpi.progress
-                      )}`}
-                      style={{ width: `${Math.min(kpi.progress, 100)}%` }}
-                    />
-                  </div>
+              {/* Barre de progression vers objectif */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-500">Objectif: {kpi.target}</span>
+                  <span className="font-medium">{kpi.progress}%</span>
                 </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full ${getProgressColor(
+                      kpi.progress
+                    )}`}
+                    style={{ width: `${Math.min(kpi.progress, 100)}%` }}
+                  />
+                </div>
+              </div>
             </div>
           </Card>
         ))}
@@ -379,8 +371,8 @@ const Analytics = () => {
         </div>
       </Card>
 
-      {/* DataTable avec données détaillées */}
-      <Card title="Transactions Récentes" className="overflow-hidden">
+      {/* ✅ DataTable avec données détaillées */}
+      <Card title="Transactions Récentes">
         <DataTable
           columns={[
             {
@@ -394,7 +386,9 @@ const Analytics = () => {
                   <div className="font-medium text-gray-900">
                     {String(row.customer)}
                   </div>
-                  <div className="text-sm text-gray-500">{String(row.email)}</div>
+                  <div className="text-sm text-gray-500">
+                    {String(row.email)}
+                  </div>
                 </div>
               ),
             },
@@ -424,7 +418,7 @@ const Analytics = () => {
               header: "Montant",
               accessor: (row: Record<string, unknown>) => (
                 <span className="font-medium text-gray-900">
-                  €{Number(row.amount).toLocaleString()}
+                  €{Number(row.amount).toLocaleString("fr-FR")}
                 </span>
               ),
             },

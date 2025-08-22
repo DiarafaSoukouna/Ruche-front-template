@@ -1,9 +1,9 @@
 import React from 'react'
 interface CardProps {
-  title?: String
+  title?: string
   children: React.ReactNode
   headerAction?: React.ReactNode
-  className?: String
+  className?: string
 }
 const Card: React.FC<CardProps> = ({
   title = '',

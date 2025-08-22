@@ -1,6 +1,5 @@
-import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import { authStore } from "../stores/auth";
-import { handleApiError } from "./errors";
+import axios, { AxiosError, type AxiosRequestConfig } from 'axios'
+import { handleApiError } from './errors'
 
 // Mock data for demonstration
 const mockTransactions = [
@@ -28,7 +27,7 @@ const mockTransactions = [
     id: 'TXN-003',
     customer: 'Sophie Bernard',
     email: 'sophie.bernard@email.com',
-    product: 'Robe d\'été',
+    product: "Robe d'été",
     category: 'Vêtements',
     amount: 89,
     status: 'Payé',
@@ -104,119 +103,148 @@ const mockTransactions = [
     status: 'Payé',
     date: '2024-01-10T15:20:00Z',
   },
-];
+]
 
 export const api = axios.create({
   baseURL:
     (import.meta.env.VITE_API_BASE_URL as string) ||
-    "http://localhost:3000/api/v1",
+    'https://adsms.simro-cmr.net/api',
   timeout: 10000,
-  withCredentials: true,
-});
+})
 
 // ----- Gestion du refresh -----
-let isRefreshing = false;
-let refreshSubscribers: (() => void)[] = [];
+let isRefreshing = false
+let refreshSubscribers: (() => void)[] = []
 
 function subscribeTokenRefresh(cb: () => void) {
-  refreshSubscribers.push(cb);
+  refreshSubscribers.push(cb)
 }
 
 function onRefreshed() {
-  refreshSubscribers.forEach((cb) => cb());
-  refreshSubscribers = [];
+  refreshSubscribers.forEach((cb) => cb())
+  refreshSubscribers = []
+}
+
+// Token management utilities
+const TOKEN_KEYS = {
+  ACCESS: 'access_token',
+  REFRESH: 'refresh_token',
+}
+
+export const tokenManager = {
+  getAccessToken: () => localStorage.getItem(TOKEN_KEYS.ACCESS),
+  getRefreshToken: () => localStorage.getItem(TOKEN_KEYS.REFRESH),
+  setTokens: (access: string, refresh: string) => {
+    localStorage.setItem(TOKEN_KEYS.ACCESS, access)
+    localStorage.setItem(TOKEN_KEYS.REFRESH, refresh)
+  },
+  clearTokens: () => {
+    localStorage.removeItem(TOKEN_KEYS.ACCESS)
+    localStorage.removeItem(TOKEN_KEYS.REFRESH)
+  },
 }
 
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
+    console.log(error)
     const originalRequest = error.config as AxiosRequestConfig & {
-      _retry?: boolean;
-    };
+      _retry?: boolean
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+      originalRequest._retry = true
 
       if (isRefreshing) {
         return new Promise((resolve) => {
           subscribeTokenRefresh(() => {
-            resolve(api(originalRequest));
-          });
-        });
+            resolve(api(originalRequest))
+          })
+        })
       }
 
-      isRefreshing = true;
+      isRefreshing = true
+      const refreshToken = tokenManager.getRefreshToken()
+
+      if (!refreshToken) {
+        isRefreshing = false
+        tokenManager.clearTokens()
+        window.location.href = '/login'
+        return Promise.reject(error)
+      }
+
       try {
-        await api.post("/auth/refresh", null, { withCredentials: true });
-        isRefreshing = false;
-        onRefreshed();
-        return api(originalRequest);
+        const response = await api.post('/token/refresh/', {
+          refresh: refreshToken,
+        })
+
+        const { access } = response.data
+        tokenManager.setTokens(access, refreshToken)
+
+        isRefreshing = false
+        onRefreshed()
+        return api(originalRequest)
       } catch (refreshError: unknown) {
-        isRefreshing = false;
-        authStore.getState().logout();
-        window.location.href = "/login";
-        return Promise.reject(refreshError as Error);
+        isRefreshing = false
+        tokenManager.clearTokens()
+        window.location.href = '/login'
+        return Promise.reject(refreshError as Error)
       }
     }
 
-    const apiError = handleApiError(error);
-    return Promise.reject(apiError);
+    const apiError = handleApiError(error)
+    return Promise.reject(apiError)
   }
-);
+)
 
 // ----- Client avec retry -----
 export const apiClient = {
   async request<T>(
     endpoint: string,
-    options: AxiosRequestConfig & { retries?: number; requireAuth?: boolean } = {}
+    options: AxiosRequestConfig & { retries?: number } = {}
   ): Promise<T> {
-    // Handle mock endpoints
+    // Handle mock endpoints (only transactions)
     if (endpoint.startsWith('mock/')) {
       return new Promise((resolve) => {
         setTimeout(() => {
           if (endpoint === 'mock/transactions') {
-            resolve({
-              transactions: mockTransactions,
-              total: mockTransactions.length,
-              isPaginated: false,
-            } as T);
+            resolve(mockTransactions as T)
           }
-          resolve([] as T);
-        }, 500); // Simulate network delay
-      });
+          resolve([] as T)
+        }, 500) // Simulate network delay
+      })
     }
 
-    const { retries = 3, requireAuth, ...axiosConfig } = options;
-    
+    const { retries = 3, ...axiosConfig } = options
+
     // Add auth token if required
-    if (requireAuth) {
-      const token = authStore.getState().accessToken;
-      if (token && token !== "cookie-auth") {
-        axiosConfig.headers = {
-          ...axiosConfig.headers,
-          Authorization: `Bearer ${token}`,
-        };
+    const token = tokenManager.getAccessToken()
+    if (token) {
+      axiosConfig.headers = {
+        ...axiosConfig.headers,
+        Authorization: `Bearer ${token}`,
       }
     }
 
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
-        const res = await api.request<T>({ url: endpoint, ...axiosConfig });
-        return res.data;
+        const res = await api.request<T>({ url: endpoint, ...axiosConfig })
+        return res.data
       } catch (err: unknown) {
         if (
           attempt < retries &&
           err instanceof AxiosError &&
-          (err.response?.status && err.response?.status >= 500)
+          err.response?.status &&
+          err.response?.status >= 500
         ) {
           await new Promise((res) =>
             setTimeout(res, Math.pow(2, attempt) * 1000)
-          );
-          continue;
+          )
+          continue
         }
-        throw err;
+        throw err
       }
     }
-    throw new Error("Max retries exceeded");
+    throw new Error('Max retries exceeded')
   },
-};
+}
