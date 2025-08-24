@@ -6,8 +6,19 @@ const Form: React.FC<FormProps> = ({
   categorie,
   setCategorie,
   isEdit,
+  setIsEdit,
+  setShowForm,
   handleSubmit,
 }) => {
+  const close = () => {
+    setIsEdit(false)
+    setShowForm(false)
+    setCategorie({
+      id_categorie: 0,
+      code_cat: '',
+      nom_categorie: '',
+    })
+  }
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex gap-4">

@@ -1,9 +1,10 @@
 import { api } from '../../lib/api'
 import { CategorieTypes } from '../../pages/Parametrages/Acteurs/categories/types'
 
-export const updateCategorie = async (data: CategorieTypes, id: number) => {
+export const updateCategorie = async (data: CategorieTypes) => {
   try {
-    const res = await api.post(`categorie_acteur/${id}`, data)
+    const { id_categorie, ...form } = data
+    const res = await api.put(`categorie_acteur/${id_categorie}/`, form)
     if (res) {
       return res
     }
