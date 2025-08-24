@@ -13,6 +13,10 @@ import {
   User,
   Building2,
   HandshakeIcon,
+  LayoutGrid,
+  FileSignature,
+  KeyIcon,
+  LogOutIcon,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 

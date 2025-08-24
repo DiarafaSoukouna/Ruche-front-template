@@ -14,14 +14,16 @@ interface Props {
     niveau: number;
     parent: number;
     niveauLocalites: typeNiveauLocalite[];
+    localites: typeLocalite[];
     editRow: typeLocalite | null;
 }
 
-const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, parent, niveauLocalites, niveau }) => {
+const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, parent, niveauLocalites, niveau, localites }) => {
 
     const parentIndex = parent - 1;
     const parentInfo = niveauLocalites[parentIndex]
     const [localite, setLocalite] = useState<typeLocalite[]>([])
+    const [localiteByNiv, setLocaliteByNiv] = useState<typeLocalite[]>([])
     const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
@@ -61,8 +63,12 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, parent, niveauLo
             console.log("error", error);
         }
     };
-
-    const LocaliteByParent = async (id: number| null) => {
+    const LocaliteByNiveau = async (id: number | null) => {
+        const res = localites.filter((loc) => loc.niveau_loca === id);
+        setLocaliteByNiv(res);
+        return res;
+    };
+    const LocaliteByParent = async (id: number) => {
         try {
             const res = await localiteByParent(id)
             // setLocalite()
@@ -71,10 +77,11 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, parent, niveauLo
         }
     }
     useEffect(() => {
-        LocaliteByParent(null)
+        if (parentInfo) {
+            LocaliteByNiveau(parentInfo.id_nlc ? parentInfo.id_nlc : null)
+        }
     }, [])
-    console.log('parent', parentIndex, niveau)
-    console.log('parentInfo', parentInfo)
+    console.log('parentInfo', editRow)
     return (
         <div className="space-y-4">
             <form onSubmit={submit} name="niveauLocaliteForm">
@@ -119,9 +126,9 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, parent, niveauLo
                                     value: editRow.parent_loca,
                                     label: editRow.parent_loca
                                 } : null}
-                                options={niveauLocalites.map(item => ({
-                                    value: String(item.id_nlc),
-                                    label: item.libelle_nlc
+                                options={localiteByNiv.map(item => ({
+                                    value: String(item.id_loca),
+                                    label: item.intitule_loca
                                 }))}
                                 isClearable
                                 placeholder="Sélectionner un parent..."

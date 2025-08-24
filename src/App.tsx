@@ -21,6 +21,9 @@ import PlanSitePage from './pages/parametrage/plan-site/PlanSitePage'
 import TypeZonePage from './pages/parametrage/type-zone/TypeZonePage'
 import Localites from './pages/Parametrages/Localites'
 import PartFinanciers from './pages/Parametrages/PartFinancier'
+import ConventionPage from './pages/parametrage/convention/ConventionPage'
+import ChangePassword from './pages/ChangePassword'
+import Ugls from './pages/Parametrages/Ugl'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)

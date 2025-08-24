@@ -42,6 +42,7 @@ const Tabs = ({
 
   if (!activeTab && tabs.length > 0) {
     setActiveTab(tabs[0].props.id);
+    tabActiveProps(Number(tabs[0].props.id))
   }
 
   const activeTabContent = tabs.find(tab => tab.props.id === activeTab)?.props.children;
@@ -55,7 +56,7 @@ const Tabs = ({
             return (
               <button
                 key={id}
-                onClick={() => (setActiveTab(id), setAddBoutonLabel(label), setParent(index), parentProp(index), tabActiveProps)}
+                onClick={() => (setActiveTab(id), setAddBoutonLabel(label), setParent(index), parentProp(index), tabActiveProps(Number(id)))}
                 className={`py-2 px-4 font-medium text-sm focus:outline-none transition-all duration-200 flex items-center gap-2 ${
                   activeTab === id
                     ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50'
