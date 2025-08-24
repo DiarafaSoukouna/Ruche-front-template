@@ -1,7 +1,7 @@
 import { instance } from "../../axios"
 import { api } from "../../lib/api"
 
-export const getAll = async () => {
+export const allNiveauLocalite = async () => {
     try {
         const res = await instance.get("niveau_localite_config/")
         return res.data

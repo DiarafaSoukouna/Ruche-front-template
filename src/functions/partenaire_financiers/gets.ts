@@ -1,8 +1,8 @@
 import { instance } from '../../axios'
 
-export const allLocalite = async () => {
+export const allPartFinancier = async () => {
   try {
-    const res = await instance.get('localite')
+    const res = await instance.get('partenaire_financier')
     return res.data
   } catch (error){
     console.log(error)
@@ -10,9 +10,9 @@ export const allLocalite = async () => {
   }
 }
 
-export const oneLocalite = (id:number) => {
+export const onePartFinancier = (id:number) => {
   try {
-    const res = instance.get('localite/'+ id)
+    const res = instance.get('partenaire_financier/'+ id)
     console.log('data', res)
     return res
   } catch (error){
