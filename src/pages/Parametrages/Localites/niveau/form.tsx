@@ -1,8 +1,9 @@
-import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import { add } from "../../../functions/niveauLocalites/post";
-import { typeNiveauLocalite } from "../../../functions/niveauLocalites/types";
-import { update } from "../../../functions/niveauLocalites/update";
+import Button from "../../../../components/Button";
+import Input from "../../../../components/Input";
+import { addNiveauLocalite } from "../../../../functions/niveauLocalites/post";
+import { updateNiveauLocalite } from "../../../../functions/niveauLocalites/put";
+import { typeNiveauLocalite } from "../../../../functions/niveauLocalites/types";
+
 
 interface Props {
     showModal: () => void;
@@ -28,10 +29,10 @@ const FormNiveau: React.FC<Props> = ({ showModal, editRow, all }) => {
         try {
             let res;
             if (editRow) {
-                res = await update(payload);
+                res = await updateNiveauLocalite(payload);
                 console.log("Updated:", res);
             } else {
-                res = await add(payload);
+                res = await addNiveauLocalite(payload);
                 form.reset();
                 console.log("Created:", res);
             }
@@ -77,15 +78,22 @@ const FormNiveau: React.FC<Props> = ({ showModal, editRow, all }) => {
                         />
                     </div>
                 </div>
-
-                <div className="flex space-x-3 pt-4">
+                <div className="flex space-x-3 pt-4 justify-end">
+                    <Button variant="outline" onClick={showModal} className="">
+                        Annuler
+                    </Button>
+                    <Button className="" type="submit">
+                        {editRow ? "Mettre à jour" : "Valider"}
+                    </Button>
+                </div>
+                {/* <div className="flex space-x-3 pt-4">
                     <Button className="flex-1" type="submit">
                         {editRow ? "Mettre à jour" : "Créer"}
                     </Button>
                     <Button variant="secondary" onClick={showModal}  className="flex-1" type="button">
                         Annuler
                     </Button>
-                </div>
+                </div> */}
             </form>
         </div>
     );

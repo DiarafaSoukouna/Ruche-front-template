@@ -16,14 +16,16 @@ import Users from './pages/Users'
 import Products from './pages/Products'
 import Analytics from './pages/Analytics'
 import Acteurs from './pages/Parametrages/Acteurs/index'
-import Localites from './pages/Localites'
 import PersonnelPage from './pages/parametrage/personnel/PersonnelPage'
 import PlanSitePage from './pages/parametrage/plan-site/PlanSitePage'
 import TypeZonePage from './pages/parametrage/type-zone/TypeZonePage'
+import Localites from './pages/Parametrages/Localites'
+import PartFinanciers from './pages/Parametrages/PartFinancier'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
-  const { isAuthenticated } = useAuth()
+  const  isAuthenticated  =useState<boolean>(true)
+  // const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     // Simulate initial loading
@@ -80,6 +82,10 @@ const AppContent: React.FC = () => {
           <Route
             path="/personnel"
             element={isAuthenticated ? <PersonnelPage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/part_financier"
+            element={isAuthenticated ? <PartFinanciers /> : <Navigate to="/login" />}
           />
           <Route
             path="/plan-site"
