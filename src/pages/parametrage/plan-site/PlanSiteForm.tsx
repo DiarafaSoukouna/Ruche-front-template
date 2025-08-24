@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../../../components/Button";
 import { planSiteService } from "../../../services/planSiteService";

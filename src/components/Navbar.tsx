@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   HomeIcon,
@@ -12,7 +12,11 @@ import {
   MapPinIcon,
   User,
   Building2,
+  LogOutIcon,
+  KeyIcon,
+  FileSignature,
 } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
 
 interface NavigationChild {
   name: string;
@@ -29,7 +33,36 @@ interface NavigationItem {
 
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const location = useLocation();
+  const { user, logout } = useAuth();
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Function to get user initials
+  const getUserInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join("");
+  };
+
+  // Handle click outside to close user dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target as Node)
+      ) {
+        setUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const navigationItems: NavigationItem[] = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
@@ -44,6 +77,7 @@ const Navbar: React.FC = () => {
         { name: "Personnel", href: "/personnel", icon: UsersIcon },
         { name: "Plans de Site", href: "/plan-site", icon: Building2 },
         { name: "Types de Zone", href: "/type-zone", icon: MapPinIcon },
+        { name: "Conventions", href: "/convention", icon: FileSignature },
       ],
       href: true,
     },
@@ -86,10 +120,58 @@ const Navbar: React.FC = () => {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3 gap-3">
               <BellIcon className="w-5 h-5 text-gray-600 hover:text-blue-700 cursor-pointer" />
-              <div className="flex items-center space-x-2">
-                <div className="rounded-full w-10 h-10 bg-gray-300 flex items-center justify-center">
-                  <p className="text-sm font-medium">AD</p>
-                </div>
+
+              {/* User Dropdown */}
+              <div className="relative" ref={userDropdownRef}>
+                <button
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="flex items-center space-x-2 rounded-full w-10 h-10 bg-blue-600 hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  <div className="rounded-full w-10 h-10 bg-blue-600 flex items-center justify-center">
+                    <p className="text-sm font-medium text-white">
+                      {user
+                        ? getUserInitials(
+                            `${user.prenom_perso} ${user.nom_perso}`
+                          )
+                        : "AD"}
+                    </p>
+                  </div>
+                </button>
+
+                {userDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                    <div className="py-2">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900">
+                          {user?.prenom_perso || "Utilisateur"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {user?.id_personnel_perso || ""}
+                        </p>
+                      </div>
+
+                      <Link
+                        to="/change-password"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                      >
+                        <KeyIcon className="w-4 h-4 mr-3" />
+                        Changer de mot de passe
+                      </Link>
+
+                      <button
+                        onClick={() => {
+                          logout();
+                          setUserDropdownOpen(false);
+                        }}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+                      >
+                        <LogOutIcon className="w-4 h-4 mr-3" />
+                        Se déconnecter
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

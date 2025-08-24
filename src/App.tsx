@@ -20,6 +20,8 @@ import Localites from './pages/Localites'
 import PersonnelPage from './pages/parametrage/personnel/PersonnelPage'
 import PlanSitePage from './pages/parametrage/plan-site/PlanSitePage'
 import TypeZonePage from './pages/parametrage/type-zone/TypeZonePage'
+import ChangePassword from './pages/ChangePassword'
+import ConventionPage from './pages/parametrage/convention/ConventionPage'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -88,6 +90,14 @@ const AppContent: React.FC = () => {
           <Route
             path="/type-zone"
             element={isAuthenticated ? <TypeZonePage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/convention"
+            element={isAuthenticated ? <ConventionPage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/change-password"
+            element={isAuthenticated ? <ChangePassword /> : <Navigate to="/login" />}
           />
         </Routes>
       </main>

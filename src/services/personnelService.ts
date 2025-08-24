@@ -1,17 +1,12 @@
 import { toast } from "react-toastify";
 import { apiClient } from "../lib/api";
-import type {
-  Personnel,
-  PersonnelFormData,
-} from "../types/entities";
+import type { Personnel, PersonnelFormData } from "../types/entities";
 
 export const personnelService = {
   // Récupérer tous les personnels
   async getAll(): Promise<Personnel[]> {
     try {
-      const response = await apiClient.request<Personnel[]>(
-        "/personnel/"
-      );
+      const response = await apiClient.request<Personnel[]>("/personnel/");
       return response || [];
     } catch (error) {
       toast.error("Erreur lors de la récupération des personnels");
@@ -35,13 +30,10 @@ export const personnelService = {
   // Créer un nouveau personnel
   async create(data: PersonnelFormData): Promise<Personnel> {
     try {
-      const response = await apiClient.request<Personnel>(
-        "/personnel/",
-        {
-          method: "POST",
-          data,
-        }
-      );
+      const response = await apiClient.request<Personnel>("/personnel/", {
+        method: "POST",
+        data,
+      });
       toast.success("Personnel créé avec succès");
       return response;
     } catch (error) {
@@ -56,6 +48,14 @@ export const personnelService = {
     data: PersonnelFormData
   ): Promise<Personnel> {
     try {
+      data.projet_active_perso =
+        (data.projet_active_perso as string)
+          ?.split(",")
+          .map((p) => p.trim() || undefined) || [];
+      data.projet_active_perso = (data.projet_active_perso as string[])?.filter(
+        Boolean
+      );
+      console.log(data);
       const response = await apiClient.request<Personnel>(
         `/personnel/${n_personnel}/`,
         {
