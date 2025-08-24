@@ -20,3 +20,12 @@ export const oneLocalite = (id:number) => {
     return error
   }
 }
+
+export const localiteByParent = async (id:number | null) =>{
+  try {
+    const res = instance.get('localiteByParent/' + id + '/')
+    return res
+  } catch (error) {
+    return error
+  }
+}

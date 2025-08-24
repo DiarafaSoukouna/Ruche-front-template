@@ -13,6 +13,7 @@ import {
   User,
   Building2,
   HandshakeIcon,
+  LayoutGrid,
 } from "lucide-react";
 
 interface NavigationChild {
@@ -41,6 +42,7 @@ const Navbar: React.FC = () => {
         { name: "Utilisateurs", href: "/users", icon: UsersIcon },
         { name: "Produits", href: "/products", icon: ShoppingBagIcon },
         { name: "Localités", href: "/localites", icon: MapPinIcon },
+        { name: "Unités de gestion", href: "/unite_gestion", icon: LayoutGrid },
         { name: "Acteurs", href: "/acteurs", icon: User },
         { name: "Personnel", href: "/personnel", icon: UsersIcon },
         { name: "Plans de Site", href: "/plan-site", icon: Building2 },

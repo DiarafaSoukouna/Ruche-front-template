@@ -21,6 +21,7 @@ import PlanSitePage from './pages/parametrage/plan-site/PlanSitePage'
 import TypeZonePage from './pages/parametrage/type-zone/TypeZonePage'
 import Localites from './pages/Parametrages/Localites'
 import PartFinanciers from './pages/Parametrages/PartFinancier'
+import Ugls from './pages/Parametrages/Ugl'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -86,6 +87,10 @@ const AppContent: React.FC = () => {
           <Route
             path="/part_financier"
             element={isAuthenticated ? <PartFinanciers /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/unite_gestion"
+            element={isAuthenticated ? <Ugls /> : <Navigate to="/login" />}
           />
           <Route
             path="/plan-site"

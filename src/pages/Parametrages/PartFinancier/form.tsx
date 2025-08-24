@@ -6,6 +6,7 @@ interface FormProps {
     part_financier: typePartFinancier
     setPartFinancier: (value: typePartFinancier) => void
     isEdit: boolean
+    onClose:()=>void
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
 }
 const FormPartFinancier: React.FC<FormProps> = ({
@@ -13,6 +14,7 @@ const FormPartFinancier: React.FC<FormProps> = ({
     setPartFinancier,
     isEdit,
     handleSubmit,
+    onClose
 }) => {
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -58,7 +60,7 @@ const FormPartFinancier: React.FC<FormProps> = ({
                
             </div>
             <div className="flex space-x-3 pt-4 justify-end">
-                <Button variant="outline" onClick={() => close()} className="">
+                <Button variant="outline" onClick={() => onClose()} className="">
                     Annuler
                 </Button>
                 <Button className="" type="submit">

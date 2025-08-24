@@ -1,101 +1,78 @@
-import Button from "../../../../components/Button";
-import Input from "../../../../components/Input";
-import { addNiveauLocalite } from "../../../../functions/niveauLocalites/post";
-import { updateNiveauLocalite } from "../../../../functions/niveauLocalites/put";
+import { TrashIcon } from "lucide-react";
 import { typeNiveauLocalite } from "../../../../functions/niveauLocalites/types";
 
 
 interface Props {
-    showModal: () => void;
-    all: () => void;
-    editRow: typeNiveauLocalite | null;
+    setFormInputs: (row:typeNiveauLocalite[]) => void;
+    formInputs: typeNiveauLocalite[];
+    niveauLocalitesLength: number
+
 }
 
-const FormNiveau: React.FC<Props> = ({ showModal, editRow, all }) => {
+const FormNiveau: React.FC<Props> = ({ formInputs, niveauLocalitesLength, setFormInputs }) => {
+    const removeFormRow = (index: number) => {
+        const newFormInputs:typeNiveauLocalite[] = [...formInputs];
+        newFormInputs.splice(index, 1);
+        setFormInputs(newFormInputs);
+    };
+    const handleInputChange = (index: number, field: string, value: string) => {
+        const newFormInputs = [...formInputs];
 
-    const submit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-
-        const payload: typeNiveauLocalite = {
-            libelle_nlc: data.libelle_nlc as string,
-            Code_number_nlc: data.Code_number_nlc as string,
-            nombre_nlc: Number(data.nombre_nlc),
-            id_nlc: editRow?.id_nlc,
-        };
-        console.log("Form values:", payload);
-        try {
-            let res;
-            if (editRow) {
-                res = await updateNiveauLocalite(payload);
-                console.log("Updated:", res);
-            } else {
-                res = await addNiveauLocalite(payload);
-                form.reset();
-                console.log("Created:", res);
-            }
-            all();
-            showModal();
-        } catch (error) {
-            console.log("error", error);
+        if (field === 'nombre_nlc') {
+            (newFormInputs[index] as any)[field] = Number(value);
+        } else if (field === 'Code_number_nlc') {
+            (newFormInputs[index] as any)[field] = Number(value);
+        } else {
+            (newFormInputs[index] as any)[field] = value;
         }
+
+        setFormInputs(newFormInputs);
+        console.log('ok', newFormInputs)
     };
     return (
-        <div className="space-y-4">
-            <form onSubmit={submit} name="niveauLocaliteForm">
-                <div className="grid grid-cols-12 gap-4">
-                    <div className="col-span-12">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Libelle
-                        </label>
-                        <Input
-                            name="libelle_nlc"
-                            placeholder="Entrer le libelle"
-                            defaultValue={editRow?.libelle_nlc || ""}
+        <>
+            {formInputs.map((input, index) => (
+                <tr key={index} className="hover:bg-gray-50 transition-colors">
+
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {index + 1 + niveauLocalitesLength}
+
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                            type="text"
+                            placeholder="Ex: Région, Département..."
+                            value={input.libelle_nlc}
+                            onChange={(e) => handleInputChange(index, 'libelle_nlc', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
                         />
-                    </div>
-                    <div className="col-span-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Code
-                        </label>
-                        <Input
-                            name="Code_number_nlc"
-                            placeholder="Entrer le code"
-                            defaultValue={editRow?.Code_number_nlc || ""}
-                        />
-                    </div>
-                    <div className="col-span-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Nombre
-                        </label>
-                        <Input
-                            name="nombre_nlc"
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                        <input
                             type="number"
-                            placeholder="Entrer le nombre"
-                            defaultValue={editRow?.nombre_nlc?.toString() || ""}
+                            placeholder="Ex: 2, 3..."
+                            value={input.Code_number_nlc}
+                            onChange={(e) => handleInputChange(index, 'Code_number_nlc', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required
                         />
-                    </div>
-                </div>
-                <div className="flex space-x-3 pt-4 justify-end">
-                    <Button variant="outline" onClick={showModal} className="">
-                        Annuler
-                    </Button>
-                    <Button className="" type="submit">
-                        {editRow ? "Mettre à jour" : "Valider"}
-                    </Button>
-                </div>
-                {/* <div className="flex space-x-3 pt-4">
-                    <Button className="flex-1" type="submit">
-                        {editRow ? "Mettre à jour" : "Créer"}
-                    </Button>
-                    <Button variant="secondary" onClick={showModal}  className="flex-1" type="button">
-                        Annuler
-                    </Button>
-                </div> */}
-            </form>
-        </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                            type="button"
+                            onClick={() => removeFormRow(index)}
+                            className="text-red-500 hover:bg-red-50 hover:text-red-700"
+                            title="Supprimer cette ligne"
+                        >
+                            <TrashIcon size={18} />
+                        </button>
+                    </td>
+                </tr>
+            ))
+            }
+        </>
+
     );
 };
 
