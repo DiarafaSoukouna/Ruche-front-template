@@ -6,7 +6,6 @@ import LineChart from '../components/LineChart'
 import BarChart from '../components/BarChart'
 import PieChart from '../components/PieChart'
 import AreaChart from '../components/AreaChart'
-import { getAll } from '../functions/acteurs/gets'
 
 import {
   UsersIcon,
@@ -53,9 +52,7 @@ interface TrafficData extends Record<string, unknown> {
 
 const Dashboard: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
-  useEffect(() => {
-    getAll()
-  })
+
   const stats: Stat[] = [
     {
       title: 'Utilisateurs Total',
