@@ -138,7 +138,7 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900">
-          Gestion des Conventions
+          Conventions
         </h2>
         <Button
           onClick={onAdd}

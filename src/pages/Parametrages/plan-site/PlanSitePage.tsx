@@ -2,6 +2,7 @@ import { useState } from "react";
 import PlanSiteList from "./PlanSiteList";
 import PlanSiteForm from "./PlanSiteForm";
 import type { PlanSite } from "../../../types/entities";
+import Modal from "../../../components/Modal";
 
 export default function PlanSitePage() {
   const [showForm, setShowForm] = useState(false);
@@ -25,9 +26,14 @@ export default function PlanSitePage() {
   return (
     <div className="p-6">
       <PlanSiteList onAdd={handleAdd} onEdit={handleEdit} />
-      {showForm && (
+      <Modal
+        isOpen={showForm}
+        onClose={handleCloseForm}
+        title={editingPlanSite ? "Modifier le plan de site" : "Ajouter un plan de site"}
+        size="md"
+      >
         <PlanSiteForm planSite={editingPlanSite} onClose={handleCloseForm} />
-      )}
+      </Modal>
     </div>
   );
 }

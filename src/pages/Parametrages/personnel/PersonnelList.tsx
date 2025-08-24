@@ -1,10 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import DataTable from "../../../components/DataTable";
 import Button from "../../../components/Button";
 import { personnelService } from "../../../services/personnelService";
-import type { Personnel } from "../../../types/entities";
+import { apiClient } from "../../../lib/api";
+import type { Personnel, Region, Structure, UGL } from "../../../types/entities";
 
 interface PersonnelListProps {
   onEdit: (personnel: Personnel) => void;
@@ -13,6 +14,31 @@ interface PersonnelListProps {
 
 export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
   const queryClient = useQueryClient();
+
+  // Fetch related data for lookups
+  const { data: regions = [] } = useQuery<Region[]>({
+    queryKey: ["/localite/"],
+    queryFn: async (): Promise<Region[]> => {
+      const response = await apiClient.request("/localite/");
+      return Array.isArray(response) ? response : [];
+    },
+  });
+
+  const { data: structures = [] } = useQuery<Structure[]>({
+    queryKey: ["/acteur/"],
+    queryFn: async (): Promise<Structure[]> => {
+      const response = await apiClient.request("/acteur/");
+      return Array.isArray(response) ? response : [];
+    },
+  });
+
+  const { data: ugls = [] } = useQuery<UGL[]>({
+    queryKey: ["/ugl/"],
+    queryFn: async (): Promise<UGL[]> => {
+      const response = await apiClient.request("/ugl/");
+      return Array.isArray(response) ? response : [];
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: personnelService.delete,
@@ -69,20 +95,36 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       accessor: "description_fonction_perso" as keyof Personnel,
     },
     {
-      header: "Niveau",
-      accessor: "niveau_perso" as keyof Personnel,
+      header: "Niveau d'accès",
+      accessor: (personnel: Personnel) => {
+        return personnel.niveau_perso === 1 ? "Editeur" : "Visiteur";
+      },
     },
     {
       header: "Structure",
-      accessor: "structure_perso" as keyof Personnel,
+      accessor: (personnel: Personnel) => {
+        if (!personnel.structure_perso) return "-";
+        const structureId = typeof personnel.structure_perso === 'string' ? parseInt(personnel.structure_perso) : personnel.structure_perso;
+        const structure = structures.find(s => s.id_acteur === structureId);
+        return structure ? `${structure.nom_acteur} (${structure.code_acteur})` : `ID: ${personnel.structure_perso}`;
+      },
     },
     {
       header: "UGL",
-      accessor: "ugl_perso" as keyof Personnel,
+      accessor: (personnel: Personnel) => {
+        if (!personnel.ugl_perso) return "-";
+        const uglId = typeof personnel.ugl_perso === 'string' ? parseInt(personnel.ugl_perso) : personnel.ugl_perso;
+        const ugl = ugls.find(u => u.id_ugl === uglId);
+        return ugl ? `${ugl.nom_ugl} (${ugl.code_ugl})` : `ID: ${personnel.ugl_perso}`;
+      },
     },
     {
       header: "Région",
-      accessor: "region_perso" as keyof Personnel,
+      accessor: (personnel: Personnel) => {
+        if (!personnel.region_perso) return "-";
+        const region = regions.find(r => r.id_loca === personnel.region_perso);
+        return region ? `${region.intitule_loca} (${region.code_loca})` : `ID: ${personnel.region_perso}`;
+      },
     },
     {
       header: "Statut",

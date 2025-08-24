@@ -16,11 +16,14 @@ import Users from './pages/Users'
 import Products from './pages/Products'
 import Analytics from './pages/Analytics'
 import Acteurs from './pages/Parametrages/Acteurs/index'
-import PersonnelPage from './pages/parametrage/personnel/PersonnelPage'
-import PlanSitePage from './pages/parametrage/plan-site/PlanSitePage'
-import TypeZonePage from './pages/parametrage/type-zone/TypeZonePage'
+import PersonnelPage from './pages/Parametrages/personnel/PersonnelPage'
+import PlanSitePage from './pages/Parametrages/plan-site/PlanSitePage'
+import TypeZonePage from './pages/Parametrages/type-zone/TypeZonePage'
 import Localites from './pages/Parametrages/Localites'
 import PartFinanciers from './pages/Parametrages/PartFinancier'
+import Ugls from './pages/Parametrages/Ugl'
+import ConventionPage from './pages/Parametrages/convention/ConventionPage'
+import ChangePassword from './pages/ChangePassword'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
