@@ -1,6 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
@@ -33,9 +33,11 @@ export default function PersonnelForm({
     control,
     formState: { errors },
   } = useForm<PersonnelCreateData | PersonnelUpdateData>({
-    resolver: zodResolver(isEdit ? personnelUpdateSchema : personnelCreateSchema),
-    mode: 'onSubmit',
-    reValidateMode: 'onChange',
+    resolver: zodResolver(
+      isEdit ? personnelUpdateSchema : personnelCreateSchema
+    ),
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     defaultValues: personnel
       ? {
           password: "", // Toujours vide pour la sécurité
@@ -50,7 +52,8 @@ export default function PersonnelForm({
             personnel.description_fonction_perso || "",
           niveau_perso: personnel.niveau_perso || undefined,
           rapport_mensuel_perso: personnel.rapport_mensuel_perso || false,
-          rapport_trimestriel_perso: personnel.rapport_trimestriel_perso || false,
+          rapport_trimestriel_perso:
+            personnel.rapport_trimestriel_perso || false,
           rapport_semestriel_perso: personnel.rapport_semestriel_perso || false,
           rapport_annuel_perso: personnel.rapport_annuel_perso || false,
           statut: personnel.statut || "",
@@ -86,7 +89,7 @@ export default function PersonnelForm({
   };
 
   const onError = (errors: Record<string, { message?: string }>) => {
-    console.log('Validation errors:', errors);
+    console.log("Validation errors:", errors);
   };
 
   return (
@@ -98,25 +101,6 @@ export default function PersonnelForm({
 
         <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {!isEdit && (
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Mot de passe <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  {...register("password")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  placeholder="Mot de passe requis"
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-            )}
-
             <div>
               <label className="block text-sm font-medium mb-1">
                 Email <span className="text-red-500">*</span>

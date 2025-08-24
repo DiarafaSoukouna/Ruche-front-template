@@ -7,5 +7,7 @@ export interface FormProps {
   categorie: CategorieTypes
   setCategorie: (value: CategorieTypes) => void
   isEdit: boolean
+  setIsEdit: (value: boolean) => void
+  setShowForm: (value: boolean) => void
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
 }
