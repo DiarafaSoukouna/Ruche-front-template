@@ -28,6 +28,7 @@ const Localites: React.FC = () => {
             const res = await allNiveauLocalite();
             setNiveauLocalites(res)
             setAddBoutonLabel(res[0].libelle_nlc)
+            setTabActive(res[0]?.id_nlc)
             setLoading(false)
         } catch (error) {
             console.log('error', error)
@@ -61,7 +62,7 @@ const Localites: React.FC = () => {
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Localités {parent}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Localités {tabActive}</h1>
                 </div>
                 <Button variant="outline" onClick={() => setLoadNiveau(true)}>
                     <MapPinIcon className="w-4 h-4 mr-2" />
@@ -116,39 +117,49 @@ const Localites: React.FC = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                            {localites.map((localite: typeLocalite, index) => (
-                                                <tr key={localite.id_loca} className="hover:bg-gray-50 transition-colors">
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" width={50}>
-                                                        {localite.code_national_loca}
+                                            {localites.filter((niv) => niv.niveau_loca == tabActive).length > 0 ?
+
+                                                (localites.filter((niv) => niv.niveau_loca == tabActive).map((localite: typeLocalite, index) => (
+                                                    <tr key={localite.id_loca} className="hover:bg-gray-50 transition-colors">
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" width={50}>
+                                                            {localite.code_national_loca}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                            {localite.intitule_loca}
+                                                        </td>
+                                                        {
+                                                            niveauLocalites.slice(0, parent).map((niv) => (
+                                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                                                    {localite.parent_loca}
+                                                                </th>
+                                                            )
+                                                            )
+                                                        }
+                                                        <td className="px-6 space-x-2 py-4 whitespace-nowrap text-sm font-medium" width={50}>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => (setEditRow(localite), setShowForm(true))}
+                                                            >
+                                                                <EditIcon className="w-3 h-3" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="danger"
+                                                                size="sm"
+                                                                onClick={() => console.log(0)}
+                                                            >
+                                                                <TrashIcon className="w-3 h-3" />
+                                                            </Button>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                                )) :
+                                                (
+                                                    <td colSpan={8} className="text-center" >
+                                                        Aucune donnée Trouvée
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        {localite.intitule_loca}
-                                                    </td>
-                                                    {
-                                                        niveauLocalites.slice(0, parent).map((niv) =>
-                                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                                                                {localite.parent_loca}
-                                                            </th>
-                                                        )
-                                                    }
-                                                    <td className="px-6 space-x-2 py-4 whitespace-nowrap text-sm font-medium" width={50}>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={() => (setEditRow(localite), setShowForm(true))}
-                                                        >
-                                                            <EditIcon className="w-3 h-3" />
-                                                        </Button>
-                                                        <Button
-                                                            variant="danger"
-                                                            size="sm"
-                                                            onClick={() => console.log(0)}
-                                                        >
-                                                            <TrashIcon className="w-3 h-3" />
-                                                        </Button>
-                                                    </td>
-                                                </tr>
-                                            ))}
+
+                                                )}
                                         </tbody>
 
                                     </table>
@@ -168,7 +179,7 @@ const Localites: React.FC = () => {
             }
 
             <Modal onClose={() => setShowForm(false)} isOpen={showForm} title={`Ajout d'une ${addBoutonLabel}`} size="lg">
-                <FormLocalite onClose={() => setShowForm(false)} niveau={tabActive} parent={parent} niveauLocalites={niveauLocalites} editRow={editRow || null} all={() => AllLocalite()} />
+                <FormLocalite onClose={() => setShowForm(false)} niveau={tabActive} parent={parent} localites={localites} niveauLocalites={niveauLocalites} editRow={editRow || null} all={() => AllLocalite()} />
             </Modal>
         </div>
     )

@@ -15,8 +15,8 @@ import {
   HandshakeIcon,
   LayoutGrid,
   FileSignature,
-  LogOutIcon,
   KeyIcon,
+  LogOutIcon,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
