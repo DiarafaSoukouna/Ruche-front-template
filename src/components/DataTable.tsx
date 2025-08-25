@@ -1,4 +1,10 @@
-import React, { useMemo, useRef, useCallback, useEffect, useState } from "react";
+import React, {
+  useMemo,
+  useRef,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import type { ValueGetterParams, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -105,7 +111,10 @@ export default function DataTable<T extends Record<string, unknown>>(
       filter: true,
       resizable: true,
       flex: 1,
-      minWidth: 120,
+      minWidth: 150,
+      autoHeight: true,
+      wrapText: true,
+      cellStyle: { fontSize: 13 },
     }),
     []
   );
@@ -119,14 +128,17 @@ export default function DataTable<T extends Record<string, unknown>>(
   const onQuickFilterChanged = useCallback((value: string) => {
     setSearchText(value);
     if (gridApiRef.current) {
-      gridApiRef.current.setGridOption('quickFilterText', value);
+      gridApiRef.current.setGridOption("quickFilterText", value);
     }
   }, []);
 
   // Gestionnaire de changement du champ de recherche
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onQuickFilterChanged(e.target.value);
-  }, [onQuickFilterChanged]);
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onQuickFilterChanged(e.target.value);
+    },
+    [onQuickFilterChanged]
+  );
 
   return (
     <div className={className}>

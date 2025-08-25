@@ -15,8 +15,13 @@ import {
   HandshakeIcon,
   LayoutGrid,
   FileSignature,
+<<<<<<< HEAD
   KeyIcon,
   LogOutIcon,
+=======
+  LogOutIcon,
+  KeyIcon,
+>>>>>>> b6408440d6958b40fec3f323e770bf37376ebccf
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -77,7 +82,7 @@ const Navbar: React.FC = () => {
         { name: "Localités", href: "/localites", icon: MapPinIcon },
         { name: "Unités de gestion", href: "/unite_gestion", icon: LayoutGrid },
         { name: "Acteurs", href: "/acteurs", icon: User },
-        { name: "Personnel", href: "/personnel", icon: UsersIcon },
+        { name: "Utilisateurs", href: "/personnel", icon: UsersIcon },
         { name: "Plans de Site", href: "/plan-site", icon: Building2 },
         { name: "Types de Zone", href: "/type-zone", icon: MapPinIcon },
         { name: "Partenaire Financier", href: "/part_financier", icon: HandshakeIcon },

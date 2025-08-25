@@ -5,12 +5,12 @@ import Button from "./Button"
 type Size = "sm" | "md" | "lg" | "xl"
 
 interface ModalProps {
-  isOpen: Boolean
+  isOpen: boolean
   children: React.ReactNode
   onClose: () => void
   title?: string
   size?: Size
-  showCloseButton?: Boolean
+  showCloseButton?: boolean
 }
 
 const Modal: React.FC<ModalProps> = ({

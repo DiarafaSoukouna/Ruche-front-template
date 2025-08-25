@@ -59,49 +59,41 @@ export default function TypeZoneForm({ typeZone, onClose }: TypeZoneFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">
-          {isEdit ? "Modifier le type de zone" : "Ajouter un type de zone"}
-        </h2>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Code *</label>
-            <input
-              {...register("code_type_zone")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.code_type_zone && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.code_type_zone.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Nom</label>
-            <input
-              {...register("nom_type_zone")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.nom_type_zone && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.nom_type_zone.message}
-              </p>
-            )}
-          </div>
-
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Annuler
-            </Button>
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? "Sauvegarde..." : "Sauvegarder"}
-            </Button>
-          </div>
-        </form>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium mb-1">Code *</label>
+        <input
+          {...register("code_type_zone")}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.code_type_zone && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.code_type_zone.message}
+          </p>
+        )}
       </div>
-    </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Nom</label>
+        <input
+          {...register("nom_type_zone")}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+        />
+        {errors.nom_type_zone && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.nom_type_zone.message}
+          </p>
+        )}
+      </div>
+
+      <div className="flex justify-end gap-2 pt-4">
+        <Button type="button" variant="outline" onClick={onClose}>
+          Annuler
+        </Button>
+        <Button type="submit" disabled={mutation.isPending}>
+          {mutation.isPending ? "Sauvegarde..." : "Sauvegarder"}
+        </Button>
+      </div>
+    </form>
   );
 }

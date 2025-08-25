@@ -34,7 +34,6 @@ export const personnelService = {
         method: "POST",
         data,
       });
-      toast.success("Personnel créé avec succès");
       return response;
     } catch (error) {
       toast.error("Erreur lors de la création du personnel");

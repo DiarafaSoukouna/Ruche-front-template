@@ -64,8 +64,41 @@ export interface Convention extends Record<string, unknown> {
   partenaire_conv: Partial<Acteur> | null;
 }
 
+export interface Region {
+  id_loca: number;
+  code_loca: string;
+  intitule_loca: string;
+  code_national_loca: string;
+  parent_loca: number | null;
+  niveau_loca: number;
+}
+
+export interface Structure {
+  id_acteur: number;
+  code_acteur: string;
+  nom_acteur: string;
+  description_acteur: string;
+  personne_responsable: string;
+  contact: string;
+  adresse_email: string;
+  categorie_acteur: number;
+}
+
+export interface UGL {
+  id_ugl: number;
+  code_ugl: string;
+  nom_ugl: string;
+  abrege_ugl: string;
+  couleur_ugl: string;
+  chef_lieu_ugl: number;
+  region_concerne_ugl: number[];
+} 
+
 // Types pour les formulaires
 export type PersonnelFormData = Omit<Personnel, "n_personnel">;
 export type PlanSiteFormData = Omit<PlanSite, "id_ds">;
 export type TypeZoneFormData = Omit<TypeZone, "id_type_zone">;
 export type ActeurFormData = Omit<Acteur, "id_acteur">;
+export type RegionFormData = Omit<Region, "id_loca">;
+export type StructureFormData = Omit<Structure, "id_acteur">;
+export type UGLFormData = Omit<UGL, "id_ugl">;

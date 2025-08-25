@@ -2,6 +2,7 @@ import { useState } from "react";
 import TypeZoneList from "./TypeZoneList";
 import TypeZoneForm from "./TypeZoneForm";
 import type { TypeZone } from "../../../types/entities";
+import Modal from "../../../components/Modal";
 
 export default function TypeZonePage() {
   const [showForm, setShowForm] = useState(false);
@@ -27,9 +28,14 @@ export default function TypeZonePage() {
   return (
     <div className="p-6">
       <TypeZoneList onAdd={handleAdd} onEdit={handleEdit} />
-      {showForm && (
+      <Modal
+        isOpen={showForm}
+        onClose={handleCloseForm}
+        title={editingTypeZone ? "Modifier le type de zone" : "Ajouter un type de zone"}
+        size="md"
+      >
         <TypeZoneForm typeZone={editingTypeZone} onClose={handleCloseForm} />
-      )}
+      </Modal>
     </div>
   );
 }
