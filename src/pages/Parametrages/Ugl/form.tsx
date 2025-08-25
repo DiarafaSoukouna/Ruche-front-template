@@ -8,11 +8,12 @@ import { useEffect, useState } from 'react'
 import { typeLocalite } from '../../../functions/localites/types'
 import { addUgl } from '../../../functions/ugl/post'
 import { updateUgl } from '../../../functions/ugl/put'
+import { toast } from 'react-toastify'
 interface FormProps {
     ugl: typeUgl
     isEdit: boolean,
-    all:() => void
-    onClose:() => void
+    all: () => void
+    onClose: () => void
 }
 const FormUgl: React.FC<FormProps> = ({
     ugl,
@@ -24,19 +25,24 @@ const FormUgl: React.FC<FormProps> = ({
     const { control, register, handleSubmit, formState: { errors } } = useForm<typeUgl>({ mode: "onSubmit" })
     const onSubmit = async (data: typeUgl) => {
         console.log('data', data)
-         const dataToSend = ugl?.id_ugl 
-        ? { ...data, id_ugl: ugl.id_ugl } 
-        : data;
+        const dataToSend = ugl?.id_ugl
+            ? { ...data, id_ugl: ugl.id_ugl }
+            : data;
         try {
             let res;
-            if(ugl.id_ugl){
+            if (ugl.id_ugl) {
                 res = await updateUgl(dataToSend)
-            }else{
+            } else {
                 res = await addUgl(dataToSend)
             }
-             
+            onClose()
+            all()
+            toast.success(ugl.id_ugl ?
+                "Unités de gestion mise a jour avec succès" :
+                "Unités de gestion ajoutée avec succès")
             console.log(res)
         } catch (error) {
+            toast.error("erreur lors de la creation de l'unité de gestion")
             console.log(error)
         }
     }
