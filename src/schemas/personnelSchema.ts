@@ -5,37 +5,38 @@ import { TitrePersonnelEnum } from "../types/entities";
 export const personnelCreateSchema = z.object({
   // Email - string(email), requis
   email: z
-    .string()
     .email("Format email invalide")
     .max(254, "Email ne peut pas dépasser 254 caractères"),
 
   // ID personnel - string, requis
-  id_personnel_perso: z.string().min(1, "ID personnel requis"),
+  id_personnel_perso: z.string().min(1, "Identifiant requis"),
 
   // Titre personnel - enum TitrePersonnelEnum, optionnel
-  titre_personnel: z
-    .enum([TitrePersonnelEnum.M, TitrePersonnelEnum.F])
-    .optional(),
+  titre_personnel: z.enum([TitrePersonnelEnum.M, TitrePersonnelEnum.F], {
+    error: "Titre requis",
+  }),
 
-  // Prénom - string, optionnel
-  prenom_perso: z.string().optional(),
+  // Prénom - string, requis
+  prenom_perso: z.string().min(1, "Prénom requis"),
 
-  // Nom - string, optionnel
-  nom_perso: z.string().optional(),
+  // Nom - string, requis
+  nom_perso: z.string().min(1, "Nom requis"),
 
-  // Contact - string, optionnel
-  contact_perso: z.string().optional(),
+  // Contact - string, requis
+  contact_perso: z.string("Contact requis").min(1, "Contact requis"),
 
-  // Fonction - string, optionnel
-  fonction_perso: z.string().optional(),
+  // Fonction - string, requis
+  fonction_perso: z.string("Fonction requise").min(1, "Fonction requise"),
 
   // Description fonction - string, optionnel
   description_fonction_perso: z.string().optional(),
 
-  // Niveau - integer, optionnel
-  niveau_perso: z.number().int("Niveau doit être un nombre entier").optional(),
+  // Niveau - integer, requis
+  niveau_perso: z
+    .int("Niveau doit être un nombre entier")
+    .min(1, "Niveau requis"),
 
-  // Rapport mensuel - boolean, optionnel
+  // Rapport mensuel - boolean, requis
   rapport_mensuel_perso: z.boolean().optional(),
 
   // Rapport trimestriel - boolean, optionnel
@@ -47,83 +48,17 @@ export const personnelCreateSchema = z.object({
   // Rapport annuel - boolean, optionnel
   rapport_annuel_perso: z.boolean().optional(),
 
-  // Statut - string, optionnel
-  statut: z.string().optional(),
+  // Statut - string, requis
+  statut: z.string("Statut requis").min(1, "Statut requis"),
 
-  // Région - integer, optionnel
-  region_perso: z.number().int("Région doit être un nombre entier").optional(),
+  // Région - integer (ID de la localité), requis
+  region_perso: z.int("Région requise").min(1, "Région requise"),
 
-  // Structure - string, optionnel
-  structure_perso: z.string().optional(),
+  // Structure - integer (ID de l'acteur), requis
+  structure_perso: z.int("Structure requise").min(1, "Structure requise"),
 
-  // UGL - string, optionnel
-  ugl_perso: z.string().optional(),
-
-  // Projet actif - string, optionnel
-  projet_active_perso: z.string().optional(),
-});
-
-// Schéma pour la modification de personnel (PatchedPersonnelRequest)
-export const personnelUpdateSchema = z.object({
-  // Mot de passe - string, optionnel pour la modification
-  password: z.string().optional(),
-
-  // Email - string(email), optionnel pour la modification
-  email: z
-    .string()
-    .email("Format email invalide")
-    .max(254, "Email ne peut pas dépasser 254 caractères")
-    .optional(),
-
-  // ID personnel - string, optionnel pour la modification
-  id_personnel_perso: z.string().optional(),
-
-  // Titre personnel - enum TitrePersonnelEnum, optionnel
-  titre_personnel: z
-    .enum([TitrePersonnelEnum.M, TitrePersonnelEnum.F])
-    .optional(),
-
-  // Prénom - string, optionnel
-  prenom_perso: z.string().optional(),
-
-  // Nom - string, optionnel
-  nom_perso: z.string().optional(),
-
-  // Contact - string, optionnel
-  contact_perso: z.string().optional(),
-
-  // Fonction - string, optionnel
-  fonction_perso: z.string().optional(),
-
-  // Description fonction - string, optionnel
-  description_fonction_perso: z.string().optional(),
-
-  // Niveau - integer, optionnel
-  niveau_perso: z.number().int("Niveau doit être un nombre entier").optional(),
-
-  // Rapport mensuel - boolean, optionnel
-  rapport_mensuel_perso: z.boolean().optional(),
-
-  // Rapport trimestriel - boolean, optionnel
-  rapport_trimestriel_perso: z.boolean().optional(),
-
-  // Rapport semestriel - boolean, optionnel
-  rapport_semestriel_perso: z.boolean().optional(),
-
-  // Rapport annuel - boolean, optionnel
-  rapport_annuel_perso: z.boolean().optional(),
-
-  // Statut - string, optionnel
-  statut: z.string().optional(),
-
-  // Région - integer, optionnel
-  region_perso: z.number().int("Région doit être un nombre entier").optional(),
-
-  // Structure - string, optionnel
-  structure_perso: z.string().optional(),
-
-  // UGL - string, optionnel
-  ugl_perso: z.string().optional(),
+  // UGL - integer (ID de l'UGL), optionnel
+  ugl_perso: z.int("UGL requise").min(1, "UGL requise"),
 
   // Projet actif - string, optionnel
   projet_active_perso: z.string().optional(),
@@ -131,7 +66,6 @@ export const personnelUpdateSchema = z.object({
 
 // Types pour les formulaires
 export type PersonnelCreateData = z.infer<typeof personnelCreateSchema>;
-export type PersonnelUpdateData = z.infer<typeof personnelUpdateSchema>;
 
 // Schema principal qui s'adapte selon le mode
 export const personnelSchema = personnelCreateSchema;

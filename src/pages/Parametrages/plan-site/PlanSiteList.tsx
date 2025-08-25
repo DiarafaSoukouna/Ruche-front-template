@@ -83,7 +83,7 @@ export default function PlanSiteList({ onEdit, onAdd }: PlanSiteListProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Gestion des Plans de Site</h2>
+        <h2 className="text-2xl font-bold">Plans de Site</h2>
         <Button onClick={onAdd} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Ajouter un plan de site

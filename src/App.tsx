@@ -16,14 +16,14 @@ import Users from './pages/Users'
 import Products from './pages/Products'
 import Analytics from './pages/Analytics'
 import Acteurs from './pages/Parametrages/Acteurs/index'
-import PersonnelPage from './pages/parametrage/personnel/PersonnelPage'
-import PlanSitePage from './pages/parametrage/plan-site/PlanSitePage'
-import TypeZonePage from './pages/parametrage/type-zone/TypeZonePage'
+import PersonnelPage from './pages/Parametrages/personnel/PersonnelPage'
+import PlanSitePage from './pages/Parametrages/plan-site/PlanSitePage'
+import TypeZonePage from './pages/Parametrages/type-zone/TypeZonePage'
 import Localites from './pages/Parametrages/Localites'
 import PartFinanciers from './pages/Parametrages/PartFinancier'
-import ConventionPage from './pages/parametrage/convention/ConventionPage'
 import ChangePassword from './pages/ChangePassword'
 import Ugls from './pages/Parametrages/Ugl'
+import ConventionPage from './pages/Parametrages/convention/ConventionPage'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -83,7 +83,7 @@ const AppContent: React.FC = () => {
             element={isAuthenticated ? <Acteurs /> : <Navigate to="/login" />}
           />
           <Route
-            path="/personnel"
+            path="/utilisateurs"
             element={isAuthenticated ? <PersonnelPage /> : <Navigate to="/login" />}
           />
           <Route
@@ -95,15 +95,15 @@ const AppContent: React.FC = () => {
             element={isAuthenticated ? <Ugls /> : <Navigate to="/login" />}
           />
           <Route
-            path="/plan-site"
+            path="/plan-sites"
             element={isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />}
           />
           <Route
-            path="/type-zone"
+            path="/type-zones"
             element={isAuthenticated ? <TypeZonePage /> : <Navigate to="/login" />}
           />
           <Route
-            path="/convention"
+            path="/conventions"
             element={isAuthenticated ? <ConventionPage /> : <Navigate to="/login" />}
           />
           <Route
