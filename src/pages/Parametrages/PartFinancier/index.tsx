@@ -175,7 +175,7 @@ const PartFinanciers = () => {
                         size="md"
                     >
                         <PlusIcon className="w-4 h-4 mr-2" />
-                        Nouvel Part Financier
+                        Nouveau Part Financier
                     </Button>
                 </div>
             </div>
