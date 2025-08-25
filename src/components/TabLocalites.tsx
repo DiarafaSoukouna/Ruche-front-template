@@ -79,11 +79,11 @@ const Tabs = ({
             className="ml-auto py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none transition-colors duration-200 flex items-center gap-1"
           >
             <PlusIcon/>
-           Ajouter {defaulBoutonLabel} {parent}
+           Ajouter {defaulBoutonLabel} 
           </button>
         )}
       </div>
-      <div className="p-4 bg-white rounded-b-lg shadow-sm">
+      <div className="mt-4 bg-white rounded-b-lg shadow-sm">
         {activeTabContent}
       </div>
     </div>

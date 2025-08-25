@@ -8,6 +8,7 @@ import Card from "../../../../components/Card";
 import { RiseLoader } from "react-spinners";
 import { typeNiveauLocalite } from "../../../../functions/niveauLocalites/types";
 import FormNiveau from "./form";
+import { toast } from "react-toastify";
 const NiveauLocalite = () => {
     const [niveauLocalites, setNiveauLocalites] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -50,10 +51,12 @@ const NiveauLocalite = () => {
         try {
             console.log('formInouts', formInputs);
             const res = await addNiveauLocalite(formInputs)
+            toast.success("Niveau localité ajouté avec succès")
             console.log;
             setFormInputs([]);
             all();
         } catch (error) {
+            toast.error("Erreur lors de l'ajout du niveau localité")
             console.error("Erreur lors de l'envoi des données:", error);
         } finally {
             setSubmitting(false);
