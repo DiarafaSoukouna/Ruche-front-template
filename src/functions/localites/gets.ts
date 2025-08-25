@@ -2,7 +2,7 @@ import { instance } from '../../axios'
 
 export const allLocalite = async () => {
   try {
-    const res = await instance.get('localite')
+    const res = await instance.get('localite/')
     return res.data
   } catch (error){
     console.log(error)
