@@ -3,7 +3,7 @@ import { typeLocalite } from "./types"
 
 export const updateLocalite = async (data:typeLocalite) =>{
     try {
-    const res = await instance.put('localite/', data)
+    const res = await instance.put('localite/' +data.id_loca+ '/', data)
     return res.data
     } catch (error) {
         return error

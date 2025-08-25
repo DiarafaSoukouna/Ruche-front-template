@@ -4,7 +4,6 @@ import {
     PlusIcon,
     EditIcon,
     TrashIcon,
-    ListTreeIcon,
 } from 'lucide-react'
 import { RiseLoader } from "react-spinners"
 import Button from '../../../components/Button'
@@ -12,10 +11,9 @@ import Modal from '../../../components/Modal'
 import Table from '../../../components/Table'
 import FormPartFinancier from './form'
 import { allUgl } from '../../../functions/ugl/gets'
-import { updateUgl } from '../../../functions/ugl/put'
-import { addUgl } from '../../../functions/ugl/post'
 import { deleteUgl } from '../../../functions/ugl/delete'
 import { typeUgl } from '../../../functions/ugl/types'
+import { toast } from 'react-toastify'
 
 const Ugls = () => {
     //   const [acteurs, setUgls] = useState([])
@@ -44,27 +42,13 @@ const Ugls = () => {
             nom_ugl: ''
         })
     }
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        try {
-            if (isEdit) {
-                await updateUgl(ugl)
-            } else {
-                await addUgl(ugl)
-            }
-            setShowModal(false)
-            fetchUgls()
-            clean()
-        } catch (error) {
-            console.error(error)
-        }
-    }
     const fetchUgls = async () => {
         setLoading(true)
         try {
             const res = await allUgl()
             setUgls(res)
         } catch (error) {
+            toast.error("Erreur lors de la recuperation de l'unité de gestion")
             console.error(error)
         } finally {
             setLoading(false)
@@ -75,9 +59,11 @@ const Ugls = () => {
         try {
             await deleteUgl(id)
             setIsDelete(false)
+            toast.success("Unité de gestion supprimé avec succès")
             fetchUgls()
         } catch (error) {
             console.error(error)
+            toast.error("Erreur lors de la suppression de l'unité de gestion")
         }
     }
 
@@ -131,12 +117,28 @@ const Ugls = () => {
             ),
         },
         {
-            key: 'region_concerne_ugl',
+            key: 'chef_lieu_ugl',
             title: 'Zone d\'intervation',
-            render: (value: String) => (
+            render: (value: String, row: any) => (
                 <div className="flex items-center">
                     <div>
-                        <div className="font-medium text-gray-900">{value}</div>
+                        <div className="font-medium text-gray-900">{row.chef_lieu_ugl?.intitule_loca || 'N/A'}</div>
+                    </div>
+                </div>
+            ),
+        },
+        {
+            key: 'region_concerne_ugl',
+            title: 'Régions concernées',
+            render: (value: String, row: any) => (
+                <div className="flex items-center">
+                    <div>
+                        <div className="font-medium text-gray-900">
+                            {row.region_concerne_ugl.map((reg: any) => (
+                                reg.intitule_loca + "/ "
+                            ))
+                            }
+                        </div>
                     </div>
                 </div>
             ),
@@ -146,9 +148,9 @@ const Ugls = () => {
             title: 'Actions',
             render: (_: any, row: any) => (
                 <div className="flex space-x-2">
-                    {/* <Button variant="outline" size="sm" onClick={() => onEdit(row)}>
+                    <Button variant="outline" size="sm" onClick={() => onEdit(row)}>
                         <EditIcon className="w-3 h-3" />
-                    </Button> */}
+                    </Button>
                     <Button
                         variant="danger"
                         size="sm"

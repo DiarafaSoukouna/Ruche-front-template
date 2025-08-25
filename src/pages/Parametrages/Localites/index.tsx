@@ -16,11 +16,11 @@ const Localites: React.FC = () => {
     const [niveauLocalites, setNiveauLocalites] = useState<typeNiveauLocalite[]>([]);
     const [localites, setLocalites] = useState<typeLocalite[]>([]);
     const [loading, setLoading] = useState<boolean>(true)
-    const [showForm, setShowForm] = useState<Boolean>(false)
+    const [showForm, setShowForm] = useState<boolean>(false)
     const [editRow, setEditRow] = useState<typeLocalite>();
     const [addBoutonLabel, setAddBoutonLabel] = useState<string>('')
     const [tabActive, setTabActive] = useState<number>(0)
-    const [loadNiveau, setLoadNiveau] = useState<Boolean>(false)
+    const [loadNiveau, setLoadNiveau] = useState<boolean>(false)
     const [parent, setParent] = useState(0);
 
     const AllNiveau = async () => {
@@ -62,7 +62,7 @@ const Localites: React.FC = () => {
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Localités {tabActive}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Localités </h1>
                 </div>
                 <Button variant="outline" onClick={() => setLoadNiveau(true)}>
                     <MapPinIcon className="w-4 h-4 mr-2" />
@@ -119,7 +119,7 @@ const Localites: React.FC = () => {
                                         <tbody className="bg-white divide-y divide-gray-200">
                                             {localites.filter((niv) => niv.niveau_loca == tabActive).length > 0 ?
 
-                                                (localites.filter((niv) => niv.niveau_loca == tabActive).map((localite: typeLocalite, index) => (
+                                                (localites.filter((niv) => niv.niveau_loca == tabActive).map((localite) => (
                                                     <tr key={localite.id_loca} className="hover:bg-gray-50 transition-colors">
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" width={50}>
                                                             {localite.code_national_loca}
@@ -130,7 +130,10 @@ const Localites: React.FC = () => {
                                                         {
                                                             niveauLocalites.slice(0, parent).map((niv) => (
                                                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                                                                    {localite.parent_loca}
+                                                                    {typeof localite.parent_loca === 'object' && localite.parent_loca !== null ?
+                                                                        (localite.parent_loca as typeLocalite).intitule_loca :
+                                                                        "-"
+                                                                    }
                                                                 </th>
                                                             )
                                                             )

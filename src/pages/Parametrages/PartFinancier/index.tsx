@@ -50,9 +50,14 @@ const PartFinanciers = () => {
                 await addPartFinancier(part_financier)
             }
             setShowModal(false)
+            toast.success(isEdit ?
+                "Parténaire financié mise à jour avec succès"
+            : "Parténaire financié ajouté avec succès"
+            )
             fetchPartFinanciers()
             clean()
         } catch (error) {
+            toast.error("Erreur lors de la mise à jour du parténaire financié")
             console.error(error)
         }
     }
@@ -62,18 +67,21 @@ const PartFinanciers = () => {
             const res = await allPartFinancier()
             setPartFinanciers(res)
         } catch (error) {
+            toast.error("Erreur lors de la récuperation du parténaire finanicié")
             console.error(error)
         } finally {
             setLoading(false)
         }
     }
 
-    const deleteActeur = async (id: number) => {
+    const deletePartFinancier = async (id: number) => {
         try {
             await deletePartFinancier(id)
             setIsDelete(false)
+            toast.success("Parténaire finanicié supprimé avec succès")
             fetchPartFinanciers()
         } catch (error) {
+            toast.error("Erreur lors de la suppression du parténaire finanicié")
             console.error(error)
         }
     }
@@ -106,7 +114,7 @@ const PartFinanciers = () => {
         },
         {
             key: 'definition_part',
-            title: 'Intitulé',
+            title: 'Definition',
             render: (value: String) => (
                 <div className="flex items-center">
                     <div>
@@ -157,7 +165,7 @@ const PartFinanciers = () => {
             {/* Header avec contrôles */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">PartFinanciers</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Parténaires Financiers</h1>
                 </div>
                 <div className="flex gap-4">
                     <Button
@@ -202,7 +210,7 @@ const PartFinanciers = () => {
                         </Button>
                         <Button
                             variant="danger"
-                            onClick={() => deleteActeur(part_financier.id_partenaire!)}
+                            onClick={() => deletePartFinancier(part_financier.id_partenaire!)}
                         >
                             Supprimer
                         </Button>
