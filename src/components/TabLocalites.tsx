@@ -1,5 +1,6 @@
 import { PlusIcon } from 'lucide-react';
 import { useState, ReactNode, Children, isValidElement, cloneElement } from 'react';
+import Button from './Button';
 
 interface TabProps {
   id: string;
@@ -74,13 +75,13 @@ const Tabs = ({
           })}
         </div>
         {activeTab  && (
-          <button
+          <Button
             onClick={()=>onAddTab(true, Number(activeTab), parent,)}
-            className="ml-auto py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none transition-colors duration-200 flex items-center gap-1"
+            variant='primary'
           >
             <PlusIcon/>
-           Ajouter {defaulBoutonLabel} 
-          </button>
+           Nouvelle {defaulBoutonLabel} 
+          </Button>
         )}
       </div>
       <div className="mt-4 bg-white rounded-b-lg shadow-sm">
