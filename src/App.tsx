@@ -25,6 +25,7 @@ import ChangePassword from "./pages/ChangePassword";
 import Ugls from "./pages/Parametrages/Ugl";
 import ConventionPage from "./pages/Parametrages/convention/ConventionPage";
 import NiveauStructureConfigPage from "./pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage";
+import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -118,13 +119,27 @@ const AppContent: React.FC = () => {
           <Route
             path="/type-zones"
             element={
+              
               isAuthenticated ? <TypeZonePage /> : <Navigate to="/login" />
+            
             }
           />
           <Route
             path="/conventions"
             element={
+              
               isAuthenticated ? <ConventionPage /> : <Navigate to="/login" />
+            
+            }
+          />
+          <Route
+            path="/autres-parametrages"
+            element={
+              isAuthenticated ? (
+                <AutresParametrages />
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
           <Route
