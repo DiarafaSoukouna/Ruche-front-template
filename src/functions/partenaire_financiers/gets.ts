@@ -2,7 +2,7 @@ import { instance } from '../../axios'
 
 export const allPartFinancier = async () => {
   try {
-    const res = await instance.get('partenaire_financier')
+    const res = await instance.get('partenaire_financier/')
     return res.data
   } catch (error){
     console.log(error)
