@@ -42,8 +42,30 @@ export interface TypeZone extends Record<string, unknown> {
   code_type_zone: string;
   nom_type_zone?: string;
 }
+export interface Acteur extends Record<string, unknown> {
+  id_acteur: number;
+  code_acteur: string;
+  nom_acteur: string;
+  description_acteur: string;
+  personne_responsable: string;
+  contact: string;
+  adresse_email: string;
+  categorie_acteur: number;
+}
+
+export interface Convention extends Record<string, unknown> {
+  id_convention?: number;
+  code_convention: string;
+  intutile_conv: string;
+  reference_conv: string;
+  montant_conv: number;
+  date_signature_conv: string;
+  etat_conv: string;
+  partenaire_conv: Partial<Acteur> | null;
+}
 
 // Types pour les formulaires
 export type PersonnelFormData = Omit<Personnel, "n_personnel">;
 export type PlanSiteFormData = Omit<PlanSite, "id_ds">;
 export type TypeZoneFormData = Omit<TypeZone, "id_type_zone">;
+export type ActeurFormData = Omit<Acteur, "id_acteur">;

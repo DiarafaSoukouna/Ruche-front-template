@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback, useEffect } from "react";
+import React, { useMemo, useRef, useCallback, useEffect, useState } from "react";
 import type { ValueGetterParams, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -42,6 +42,9 @@ export default function DataTable<T extends Record<string, unknown>>(
 ) {
   const { columns, rowKey, className, endpoint } = props;
   const queryClient = useQueryClient();
+
+  // État pour la recherche
+  const [searchText, setSearchText] = useState("");
 
   // Référence à l’API Ag-Grid
   const gridApiRef = useRef<GridApi | null>(null);
@@ -112,10 +115,32 @@ export default function DataTable<T extends Record<string, unknown>>(
     gridApiRef.current = e.api;
   }, []);
 
+  // Fonction de recherche rapide
+  const onQuickFilterChanged = useCallback((value: string) => {
+    setSearchText(value);
+    if (gridApiRef.current) {
+      gridApiRef.current.setGridOption('quickFilterText', value);
+    }
+  }, []);
+
+  // Gestionnaire de changement du champ de recherche
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onQuickFilterChanged(e.target.value);
+  }, [onQuickFilterChanged]);
+
   return (
     <div className={className}>
-      {/* Bouton Actualiser */}
-      <div className="flex justify-end mb-2">
+      {/* Barre de recherche et bouton Actualiser */}
+      <div className="flex justify-between items-center mb-4 gap-4">
+        <div className="relative flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="Rechercher dans le tableau..."
+            value={searchText}
+            onChange={handleSearchChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+          />
+        </div>
         <Button
           onClick={() =>
             queryClient.invalidateQueries({ queryKey: [endpoint] })

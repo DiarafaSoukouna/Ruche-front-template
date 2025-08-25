@@ -19,11 +19,15 @@ interface LoginResponse {
   user?: User;
 }
 
+interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export const authService = {
   // Login function
-  async login(
-    credentials: LoginCredentials
-  ): Promise<LoginResponse> {
+  async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
       const response = await apiClient.request<LoginResponse>("/token/", {
         method: "POST",
@@ -34,7 +38,8 @@ export const authService = {
       return response;
     } catch (error: unknown) {
       const errorMessage =
-        (error as { response?: { data?: { detail?: string } } })?.response?.data?.detail || "Erreur de connexion";
+        (error as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail || "Erreur de connexion";
       toast.error(errorMessage);
       throw error;
     }
@@ -50,7 +55,8 @@ export const authService = {
       return response;
     } catch (error: unknown) {
       const errorMessage =
-        (error as { response?: { data?: { detail?: string } } })?.response?.data?.detail || "Erreur de connexion Google";
+        (error as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail || "Erreur de connexion Google";
       toast.error(errorMessage);
       throw error;
     }
@@ -74,19 +80,6 @@ export const authService = {
     } finally {
       // Clear local storage
       tokenManager.clearTokens();
-    }
-  },
-
-  // Get current user info
-  async getCurrentUser(): Promise<User | null> {
-    try {
-      const response = await apiClient.request<User>("/auth/me/");
-      return response;
-    } catch {
-      toast.error(
-        "Erreur lors de la récupération des informations utilisateur"
-      );
-      return null;
     }
   },
 
@@ -127,6 +120,76 @@ export const authService = {
       toast.error("Session expirée, veuillez vous reconnecter");
       tokenManager.clearTokens();
       return false;
+    }
+  },
+
+  // Change password function
+  async changePassword(id: number, data: ChangePasswordData): Promise<void> {
+    try {
+      await apiClient.request(`/personnel/password_change/${id}/`, {
+        method: "PUT",
+        data: {
+          old_password: data.currentPassword,
+          new_password: data.newPassword,
+          confirm_new_password: data.confirmPassword,
+        },
+      });
+
+      toast.success("Mot de passe modifié avec succès");
+    } catch (error: unknown) {
+      let errorMessage = "Erreur lors du changement de mot de passe";
+
+      // Handle different error response structures
+      const axiosError = error as {
+        response?: {
+          data?: {
+            old_password?: string | string[];
+            new_password?: string | string[];
+            confirm_new_password?: string | string[];
+            detail?: string;
+            message?: string;
+          };
+        };
+        message?: string;
+        code?: string;
+      };
+
+      if (axiosError?.response?.data) {
+        const errorData = axiosError.response.data;
+        console.log(errorData);
+
+        // Check for specific field errors
+        if (errorData.old_password) {
+          errorMessage = Array.isArray(errorData.old_password)
+            ? errorData.old_password[0]
+            : errorData.old_password;
+        } else if (errorData.new_password) {
+          errorMessage = Array.isArray(errorData.new_password)
+            ? errorData.new_password[0]
+            : errorData.new_password;
+        } else if (errorData.confirm_new_password) {
+          errorMessage = Array.isArray(errorData.confirm_new_password)
+            ? errorData.confirm_new_password[0]
+            : errorData.confirm_new_password;
+        } else if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      } else if (axiosError?.message) {
+        // Handle network or other errors
+        if (axiosError.code === "ERR_BAD_REQUEST") {
+          errorMessage = "Données invalides. Vérifiez vos informations.";
+        } else if (axiosError.code === "ERR_NETWORK") {
+          errorMessage =
+            "Erreur de connexion. Vérifiez votre connexion internet.";
+        } else {
+          errorMessage = axiosError.message;
+        }
+      }
+
+      toast.error(errorMessage);
+      throw error;
     }
   },
 };

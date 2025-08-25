@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import Card from '../components/Card'
-import Button from '../components/Button'
-import Modal from '../components/Modal'
-import LineChart from '../components/LineChart'
-import BarChart from '../components/BarChart'
-import PieChart from '../components/PieChart'
-import AreaChart from '../components/AreaChart'
+import React, { useState } from "react";
+import Card from "../components/Card";
+import Button from "../components/Button";
+import Modal from "../components/Modal";
+import LineChart from "../components/LineChart";
+import BarChart from "../components/BarChart";
+import PieChart from "../components/PieChart";
+import AreaChart from "../components/AreaChart";
 
 import {
   UsersIcon,
@@ -15,138 +15,138 @@ import {
   PlusIcon,
   EyeIcon,
   LucideIcon,
-} from 'lucide-react'
+} from "lucide-react";
 
 interface Stat {
-  title: string
-  value: string
-  change: string
-  changeType: string
-  icon: LucideIcon
-  color: 'blue' | 'green' | 'purple' | 'indigo'
+  title: string;
+  value: string;
+  change: string;
+  changeType: string;
+  icon: LucideIcon;
+  color: "blue" | "green" | "purple" | "indigo";
 }
 
 interface Activity {
-  id: number
-  action: string
-  user: string
-  time: string
+  id: number;
+  action: string;
+  user: string;
+  time: string;
 }
 
 interface SalesData extends Record<string, unknown> {
-  month: string
-  ventes: number
-  commandes: number
+  month: string;
+  ventes: number;
+  commandes: number;
 }
 
 interface CategoryData extends Record<string, unknown> {
-  category: string
-  value: number
+  category: string;
+  value: number;
 }
 
 interface TrafficData extends Record<string, unknown> {
-  day: string
-  visiteurs: number
-  pages: number
+  day: string;
+  visiteurs: number;
+  pages: number;
 }
 
 const Dashboard: React.FC = () => {
-  const [showModal, setShowModal] = useState<boolean>(false)
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const stats: Stat[] = [
     {
-      title: 'Utilisateurs Total',
-      value: '2,847',
-      change: '+12%',
-      changeType: 'increase',
+      title: "Utilisateurs Total",
+      value: "2,847",
+      change: "+12%",
+      changeType: "increase",
       icon: UsersIcon,
-      color: 'blue',
+      color: "blue",
     },
     {
-      title: 'Produits Actifs',
-      value: '1,234',
-      change: '+8%',
-      changeType: 'increase',
+      title: "Produits Actifs",
+      value: "1,234",
+      change: "+8%",
+      changeType: "increase",
       icon: ShoppingBagIcon,
-      color: 'green',
+      color: "green",
     },
     {
-      title: 'Ventes du Mois',
-      value: '€45,287',
-      change: '+23%',
-      changeType: 'increase',
+      title: "Ventes du Mois",
+      value: "€45,287",
+      change: "+23%",
+      changeType: "increase",
       icon: ChartBarIcon,
-      color: 'purple',
+      color: "purple",
     },
     {
-      title: 'Croissance',
-      value: '18.7%',
-      change: '+5%',
-      changeType: 'increase',
+      title: "Croissance",
+      value: "18.7%",
+      change: "+5%",
+      changeType: "increase",
       icon: TrendingUpIcon,
-      color: 'indigo',
+      color: "indigo",
     },
-  ]
+  ];
 
   const recentActivities: Activity[] = [
     {
       id: 1,
-      action: 'Nouvel utilisateur inscrit',
-      user: 'Marie Dupont',
-      time: 'Il y a 2 minutes',
+      action: "Nouvel utilisateur inscrit",
+      user: "Marie Dupont",
+      time: "Il y a 2 minutes",
     },
     {
       id: 2,
-      action: 'Commande traitée',
-      user: 'Jean Martin',
-      time: 'Il y a 15 minutes',
+      action: "Commande traitée",
+      user: "Jean Martin",
+      time: "Il y a 15 minutes",
     },
-    { id: 3, action: 'Produit ajouté', user: 'Admin', time: 'Il y a 1 heure' },
+    { id: 3, action: "Produit ajouté", user: "Admin", time: "Il y a 1 heure" },
     {
       id: 4,
-      action: 'Paiement reçu',
-      user: 'Sophie Bernard',
-      time: 'Il y a 2 heures',
+      action: "Paiement reçu",
+      user: "Sophie Bernard",
+      time: "Il y a 2 heures",
     },
-  ]
+  ];
 
   // Données pour les graphiques
   const salesData: SalesData[] = [
-    { month: 'Jan', ventes: 4000, commandes: 240 },
-    { month: 'Fév', ventes: 3000, commandes: 139 },
-    { month: 'Mar', ventes: 2000, commandes: 980 },
-    { month: 'Avr', ventes: 2780, commandes: 390 },
-    { month: 'Mai', ventes: 1890, commandes: 480 },
-    { month: 'Jun', ventes: 2390, commandes: 380 },
-  ]
+    { month: "Jan", ventes: 4000, commandes: 240 },
+    { month: "Fév", ventes: 3000, commandes: 139 },
+    { month: "Mar", ventes: 2000, commandes: 980 },
+    { month: "Avr", ventes: 2780, commandes: 390 },
+    { month: "Mai", ventes: 1890, commandes: 480 },
+    { month: "Jun", ventes: 2390, commandes: 380 },
+  ];
 
   const categoryData: CategoryData[] = [
-    { category: 'Électronique', value: 35 },
-    { category: 'Vêtements', value: 25 },
-    { category: 'Maison', value: 20 },
-    { category: 'Sports', value: 15 },
-    { category: 'Autres', value: 5 },
-  ]
+    { category: "Électronique", value: 35 },
+    { category: "Vêtements", value: 25 },
+    { category: "Maison", value: 20 },
+    { category: "Sports", value: 15 },
+    { category: "Autres", value: 5 },
+  ];
 
   const trafficData: TrafficData[] = [
-    { day: 'Lun', visiteurs: 1200, pages: 2400 },
-    { day: 'Mar', visiteurs: 1900, pages: 1398 },
-    { day: 'Mer', visiteurs: 800, pages: 9800 },
-    { day: 'Jeu', visiteurs: 1390, pages: 3908 },
-    { day: 'Ven', visiteurs: 1490, pages: 4800 },
-    { day: 'Sam', visiteurs: 1390, pages: 3800 },
-    { day: 'Dim', visiteurs: 1490, pages: 4300 },
-  ]
+    { day: "Lun", visiteurs: 1200, pages: 2400 },
+    { day: "Mar", visiteurs: 1900, pages: 1398 },
+    { day: "Mer", visiteurs: 800, pages: 9800 },
+    { day: "Jeu", visiteurs: 1390, pages: 3908 },
+    { day: "Ven", visiteurs: 1490, pages: 4800 },
+    { day: "Sam", visiteurs: 1390, pages: 3800 },
+    { day: "Dim", visiteurs: 1490, pages: 4300 },
+  ];
 
-  const getStatColor = (color: Stat['color']): string => {
-    const colors: Record<Stat['color'], string> = {
-      blue: 'bg-blue-500',
-      green: 'bg-green-500',
-      purple: 'bg-purple-500',
-      indigo: 'bg-indigo-500',
-    }
-    return colors[color] || colors.blue
-  }
+  const getStatColor = (color: Stat["color"]): string => {
+    const colors: Record<Stat["color"], string> = {
+      blue: "bg-blue-500",
+      green: "bg-green-500",
+      purple: "bg-purple-500",
+      indigo: "bg-indigo-500",
+    };
+    return colors[color] || colors.blue;
+  };
 
   return (
     <div className="space-y-8">
@@ -203,13 +203,13 @@ const Dashboard: React.FC = () => {
             data={salesData}
             xKey="month"
             series={[
-              { yKey: 'ventes', label: 'Ventes (€)', color: '#3B82F6' },
-              { yKey: 'commandes', label: 'Commandes', color: '#10B981' },
+              { yKey: "ventes", label: "Ventes (€)", color: "#3B82F6" },
+              { yKey: "commandes", label: "Commandes", color: "#10B981" },
             ]}
             height={250}
             axes={{
-              yTitle: 'Montant (€)',
-              xTitle: 'Mois',
+              yTitle: "Montant (€)",
+              xTitle: "Mois",
             }}
           />
         </Card>
@@ -234,12 +234,12 @@ const Dashboard: React.FC = () => {
             data={categoryData}
             xKey="category"
             series={[
-              { yKey: 'value', label: 'Pourcentage (%)', color: '#8B5CF6' },
+              { yKey: "value", label: "Pourcentage (%)", color: "#8B5CF6" },
             ]}
             height={250}
             axes={{
-              yTitle: 'Pourcentage (%)',
-              xTitle: 'Catégories',
+              yTitle: "Pourcentage (%)",
+              xTitle: "Catégories",
             }}
           />
         </Card>
@@ -251,23 +251,23 @@ const Dashboard: React.FC = () => {
             xKey="day"
             series={[
               {
-                yKey: 'visiteurs',
-                label: 'Visiteurs',
-                color: '#F59E0B',
+                yKey: "visiteurs",
+                label: "Visiteurs",
+                color: "#F59E0B",
                 opacity: 0.6,
               },
               {
-                yKey: 'pages',
-                label: 'Pages vues',
-                color: '#EF4444',
+                yKey: "pages",
+                label: "Pages vues",
+                color: "#EF4444",
                 opacity: 0.6,
               },
             ]}
             height={250}
             stacked={false}
             axes={{
-              yTitle: 'Nombre',
-              xTitle: 'Jour',
+              yTitle: "Nombre",
+              xTitle: "Jour",
             }}
           />
         </Card>
@@ -344,7 +344,7 @@ const Dashboard: React.FC = () => {
         </div>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

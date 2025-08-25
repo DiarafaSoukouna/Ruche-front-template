@@ -10,57 +10,60 @@ import { RiseLoader } from "react-spinners"
 import Button from '../../../components/Button'
 import Modal from '../../../components/Modal'
 import Table from '../../../components/Table'
-import { typePartFinancier } from '../../../functions/partenaire_financiers/types'
-import { allPartFinancier } from '../../../functions/partenaire_financiers/gets'
-import { updatePartFinancier } from '../../../functions/partenaire_financiers/put'
-import { addPartFinancier } from '../../../functions/partenaire_financiers/post'
 import FormPartFinancier from './form'
-import { deletePartFinancier } from '../../../functions/partenaire_financiers/delete'
-import { toast } from 'react-toastify'
+import { allUgl } from '../../../functions/ugl/gets'
+import { updateUgl } from '../../../functions/ugl/put'
+import { addUgl } from '../../../functions/ugl/post'
+import { deleteUgl } from '../../../functions/ugl/delete'
+import { typeUgl } from '../../../functions/ugl/types'
 
-const PartFinanciers = () => {
-    //   const [acteurs, setPartFinanciers] = useState([])
+const Ugls = () => {
+    //   const [acteurs, setUgls] = useState([])
     // const [acteurs, set]
     const [showModal, setShowModal] = useState(false)
-    const [partFinanciers, setPartFinanciers] = useState<typePartFinancier[]>([])
+    const [ugls, setUgls] = useState<typeUgl[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [isDelete, setIsDelete] = useState(false)
-    const [part_financier, setPart_financier] = useState<typePartFinancier>({
-        id_partenaire: 0,
-        definition_part: '',
-        sigle_part: '',
-        code_part: '',
-        statut: "0",
+    const [ugl, setUgl] = useState<typeUgl>({
+        id_ugl: 0,
+        code_ugl: '',
+        abrege_ugl: '',
+        chef_lieu_ugl: 0,
+        couleur_ugl: '',
+        region_concerne_ugl: [],
+        nom_ugl: ''
     })
     const clean = () => {
-        setPart_financier({
-            id_partenaire: 0,
-            definition_part: '',
-            sigle_part: '',
-            code_part: '',
-            statut: "0",
+        setUgl({
+            id_ugl: 0,
+            code_ugl: '',
+            abrege_ugl: '',
+            chef_lieu_ugl: 0,
+            couleur_ugl: '',
+            region_concerne_ugl: [],
+            nom_ugl: ''
         })
     }
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         try {
             if (isEdit) {
-                await updatePartFinancier(part_financier)
+                await updateUgl(ugl)
             } else {
-                await addPartFinancier(part_financier)
+                await addUgl(ugl)
             }
             setShowModal(false)
-            fetchPartFinanciers()
+            fetchUgls()
             clean()
         } catch (error) {
             console.error(error)
         }
     }
-    const fetchPartFinanciers = async () => {
+    const fetchUgls = async () => {
         setLoading(true)
         try {
-            const res = await allPartFinancier()
-            setPartFinanciers(res)
+            const res = await allUgl()
+            setUgls(res)
         } catch (error) {
             console.error(error)
         } finally {
@@ -70,9 +73,9 @@ const PartFinanciers = () => {
 
     const deleteActeur = async (id: number) => {
         try {
-            await deletePartFinancier(id)
+            await deleteUgl(id)
             setIsDelete(false)
-            fetchPartFinanciers()
+            fetchUgls()
         } catch (error) {
             console.error(error)
         }
@@ -86,15 +89,15 @@ const PartFinanciers = () => {
     }
     const [isEdit, setIsEdit] = useState(false)
 
-    const onEdit = (part_financier: any) => {
-        setPart_financier(part_financier)
+    const onEdit = (ugl: any) => {
+        setUgl(ugl)
         setShowModal(true)
         setIsEdit(true)
     }
 
     const columns = [
         {
-            key: 'code_part',
+            key: 'code_ugl',
             title: 'Code',
             render: (value: String) => (
                 <div className="flex items-center">
@@ -104,9 +107,10 @@ const PartFinanciers = () => {
                 </div>
             ),
         },
+
         {
-            key: 'definition_part',
-            title: 'Intitulé',
+            key: 'abrege_ugl',
+            title: 'Abréviation',
             render: (value: String) => (
                 <div className="flex items-center">
                     <div>
@@ -116,8 +120,19 @@ const PartFinanciers = () => {
             ),
         },
         {
-            key: 'sigle_part',
-            title: 'Sigle',
+            key: 'nom_ugl',
+            title: 'Libellé',
+            render: (value: String) => (
+                <div className="flex items-center">
+                    <div>
+                        <div className="font-medium text-gray-900">{value}</div>
+                    </div>
+                </div>
+            ),
+        },
+        {
+            key: 'region_concerne_ugl',
+            title: 'Zone d\'intervation',
             render: (value: String) => (
                 <div className="flex items-center">
                     <div>
@@ -131,15 +146,15 @@ const PartFinanciers = () => {
             title: 'Actions',
             render: (_: any, row: any) => (
                 <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" onClick={() => onEdit(row)}>
+                    {/* <Button variant="outline" size="sm" onClick={() => onEdit(row)}>
                         <EditIcon className="w-3 h-3" />
-                    </Button>
+                    </Button> */}
                     <Button
                         variant="danger"
                         size="sm"
                         onClick={() => {
                             setIsDelete(true)
-                            setPart_financier(row)
+                            setUgl(row)
                         }}
                     >
                         <TrashIcon className="w-3 h-3" />
@@ -149,7 +164,7 @@ const PartFinanciers = () => {
         },
     ]
     useEffect(() => {
-        fetchPartFinanciers()
+        fetchUgls()
     }, [])
 
     return (
@@ -157,7 +172,7 @@ const PartFinanciers = () => {
             {/* Header avec contrôles */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">PartFinanciers</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Unités de gestion</h1>
                 </div>
                 <div className="flex gap-4">
                     <Button
@@ -167,7 +182,7 @@ const PartFinanciers = () => {
                         size="md"
                     >
                         <PlusIcon className="w-4 h-4 mr-2" />
-                        Nouvel Part Financier
+                        Nouvelle Unités de gestion
                     </Button>
                 </div>
             </div>
@@ -175,13 +190,12 @@ const PartFinanciers = () => {
                 isOpen={showModal}
                 onClose={() => close()}
                 title={isEdit ? "Modifier l'acteur" : 'Nouvel acteur'}
-                size="md"
+                size="lg"
             >
                 <FormPartFinancier
-                    part_financier={part_financier}
-                    setPartFinancier={setPart_financier}
+                    ugl={ugl}
+                    all={() => fetchUgls}
                     isEdit={isEdit}
-                    handleSubmit={handleSubmit}
                     onClose={() => close()}
                 />
             </Modal>
@@ -202,7 +216,7 @@ const PartFinanciers = () => {
                         </Button>
                         <Button
                             variant="danger"
-                            onClick={() => deleteActeur(part_financier.id_partenaire!)}
+                            onClick={() => deleteActeur(ugl.id_ugl!)}
                         >
                             Supprimer
                         </Button>
@@ -210,17 +224,17 @@ const PartFinanciers = () => {
                 </div>
             </Modal>
 
-            <Card title="Liste des partenaires financiers" className="overflow-hidden">
+            <Card title="Liste des unités de gestion" className="overflow-hidden">
                 {loading ?
                     (<div className="text-center">
                         <RiseLoader color='blue' />
                     </div>
                     ) :
-                    <Table columns={columns} data={partFinanciers} itemsPerPage={5} />
+                    <Table columns={columns} data={ugls} itemsPerPage={5} />
                 }
 
             </Card>
         </div>
     )
 }
-export default PartFinanciers
+export default Ugls

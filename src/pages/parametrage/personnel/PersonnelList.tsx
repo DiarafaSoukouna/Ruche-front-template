@@ -1,7 +1,6 @@
-import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Search } from "lucide-react";
-import { toast } from "react-hot-toast";
+import { Plus, Edit, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
 import DataTable from "../../../components/DataTable";
 import Button from "../../../components/Button";
 import { personnelService } from "../../../services/personnelService";
@@ -13,7 +12,6 @@ interface PersonnelListProps {
 }
 
 export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
-  const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
@@ -133,7 +131,8 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
             variant="outline"
             size="sm"
             onClick={() => handleDelete(personnel.n_personnel!)}
-            className="p-1 text-red-600 hover:text-red-700"
+            className="p-1 border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500"
+            disabled={deleteMutation.isPending}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -150,19 +149,6 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
           <Plus className="h-4 w-4" />
           Ajouter un personnel
         </Button>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <input
-            type="text"
-            placeholder="Rechercher..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full"
-          />
-        </div>
       </div>
 
       <DataTable<Personnel>
