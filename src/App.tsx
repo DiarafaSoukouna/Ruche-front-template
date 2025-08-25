@@ -21,9 +21,10 @@ import PlanSitePage from './pages/Parametrages/plan-site/PlanSitePage'
 import TypeZonePage from './pages/Parametrages/type-zone/TypeZonePage'
 import Localites from './pages/Parametrages/Localites'
 import PartFinanciers from './pages/Parametrages/PartFinancier'
+import ChangePassword from './pages/ChangePassword'
 import Ugls from './pages/Parametrages/Ugl'
 import ConventionPage from './pages/Parametrages/convention/ConventionPage'
-import ChangePassword from './pages/ChangePassword'
+import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -83,7 +84,7 @@ const AppContent: React.FC = () => {
             element={isAuthenticated ? <Acteurs /> : <Navigate to="/login" />}
           />
           <Route
-            path="/personnel"
+            path="/utilisateurs"
             element={
               isAuthenticated ? <PersonnelPage /> : <Navigate to="/login" />
             }
@@ -99,21 +100,31 @@ const AppContent: React.FC = () => {
             element={isAuthenticated ? <Ugls /> : <Navigate to="/login" />}
           />
           <Route
-            path="/plan-site"
+            path="/plan-sites"
             element={
               isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />
             }
           />
           <Route
-            path="/type-zone"
+            path="/type-zones"
             element={
               isAuthenticated ? <TypeZonePage /> : <Navigate to="/login" />
             }
           />
           <Route
-            path="/convention"
+            path="/conventions"
             element={
               isAuthenticated ? <ConventionPage /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/autres-parametrages"
+            element={
+              isAuthenticated ? (
+                <AutresParametrages />
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
           <Route

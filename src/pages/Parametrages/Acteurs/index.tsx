@@ -21,6 +21,8 @@ import { DeleteActeur } from '../../../functions/acteurs/delete'
 import Table from '../../../components/Table'
 import { getAllCategories } from '../../../functions/categoriesActeurs/gets'
 import CategorieActeur from './categories/index'
+import { RiseLoader } from 'react-spinners'
+import { toast } from 'react-toastify'
 
 const Acteurs = () => {
   //   const [acteurs, setActeurs] = useState([])
@@ -40,6 +42,8 @@ const Acteurs = () => {
     adresse_email: '',
     categorie_acteur: 1,
   })
+  const [loading, setLoading] = useState<boolean>(false)
+
   const clean = () => {
     setActeur({
       id_acteur: undefined,
@@ -52,9 +56,11 @@ const Acteurs = () => {
       categorie_acteur: 1,
     })
   }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
+      setLoading(true)
       if (isEdit) {
         const { id_acteur, ...data } = acteur
         if (!id_acteur) return
@@ -63,6 +69,7 @@ const Acteurs = () => {
           setShowModal(false)
           fetchActeurs()
           clean()
+          toast.success('Acteur modifié avec succès')
         }
       } else {
         const res = await addActeur(acteur)
@@ -70,18 +77,23 @@ const Acteurs = () => {
           setShowModal(false)
           fetchActeurs()
           clean()
+          toast.success('Acteur crée avec succès')
         }
         console.log(acteur)
       }
+      setLoading(false)
     } catch (error) {
       console.error(error)
+      toast.error("Erreur lors de l'action")
     }
   }
   const fetchActeurs = async () => {
     try {
+      setLoading(true)
       const res = await getAllActeurs()
       if (res?.data) {
         setAllActeurs(res.data)
+        setLoading(false)
       }
     } catch (error) {
       console.error(error)
@@ -90,10 +102,13 @@ const Acteurs = () => {
 
   const deleteActeur = async (id: number) => {
     try {
+      setLoading(true)
+
       await DeleteActeur(id)
       setIsDelete(false)
       fetchActeurs()
       clean()
+      setLoading(false)
     } catch (error) {
       console.error(error)
     }
@@ -262,6 +277,7 @@ const Acteurs = () => {
           </Button>
         </div>
       </div>
+
       <Modal
         isOpen={showModal}
         onClose={() => close()}
@@ -275,6 +291,11 @@ const Acteurs = () => {
           handleSubmit={handleSubmit}
         />
       </Modal>
+      {loading && (
+        <div className="text-center">
+          <RiseLoader color="blue" />
+        </div>
+      )}
       <Modal
         isOpen={isDelete}
         onClose={() => close()}

@@ -8,6 +8,8 @@ import { updateCategorie } from '../../../../functions/categoriesActeurs/put'
 import { addCategorie } from '../../../../functions/categoriesActeurs/post'
 import { DeleteCategorie } from '../../../../functions/categoriesActeurs/delete'
 import Form from '../categories/form'
+import { RiseLoader } from 'react-spinners'
+import { toast } from 'react-toastify'
 
 const CategorieActeur = () => {
   const [categories, setCategories] = useState<any[]>([])
@@ -16,6 +18,8 @@ const CategorieActeur = () => {
     code_cat: '',
     nom_categorie: '',
   })
+  const [loading, setLoading] = useState<boolean>(false)
+
   const clean = () => {
     setIsEdit(false)
     setIsDelete(false)
@@ -33,21 +37,26 @@ const CategorieActeur = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
+      setLoading(true)
       if (isEdit) {
         const res = await updateCategorie(categorieActeur)
         if (res) {
           fetchCategories()
           clean()
+          toast.success('Catégorie mise à jour avec succès')
         }
       } else {
         const res = await addCategorie(categorieActeur)
         if (res) {
           fetchCategories()
           clean()
+          toast.success('Catégorie créee à jour avec succès')
         }
       }
+      setLoading(false)
     } catch (error) {
       console.error(error)
+      toast.error("erreur lors de l'action")
     }
   }
 
@@ -114,8 +123,11 @@ const CategorieActeur = () => {
   ]
   const fetchCategories = async () => {
     try {
+      setLoading(true)
+
       const res = await getAllCategories()
       setCategories(res)
+      setLoading(false)
     } catch (error) {
       console.error(error)
     }
@@ -153,7 +165,11 @@ const CategorieActeur = () => {
               <Table columns={columns} data={categories} itemsPerPage={5} />
             </div>
           )}
-
+          {loading && (
+            <div className="text-center">
+              <RiseLoader color="blue" />
+            </div>
+          )}
           {isDelete && (
             <Card className="">
               <div className="space-y-6 w-100">

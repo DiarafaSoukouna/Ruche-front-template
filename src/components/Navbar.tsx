@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import {
   HomeIcon,
   UsersIcon,
@@ -15,44 +15,40 @@ import {
   HandshakeIcon,
   LayoutGrid,
   FileSignature,
-<<<<<<< HEAD
-  KeyIcon,
-  LogOutIcon,
-=======
   LogOutIcon,
   KeyIcon,
->>>>>>> b6408440d6958b40fec3f323e770bf37376ebccf
-} from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
+  Settings2Icon,
+} from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
 
 interface NavigationChild {
-  name: string;
-  href: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  name: string
+  href: string
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
 interface NavigationItem {
-  name: string;
-  href?: string | boolean;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  children?: NavigationChild[];
+  name: string
+  href?: string | boolean
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  children?: NavigationChild[]
 }
 
 const Navbar: React.FC = () => {
-  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const location = useLocation();
-  const { user, logout } = useAuth();
-  const userDropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+  const location = useLocation()
+  const { user, logout } = useAuth()
+  const userDropdownRef = useRef<HTMLDivElement>(null)
 
   // Function to get user initials
   const getUserInitials = (name: string) => {
     return name
-      .split(" ")
+      .split(' ')
       .map((word) => word.charAt(0).toUpperCase())
       .slice(0, 2)
-      .join("");
-  };
+      .join('')
+  }
 
   // Handle click outside to close user dropdown
   useEffect(() => {
@@ -61,40 +57,48 @@ const Navbar: React.FC = () => {
         userDropdownRef.current &&
         !userDropdownRef.current.contains(event.target as Node)
       ) {
-        setUserDropdownOpen(false);
+        setUserDropdownOpen(false)
       }
-    };
+    }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const navigationItems: NavigationItem[] = [
-    { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
     {
-      name: "Paramétrage",
+      name: 'Paramétrage',
       icon: CogIcon,
       children: [
-        { name: "Utilisateurs", href: "/users", icon: UsersIcon },
-        { name: "Produits", href: "/products", icon: ShoppingBagIcon },
-        { name: "Localités", href: "/localites", icon: MapPinIcon },
-        { name: "Unités de gestion", href: "/unite_gestion", icon: LayoutGrid },
-        { name: "Acteurs", href: "/acteurs", icon: User },
-        { name: "Utilisateurs", href: "/personnel", icon: UsersIcon },
-        { name: "Plans de Site", href: "/plan-site", icon: Building2 },
-        { name: "Types de Zone", href: "/type-zone", icon: MapPinIcon },
-        { name: "Partenaire Financier", href: "/part_financier", icon: HandshakeIcon },
-        { name: "Conventions", href: "/convention", icon: FileSignature },
+        { name: 'Produits', href: '/products', icon: ShoppingBagIcon },
+        { name: 'Localités', href: '/localites', icon: MapPinIcon },
+        { name: 'Unités de gestion', href: '/unite_gestion', icon: LayoutGrid },
+        { name: 'Acteurs', href: '/acteurs', icon: User },
+        { name: 'Utilisateurs', href: '/utilisateurs', icon: UsersIcon },
+        { name: 'Plans de Site', href: '/plan-sites', icon: Building2 },
+        { name: 'Types de Zone', href: '/type-zones', icon: MapPinIcon },
+        {
+          name: 'Partenaire Financier',
+          href: '/part_financier',
+          icon: HandshakeIcon,
+        },
+        { name: 'Conventions', href: '/conventions', icon: FileSignature },
+        {
+          name: 'Autres paramétrages',
+          href: '/autres-parametrages',
+          icon: Settings2Icon,
+        },
       ],
       href: true,
     },
-    { name: "Analytics", href: "/analytics", icon: ChartBarIcon },
-  ];
+    { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
+  ]
 
   const isActive = (href?: string | boolean) =>
-    typeof href === "string" ? location.pathname === href : false;
+    typeof href === 'string' ? location.pathname === href : false
 
   return (
     <nav className="bg-white shadow-lg border-b border-blue-100 sticky top-0 z-50">
@@ -142,7 +146,7 @@ const Navbar: React.FC = () => {
                         ? getUserInitials(
                             `${user.prenom_perso} ${user.nom_perso}`
                           )
-                        : "AD"}
+                        : 'AD'}
                     </p>
                   </div>
                 </button>
@@ -152,10 +156,10 @@ const Navbar: React.FC = () => {
                     <div className="py-2">
                       <div className="px-4 py-2 border-b border-gray-100">
                         <p className="text-sm font-medium text-gray-900">
-                          {user?.prenom_perso || "Utilisateur"}
+                          {user?.prenom_perso || 'Utilisateur'}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {user?.id_personnel_perso || ""}
+                          {user?.id_personnel_perso || ''}
                         </p>
                       </div>
 
@@ -170,8 +174,8 @@ const Navbar: React.FC = () => {
 
                       <button
                         onClick={() => {
-                          logout();
-                          setUserDropdownOpen(false);
+                          logout()
+                          setUserDropdownOpen(false)
                         }}
                         className="flex items-center w-full px-4 py-2 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors"
                       >
@@ -204,19 +208,19 @@ const Navbar: React.FC = () => {
                      item.children
                        .map((child) => isActive(child.href))
                        .includes(true)
-                       ? "bg-blue-600 text-white shadow-md"
-                       : "text-gray-600 hover:text-blue-700 hover:bg-blue-50"
+                       ? 'bg-blue-600 text-white shadow-md'
+                       : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
                    } ${
                     dropdownOpen === item.name
-                      ? "bg-blue-50 text-blue-900"
-                      : "text-gray-600 hover:text-blue-700 hover:bg-blue-50"
+                      ? 'bg-blue-50 text-blue-900'
+                      : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
                   }`}
                 >
                   <item.icon className="w-4 h-4" />
                   <span>{item.name}</span>
                   <ChevronDownIcon
                     className={`w-4 h-4 transition-transform ${
-                      dropdownOpen === item.name ? "rotate-180" : ""
+                      dropdownOpen === item.name ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
@@ -234,8 +238,8 @@ const Navbar: React.FC = () => {
                           onClick={() => setDropdownOpen(null)}
                           className={`flex items-center px-4 py-2 text-sm transition-colors ${
                             isActive(child.href)
-                              ? "bg-blue-50 text-blue-700 border-r-2 border-blue-600"
-                              : "text-gray-600 hover:bg-blue-50 hover:text-blue-700"
+                              ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
+                              : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700'
                           }`}
                         >
                           <child.icon className="w-4 h-4 mr-3" />
@@ -251,8 +255,8 @@ const Navbar: React.FC = () => {
                 to={item.href as string}
                 className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 ${
                   isActive(item.href)
-                    ? "bg-blue-600 text-white shadow-md"
-                    : "text-gray-600 hover:text-blue-700 hover:bg-blue-50"
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
                 }`}
                 onClick={() => setDropdownOpen(null)}
               >
@@ -264,7 +268,7 @@ const Navbar: React.FC = () => {
         ))}
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

@@ -16,11 +16,11 @@ const Localites: React.FC = () => {
     const [niveauLocalites, setNiveauLocalites] = useState<typeNiveauLocalite[]>([]);
     const [localites, setLocalites] = useState<typeLocalite[]>([]);
     const [loading, setLoading] = useState<boolean>(true)
-    const [showForm, setShowForm] = useState<Boolean>(false)
+    const [showForm, setShowForm] = useState<boolean>(false)
     const [editRow, setEditRow] = useState<typeLocalite>();
     const [addBoutonLabel, setAddBoutonLabel] = useState<string>('')
     const [tabActive, setTabActive] = useState<number>(0)
-    const [loadNiveau, setLoadNiveau] = useState<Boolean>(false)
+    const [loadNiveau, setLoadNiveau] = useState<boolean>(false)
     const [parent, setParent] = useState(0);
 
     const AllNiveau = async () => {
