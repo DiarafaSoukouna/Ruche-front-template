@@ -1,5 +1,5 @@
 import { api } from '../../lib/api'
-import { ZoneCollecteTypes } from '../../pages/Parametrages/AutresParametrages/ZoneCollecte/types'
+import { ZoneCollecteTypes } from '../../pages/Parametrages/ZoneCollecte/types'
 
 export const addZoneCollecte = async (data: ZoneCollecteTypes) => {
   try {

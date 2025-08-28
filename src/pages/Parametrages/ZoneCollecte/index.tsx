@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react'
-import Card from '../../../../components/Card'
-import { PlusIcon, EditIcon, TrashIcon } from 'lucide-react'
-import Button from '../../../../components/Button'
+import Card from '../../../components/Card'
+import { PlusIcon, EditIcon, TrashIcon, ListTreeIcon } from 'lucide-react'
+import Button from '../../../components/Button'
 import Form from './form'
-import { ZoneCollecteTypes, TypesZoneTypes } from './types'
-
-import Modal from '../../../../components/Modal'
-import { addZoneCollecte } from '../../../../functions/zoneCollecte/post'
-import { updateZoneCollecte } from '../../../../functions/zoneCollecte/put'
-import { getAllZoneCollecte } from '../../../../functions/zoneCollecte/gets'
-import { DeleteZoneCollecte } from '../../../../functions/zoneCollecte/delete'
-import { getAllTypeZones } from '../../../../functions/typeZone/gets'
-
-import Table from '../../../../components/Table'
+import { ZoneCollecteTypes } from './types'
+import { TypesZoneTypes } from './TypeZone/types'
+import Modal from '../../../components/Modal'
+import { addZoneCollecte } from '../../../functions/zoneCollecte/post'
+import { updateZoneCollecte } from '../../../functions/zoneCollecte/put'
+import { getAllZoneCollecte } from '../../../functions/zoneCollecte/gets'
+import { DeleteZoneCollecte } from '../../../functions/zoneCollecte/delete'
+import { getAllTypeZones } from '../../../functions/typeZone/gets'
+import TypeZone from './TypeZone/index'
+import Table from '../../../components/Table'
 
 import { RiseLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
@@ -24,6 +24,7 @@ const Acteurs = () => {
   const [allZoneCollecte, setAllZoneCollecte] = useState<ZoneCollecteTypes[]>(
     []
   )
+  const [showModalTypeZone, setShowModalTypeZone] = useState(false)
   const [typesZone, setTypesZone] = useState<TypesZoneTypes[]>([])
   const [isDelete, setIsDelete] = useState(false)
   const [zoneCollecte, setZoneCollecte] = useState<ZoneCollecteTypes>({
@@ -196,7 +197,32 @@ const Acteurs = () => {
   return (
     <div className="space-y-8">
       {/* Header avec contrôles */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"></div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Zone de Collecte</h1>
+        </div>
+        <div className="flex gap-4">
+          <Button
+            onClick={() => {
+              setShowModal(true)
+            }}
+            size="md"
+          >
+            <PlusIcon className="w-4 h-4 mr-2" />
+            Nouvelle Zone
+          </Button>
+          <Button
+            variant="outline"
+            size="md"
+            onClick={() => {
+              setShowModalTypeZone(true)
+            }}
+          >
+            <ListTreeIcon className="w-4 h-4 mr-2" />
+            Types de zones
+          </Button>
+        </div>
+      </div>
 
       <Modal
         isOpen={showModal}
@@ -240,22 +266,15 @@ const Acteurs = () => {
           </div>
         </div>
       </Modal>
-
-      <Card className="overflow-hidden">
-        <div className="flex justify-between mb-5">
-          <div>
-            <h1 className="text-lg font-bold">Liste des zones de collecte</h1>
-          </div>
-          <Button
-            onClick={() => {
-              setShowModal(true)
-            }}
-            size="md"
-          >
-            <PlusIcon className="w-4 h-4 mr-2" />
-            Nouvelle Zone
-          </Button>
-        </div>
+      <Modal
+        isOpen={showModalTypeZone}
+        onClose={() => setShowModalTypeZone(false)}
+        title={'Espace de configuration des types de zones'}
+        size="xl"
+      >
+        <TypeZone />
+      </Modal>
+      <Card className="overflow-hidden" title="Liste des zones de collecte">
         <Table columns={columns} data={allZoneCollecte} itemsPerPage={5} />
       </Card>
     </div>

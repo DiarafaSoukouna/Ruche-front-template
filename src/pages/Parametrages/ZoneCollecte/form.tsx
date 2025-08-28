@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getAllTypeZones } from '../../../../functions/typeZone/gets'
-import Button from '../../../../components/Button'
+import { getAllTypeZones } from '../../../functions/typeZone/gets'
+import Button from '../../../components/Button'
 import { FormProps } from './types'
 // import { getAllActeurs } from '../../../functions/acteurs/gets'
 
