@@ -92,7 +92,15 @@ export interface UGL {
   couleur_ugl: string;
   chef_lieu_ugl: number;
   region_concerne_ugl: number[];
-} 
+}
+
+export interface NiveauStructureConfig extends Record<string, unknown> {
+  id_nsc?: number;
+  nombre_nsc: number;
+  libelle_nsc: string;
+  code_number_nsc: string;
+  id_programme: number;
+}
 
 // Types pour les formulaires
 export type PersonnelFormData = Omit<Personnel, "n_personnel">;
@@ -102,3 +110,4 @@ export type ActeurFormData = Omit<Acteur, "id_acteur">;
 export type RegionFormData = Omit<Region, "id_loca">;
 export type StructureFormData = Omit<Structure, "id_acteur">;
 export type UGLFormData = Omit<UGL, "id_ugl">;
+export type NiveauStructureConfigFormData = Omit<NiveauStructureConfig, "id_nsc">;

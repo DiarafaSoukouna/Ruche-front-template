@@ -4,6 +4,7 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Select from "react-select";
 import Button from "../../../components/Button";
+import { conventionService } from "../../../services/conventionService";
 import { apiClient } from "../../../lib/api";
 import {
   conventionFormSchema,
@@ -63,15 +64,16 @@ export default function ConventionForm({
 
   const mutation = useMutation({
     mutationFn: async (data: ConventionFormData) => {
-      const endpoint = isEditing
-        ? `/convention/${convention.id_convention}/`
-        : "/convention/";
-      const method = isEditing ? "PUT" : "POST";
+      const payload = {
+        ...data,
+        partenaire_conv: data.partenaire_conv || null,
+      };
 
-      await apiClient.request(endpoint, {
-        method,
-        data,
-      });
+      if (isEditing) {
+        return await conventionService.update(convention.id_convention!, payload);
+      } else {
+        return await conventionService.create(payload);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/convention/"] });

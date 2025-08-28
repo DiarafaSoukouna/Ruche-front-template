@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
-import DataTable from "../../../components/DataTable";
+import Table from "../../../components/Table";
 import Button from "../../../components/Button";
 import { personnelService } from "../../../services/personnelService";
 import { apiClient } from "../../../lib/api";
@@ -14,6 +14,15 @@ interface PersonnelListProps {
 
 export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
   const queryClient = useQueryClient();
+
+  // Fetch personnel data
+  const { data: personnel = [], isLoading } = useQuery<Personnel[]>({
+    queryKey: ["personnel"],
+    queryFn: async (): Promise<Personnel[]> => {
+      const response = await apiClient.request("/personnel/");
+      return Array.isArray(response) ? response : [];
+    },
+  });
 
   // Fetch related data for lookups
   const { data: regions = [] } = useQuery<Region[]>({
@@ -59,50 +68,52 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
 
   const columns = [
     {
-      header: "ID",
-      accessor: "n_personnel" as keyof Personnel,
+      key: "n_personnel" as keyof Personnel,
+      title: "ID",
     },
     {
-      header: "ID Personnel",
-      accessor: "id_personnel_perso" as keyof Personnel,
+      key: "id_personnel_perso" as keyof Personnel,
+      title: "ID Personnel",
     },
     {
-      header: "Titre",
-      accessor: "titre_personnel" as keyof Personnel,
+      key: "titre_personnel" as keyof Personnel,
+      title: "Titre",
     },
     {
-      header: "Nom",
-      accessor: "nom_perso" as keyof Personnel,
+      key: "nom_perso" as keyof Personnel,
+      title: "Nom",
     },
     {
-      header: "Prénom",
-      accessor: "prenom_perso" as keyof Personnel,
+      key: "prenom_perso" as keyof Personnel,
+      title: "Prénom",
     },
     {
-      header: "Email",
-      accessor: "email" as keyof Personnel,
+      key: "email" as keyof Personnel,
+      title: "Email",
     },
     {
-      header: "Contact",
-      accessor: "contact_perso" as keyof Personnel,
+      key: "contact_perso" as keyof Personnel,
+      title: "Contact",
     },
     {
-      header: "Fonction",
-      accessor: "fonction_perso" as keyof Personnel,
+      key: "fonction_perso" as keyof Personnel,
+      title: "Fonction",
     },
     {
-      header: "Description",
-      accessor: "description_fonction_perso" as keyof Personnel,
+      key: "description_fonction_perso" as keyof Personnel,
+      title: "Description",
     },
     {
-      header: "Niveau d'accès",
-      accessor: (personnel: Personnel) => {
+      key: "niveau_perso" as keyof Personnel,
+      title: "Niveau d'accès",
+      render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         return personnel.niveau_perso === 1 ? "Editeur" : "Visiteur";
       },
     },
     {
-      header: "Structure",
-      accessor: (personnel: Personnel) => {
+      key: "structure_perso" as keyof Personnel,
+      title: "Structure",
+      render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.structure_perso) return "-";
         const structureId = typeof personnel.structure_perso === 'string' ? parseInt(personnel.structure_perso) : personnel.structure_perso;
         const structure = structures.find(s => s.id_acteur === structureId);
@@ -110,8 +121,9 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       },
     },
     {
-      header: "UGL",
-      accessor: (personnel: Personnel) => {
+      key: "ugl_perso" as keyof Personnel,
+      title: "UGL",
+      render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.ugl_perso) return "-";
         const uglId = typeof personnel.ugl_perso === 'string' ? parseInt(personnel.ugl_perso) : personnel.ugl_perso;
         const ugl = ugls.find(u => u.id_ugl === uglId);
@@ -119,20 +131,22 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       },
     },
     {
-      header: "Région",
-      accessor: (personnel: Personnel) => {
+      key: "region_perso" as keyof Personnel,
+      title: "Région",
+      render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.region_perso) return "-";
         const region = regions.find(r => r.id_loca === personnel.region_perso);
         return region ? `${region.intitule_loca} (${region.code_loca})` : `ID: ${personnel.region_perso}`;
       },
     },
     {
-      header: "Statut",
-      accessor: "statut" as keyof Personnel,
+      key: "statut" as keyof Personnel,
+      title: "Statut",
     },
     {
-      header: "Rapports",
-      accessor: (personnel: Personnel) => (
+      key: "rapport_mensuel_perso" as keyof Personnel,
+      title: "Rapports",
+      render: (_: Personnel[keyof Personnel], personnel: Personnel) => (
         <div className="text-xs flex gap-2 flex-wrap items-center">
           {personnel.rapport_mensuel_perso && (
             <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
@@ -158,8 +172,9 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       ),
     },
     {
-      header: "Actions",
-      accessor: (personnel: Personnel) => (
+      key: "n_personnel" as keyof Personnel,
+      title: "Actions",
+      render: (_: Personnel[keyof Personnel], personnel: Personnel) => (
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -193,12 +208,17 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
         </Button>
       </div>
 
-      <DataTable<Personnel>
-        columns={columns}
-        rowKey={(personnel) => personnel.n_personnel!}
-        endpoint="/personnel/"
-        className="min-h-[400px]"
-      />
+      {isLoading ? (
+        <div className="flex justify-center items-center min-h-[400px]">
+          <div className="text-gray-500">Chargement...</div>
+        </div>
+      ) : (
+        <Table<Personnel & { id?: string | number }>
+          columns={columns}
+          data={personnel.map(p => ({ ...p, id: p.n_personnel }))}
+          className="min-h-[400px]"
+        />
+      )}
     </div>
   );
 }

@@ -25,6 +25,7 @@ import ChangePassword from './pages/ChangePassword'
 import Ugls from './pages/Parametrages/Ugl'
 import ConventionPage from './pages/Parametrages/convention/ConventionPage'
 import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
+import NiveauStructureConfigPage from './pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -98,6 +99,16 @@ const AppContent: React.FC = () => {
           <Route
             path="/unite_gestion"
             element={isAuthenticated ? <Ugls /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/niveau-structure-config"
+            element={
+              isAuthenticated ? (
+                <NiveauStructureConfigPage />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
           <Route
             path="/plan-sites"

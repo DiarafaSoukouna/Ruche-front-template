@@ -1,9 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
-import DataTable from "../../../components/DataTable";
+import Table from "../../../components/Table";
 import Button from "../../../components/Button";
 import { typeZoneService } from "../../../services/typeZoneService";
+import { apiClient } from "../../../lib/api";
 import type { TypeZone } from "../../../types/entities";
 
 interface TypeZoneListProps {
@@ -14,6 +15,15 @@ interface TypeZoneListProps {
 
 export default function TypeZoneList({ onEdit, onAdd }: TypeZoneListProps) {
   const queryClient = useQueryClient();
+
+  // Fetch type zone data
+  const { data: typeZones = [], isLoading } = useQuery<TypeZone[]>({
+    queryKey: ["/type_zone/"],
+    queryFn: async (): Promise<TypeZone[]> => {
+      const response = await apiClient.request("/type_zone/");
+      return Array.isArray(response) ? response : [];
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: typeZoneService.delete,
@@ -36,16 +46,17 @@ export default function TypeZoneList({ onEdit, onAdd }: TypeZoneListProps) {
 
   const columns = [
     {
-      header: "Code",
-      accessor: "code_type_zone" as keyof TypeZone,
+      key: "code_type_zone" as keyof TypeZone,
+      title: "Code",
     },
     {
-      header: "Nom",
-      accessor: "nom_type_zone" as keyof TypeZone,
+      key: "nom_type_zone" as keyof TypeZone,
+      title: "Nom",
     },
     {
-      header: "Actions",
-      accessor: (typeZone: TypeZone) => (
+      key: "id_type_zone" as keyof TypeZone,
+      title: "Actions",
+      render: (_: TypeZone[keyof TypeZone], typeZone: TypeZone) => (
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -79,12 +90,17 @@ export default function TypeZoneList({ onEdit, onAdd }: TypeZoneListProps) {
         </Button>
       </div>
 
-      <DataTable
-        columns={columns}
-        rowKey={(typeZone) => typeZone.id_type_zone!}
-        endpoint="/type_zone/"
-        className="min-h-[400px]"
-      />
+      {isLoading ? (
+        <div className="flex justify-center items-center min-h-[400px]">
+          <div className="text-gray-500">Chargement...</div>
+        </div>
+      ) : (
+        <Table<TypeZone & { id?: string | number }>
+          columns={columns}
+          data={typeZones.map(t => ({ ...t, id: t.id_type_zone }))}
+          className="min-h-[400px]"
+        />
+      )}
     </div>
   );
 }

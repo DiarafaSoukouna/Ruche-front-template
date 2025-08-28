@@ -1,14 +1,15 @@
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import Button from "../../../components/Button";
-import { planSiteService } from "../../../services/planSiteService";
+import { apiClient } from "../../../lib/api";
+import type { PlanSite, NiveauStructureConfig } from "../../../types/entities";
 import {
   planSiteSchema,
   type PlanSiteFormData,
 } from "../../../schemas/planSiteSchema";
-import type { PlanSite } from "../../../types/entities";
+import Select from "react-select";
 
 interface PlanSiteFormProps {
   planSite?: PlanSite;
@@ -19,10 +20,30 @@ export default function PlanSiteForm({ planSite, onClose }: PlanSiteFormProps) {
   const queryClient = useQueryClient();
   const isEdit = !!planSite;
 
+  // Fetch all plan sites for parent selection
+  const { data: allPlanSites = [] } = useQuery<PlanSite[]>({
+    queryKey: ["/plan_site/"],
+    queryFn: async (): Promise<PlanSite[]> => {
+      const response = await apiClient.request("/plan_site/");
+      return Array.isArray(response) ? response : [];
+    },
+  });
+
+  // Fetch niveau structure config data
+  const { data: niveauConfigs = [] } = useQuery<NiveauStructureConfig[]>({
+    queryKey: ["/niveau_structure_config/"],
+    queryFn: async (): Promise<NiveauStructureConfig[]> => {
+      const response = await apiClient.request("/niveau_structure_config/");
+      return Array.isArray(response) ? response : [];
+    },
+  });
+
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
+    watch,
   } = useForm<PlanSiteFormData>({
     resolver: zodResolver(planSiteSchema),
     mode: "onSubmit",
@@ -38,11 +59,33 @@ export default function PlanSiteForm({ planSite, onClose }: PlanSiteFormProps) {
       : {},
   });
 
+  // Get available parents (structures with lower level than current)
+  const currentLevel = watch("niveau_ds");
+  const availableParents = currentLevel
+    ? allPlanSites.filter((p) => {
+        if (!planSite) {
+          return p.niveau_ds < currentLevel;
+        }
+        return p.id_ds !== planSite.id_ds && p.niveau_ds < currentLevel;
+      })
+    : [];
+
   const mutation = useMutation({
-    mutationFn: (data: PlanSiteFormData) =>
-      isEdit
-        ? planSiteService.update(planSite.id_ds!, data)
-        : planSiteService.create(data),
+    mutationFn: async (data: PlanSiteFormData) => {
+      if (isEdit) {
+        await apiClient.request(`/plan_site/${planSite.id_ds}/`, {
+          method: "PUT",
+          data: data,
+          headers: { "Content-Type": "application/json" },
+        });
+      } else {
+        await apiClient.request("/plan_site/", {
+          method: "POST",
+          data: data,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/plan_site/"] });
       toast.success(
@@ -96,13 +139,35 @@ export default function PlanSiteForm({ planSite, onClose }: PlanSiteFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Niveau hiérarchique <span className="text-red-500">*</span>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Niveau
           </label>
-          <input
-            type="number"
-            {...register("niveau_ds", { valueAsNumber: true })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+          <Controller
+            name="niveau_ds"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={niveauConfigs.map((config) => ({
+                  value: config.nombre_nsc,
+                  label: `${config.nombre_nsc} - ${config.libelle_nsc}`,
+                }))}
+                className="w-full"
+                classNamePrefix="react-select"
+                onChange={(selectedOption) =>
+                  field.onChange(selectedOption?.value)
+                }
+                value={
+                  niveauConfigs
+                    .map((config) => ({
+                      value: config.nombre_nsc,
+                      label: `${config.nombre_nsc} - ${config.libelle_nsc}`,
+                    }))
+                    .find((option) => option.value === field.value) || null
+                }
+                placeholder="Sélectionnez un niveau"
+              />
+            )}
           />
           {errors.niveau_ds && (
             <p className="text-red-500 text-sm mt-1">
@@ -113,12 +178,37 @@ export default function PlanSiteForm({ planSite, onClose }: PlanSiteFormProps) {
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Code parent <span className="text-red-500">*</span>
+            Structure parente <span className="text-red-500">*</span>
           </label>
-          <input
-            type="number"
-            {...register("parent_ds", { valueAsNumber: true })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+          <Controller
+            name="parent_ds"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={[
+                  ...availableParents.map((parent) => ({
+                    value: parent.id_ds,
+                    label: `${parent.intitule_ds} (${parent.code_ds}) - Niveau ${parent.niveau_ds}`,
+                  })),
+                ]}
+                isClearable
+                className="react-select-container"
+                classNamePrefix="react-select"
+                placeholder="Sélectionnez une structure parente..."
+                onChange={(option) =>
+                  field.onChange(option ? Number(option.value) : null)
+                }
+                value={
+                  availableParents
+                    .map((parent) => ({
+                      value: parent.id_ds,
+                      label: `${parent.intitule_ds} (${parent.code_ds}) - Niveau ${parent.niveau_ds}`,
+                    }))
+                    .find((opt) => opt.value === field.value) || null
+                }
+              />
+            )}
           />
           {errors.parent_ds && (
             <p className="text-red-500 text-sm mt-1">
@@ -134,6 +224,7 @@ export default function PlanSiteForm({ planSite, onClose }: PlanSiteFormProps) {
           <input
             {...register("code_relai_ds")}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            placeholder="Code de liaison (optionnel)"
           />
           {errors.code_relai_ds && (
             <p className="text-red-500 text-sm mt-1">
