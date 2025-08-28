@@ -77,7 +77,7 @@ const Navbar: React.FC = () => {
         { name: "Unités de gestion", href: "/unite_gestion", icon: LayoutGrid },
         { name: "Acteurs", href: "/acteurs", icon: User },
         { name: "Utilisateurs", href: "/utilisateurs", icon: UsersIcon },
-        { name: "Plans de Site", href: "/plan-sites", icon: Building2 },
+        { name: "Plans de Site", href: "/plan_sites", icon: Building2 },
         { name: "Types de Zone", href: "/type-zones", icon: MapPinIcon },
         { name: "Partenaire Financier", href: "/part_financier", icon: HandshakeIcon },
         { name: "Conventions", href: "/conventions", icon: FileSignature },

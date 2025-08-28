@@ -17,13 +17,13 @@ import Products from './pages/Products'
 import Analytics from './pages/Analytics'
 import Acteurs from './pages/Parametrages/Acteurs/index'
 import PersonnelPage from './pages/Parametrages/personnel/PersonnelPage'
-import PlanSitePage from './pages/Parametrages/plan-site/PlanSitePage'
 import TypeZonePage from './pages/Parametrages/type-zone/TypeZonePage'
 import Localites from './pages/Parametrages/Localites'
 import PartFinanciers from './pages/Parametrages/PartFinancier'
 import ChangePassword from './pages/ChangePassword'
 import Ugls from './pages/Parametrages/Ugl'
 import ConventionPage from './pages/Parametrages/convention/ConventionPage'
+import PlanSitePage from './pages/Parametrages/planSite'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -95,7 +95,7 @@ const AppContent: React.FC = () => {
             element={isAuthenticated ? <Ugls /> : <Navigate to="/login" />}
           />
           <Route
-            path="/plan-sites"
+            path="/plan_sites"
             element={isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />}
           />
           <Route

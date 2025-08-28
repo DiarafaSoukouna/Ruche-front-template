@@ -17,6 +17,7 @@ import { addPartFinancier } from '../../../functions/partenaire_financiers/post'
 import FormPartFinancier from './form'
 import { deletePartFinancier } from '../../../functions/partenaire_financiers/delete'
 import { toast } from 'react-toastify'
+import ConfirmModal from '../../../components/ConfirModal'
 
 const PartFinanciers = () => {
     //   const [acteurs, setPartFinanciers] = useState([])
@@ -182,7 +183,7 @@ const PartFinanciers = () => {
             <Modal
                 isOpen={showModal}
                 onClose={() => close()}
-                title={isEdit ? "Modifier l'acteur" : 'Nouvel acteur'}
+                title={isEdit ? "Modifier l'acteur" : 'Nouvelle partenaire financier'}
                 size="md"
             >
                 <FormPartFinancier
@@ -193,30 +194,14 @@ const PartFinanciers = () => {
                     onClose={() => close()}
                 />
             </Modal>
-            <Modal
+            <ConfirmModal
                 isOpen={isDelete}
                 onClose={() => close()}
-                title={'Supprimer un acteur'}
+                title={'Supprimer cet partenaire'}
                 size="md"
+                confimationButon={()=>deletePartFinancier(part_financier.id_partenaire!)}
             >
-                <div className="space-y-6">
-                    <p className="text-gray-700">
-                        Êtes-vous sûr(e) de vouloir supprimer cet acteur ? Cette action est
-                        irréversible.
-                    </p>
-                    <div className="flex justify-end space-x-3">
-                        <Button variant="outline" onClick={() => close()}>
-                            Annuler
-                        </Button>
-                        <Button
-                            variant="danger"
-                            onClick={() => deletePartFinancier(part_financier.id_partenaire!)}
-                        >
-                            Supprimer
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
+            </ConfirmModal>
 
             <Card title="Liste des partenaires financiers" className="overflow-hidden">
                 {loading ?

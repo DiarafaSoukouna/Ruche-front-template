@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
 import { PlusIcon, TrashIcon, } from "lucide-react";
 import Button from "../../../../components/Button";
-import { allNiveauLocalite } from "../../../../functions/niveauLocalites/gets";
-import { deleteNiveauLocalite } from "../../../../functions/niveauLocalites/delete";
-import { addNiveauLocalite } from "../../../../functions/niveauLocalites/post";
 import Card from "../../../../components/Card";
 import { RiseLoader } from "react-spinners";
-import { typeNiveauLocalite } from "../../../../functions/niveauLocalites/types";
 import FormNiveau from "./form";
 import { toast } from "react-toastify";
+import { typeNiveauStructure } from "../../../../functions/niveauStructures/types";
+import { allNiveauStructure } from "../../../../functions/niveauStructures/gets";
+import { deleteNiveauStructure } from "../../../../functions/niveauStructures/delete";
+import { addNiveauStructure } from "../../../../functions/niveauStructures/post";
 const NiveauLocalite = () => {
-    const [niveauLocalites, setNiveauLocalites] = useState([]);
+    const [niveauStructures, setNiveauStructures] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [formInputs, setFormInputs] = useState<typeNiveauLocalite[]>([]);
+    const [formInputs, setFormInputs] = useState<typeNiveauStructure[]>([]);
     const [submitting, setSubmitting] = useState(false);
 
     const all = async () => {
         setLoading(true);
         try {
-            const res = await allNiveauLocalite();
-            setNiveauLocalites(res);
+            const res = await allNiveauStructure();
+            setNiveauStructures(res);
             setLoading(false);
         } catch (error) {
             console.error(error);
@@ -29,7 +29,7 @@ const NiveauLocalite = () => {
 
     const del = async (id: number) => {
         try {
-            await deleteNiveauLocalite(id);
+            await deleteNiveauStructure(id);
             all();
         } catch (error) {
             console.error(error);
@@ -39,9 +39,9 @@ const NiveauLocalite = () => {
         setFormInputs([
             ...formInputs,
             {
-                libelle_nlc: "",
-                nombre_nlc: niveauLocalites.length + formInputs.length + 1,
-                Code_number_nlc: 0
+                libelle_nsc: "",
+                nombre_nsc: niveauStructures.length + formInputs.length + 1,
+                code_number_nsc: 0
             }
         ]);
     };
@@ -49,10 +49,9 @@ const NiveauLocalite = () => {
     const submitAll = async () => {
         setSubmitting(true);
         try {
-            console.log('formInouts', formInputs);
-            await addNiveauLocalite(formInputs)
+            await Promise.all(formInputs.map(input => addNiveauStructure(input)));
             toast.success("Niveau localité ajouté avec succès")
-            console.log;
+            console.log('formInouts', formInputs);
             setFormInputs([]);
             all();
         } catch (error) {
@@ -73,7 +72,7 @@ const NiveauLocalite = () => {
         <Card>
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h3 className="text-2xl font-bold text-gray-900">Liste Niveaux de Localité {niveauLocalites.length} </h3>
+                    <h3 className="text-2xl font-bold text-gray-900">Liste Niveaux de structure ({niveauStructures.length}) </h3>
                 </div>
                 <Button variant="primary" onClick={addFormRow} size="sm">
                     <PlusIcon className="w-4 h-4" /> Ajouter
@@ -104,25 +103,25 @@ const NiveauLocalite = () => {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                                {niveauLocalites.map((niveau: typeNiveauLocalite, index) => (
-                                    <tr key={niveau.id_nlc} className="hover:bg-gray-50 transition-colors">
+                                {niveauStructures.map((niveau: typeNiveauStructure, index) => (
+                                    <tr key={niveau.id_nsc} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {niveau.nombre_nlc}
+                                            {niveau.nombre_nsc}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {niveau.libelle_nlc}
+                                            {niveau.libelle_nsc}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {niveau.Code_number_nlc}
+                                            {niveau.code_number_nsc}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div className="flex space-x-2">
 
-                                                {index === niveauLocalites.length - 1 && (
+                                                {index === niveauStructures.length - 1 && (
                                                     <button
                                                         onClick={() => {
                                                             if (window.confirm("Êtes-vous sûr de vouloir supprimer ce niveau ?")) {
-                                                                del(niveau.id_nlc!);
+                                                                del(niveau.id_nsc!);
                                                             }
                                                         }}
                                                         className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-100 transition-colors"
@@ -135,7 +134,7 @@ const NiveauLocalite = () => {
                                         </td>
                                     </tr>
                                 ))}
-                                <FormNiveau formInputs={formInputs} niveauLocalitesLength={niveauLocalites.length} setFormInputs={setFormInputs} />
+                                <FormNiveau formInputs={formInputs} niveauStructuresLength={niveauStructures.length} setFormInputs={setFormInputs} />
                             </tbody>
 
                         </table>
@@ -150,7 +149,7 @@ const NiveauLocalite = () => {
                     <Button
                         variant="primary"
                         onClick={submitAll}
-                        disabled={submitting || formInputs.some(input => !input.libelle_nlc || input.nombre_nlc <= 0 || input.Code_number_nlc <= 0)}
+                        disabled={submitting || formInputs.some(input => !input.libelle_nsc || input.nombre_nsc <= 0 || input.code_number_nsc <= 0)}
                         className=""
                     >
                         {submitting ? (

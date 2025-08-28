@@ -24,7 +24,7 @@ export const Tab = ({ children }: TabProps) => {
   return <>{children}</>;
 };
 
-const Tabs = ({ 
+const TabsLocalites = ({ 
   children, 
   defaultActiveTab, 
   className = '', 
@@ -91,6 +91,6 @@ const Tabs = ({
   );
 };
 
-Tabs.Tab = Tab;
+TabsLocalites .Tab = Tab;
 
-export default Tabs;
+export default TabsLocalites  ;
