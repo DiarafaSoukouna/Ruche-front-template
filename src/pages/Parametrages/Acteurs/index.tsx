@@ -40,7 +40,7 @@ const Acteurs = () => {
     personne_responsable: '',
     contact: '',
     adresse_email: '',
-    categorie_acteur: 1,
+    categorie_acteur: 0,
   })
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -53,7 +53,7 @@ const Acteurs = () => {
       personne_responsable: '',
       contact: '',
       adresse_email: '',
-      categorie_acteur: 1,
+      categorie_acteur: 0,
     })
   }
 
@@ -261,6 +261,7 @@ const Acteurs = () => {
               setShowModal(true)
             }}
             size="md"
+            variant="yellow"
           >
             <PlusIcon className="w-4 h-4 mr-2" />
             Nouvel acteur

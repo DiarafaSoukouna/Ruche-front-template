@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { getAllCategories } from '../../../functions/categoriesActeurs/gets'
 import Button from '../../../components/Button'
 import { FormProps } from './types'
+import Select from 'react-select'
+import { CategorieTypes } from './categories/types'
 // import { getAllActeurs } from '../../../functions/acteurs/gets'
 
 const Form: React.FC<FormProps> = ({
@@ -10,7 +12,7 @@ const Form: React.FC<FormProps> = ({
   isEdit,
   handleSubmit,
 }) => {
-  const [categories, setCategories] = useState([])
+  const [categories, setCategories] = useState<CategorieTypes[]>([])
 
   const fetchCategories = async () => {
     try {
@@ -60,16 +62,33 @@ const Form: React.FC<FormProps> = ({
       <div className="flex gap-4">
         <div className="flex-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description
+            Catégorie
           </label>
-          <input
-            type="text"
-            value={acteur?.description_acteur || ''}
-            onChange={(e) =>
-              setActeur({ ...acteur, description_acteur: e.target.value })
+          <Select
+            value={
+              categories.find(
+                (cat: any) => cat.id_categorie === acteur.categorie_acteur
+              )
+                ? {
+                    value: acteur.categorie_acteur,
+                    label: categories.find(
+                      (cat: any) => cat.id_categorie === acteur.categorie_acteur
+                    )?.nom_categorie,
+                  }
+                : null
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Entrez une description de l'acteur"
+            onChange={(selected) =>
+              setActeur({
+                ...acteur,
+                categorie_acteur: Number(selected?.value),
+              })
+            }
+            options={categories.map((cat: any) => ({
+              value: cat.id_categorie, // garder number
+              label: cat.nom_categorie,
+            }))}
+            placeholder="Sélectionner une catégorie"
+            isClearable
           />
         </div>
         <div className="flex-1">
@@ -116,26 +135,20 @@ const Form: React.FC<FormProps> = ({
           />
         </div>
       </div>
-
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Catégorie
+          Description
         </label>
-        <select
-          value={acteur.categorie_acteur}
+        <textarea
+          value={acteur?.description_acteur || ''}
           onChange={(e) =>
-            setActeur({ ...acteur, categorie_acteur: Number(e.target.value) })
+            setActeur({ ...acteur, description_acteur: e.target.value })
           }
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        >
-          {categories &&
-            categories.map((cat: any) => (
-              <option key={cat.id_categorie} value={cat.id_categorie}>
-                {cat.nom_categorie}
-              </option>
-            ))}
-        </select>
+          placeholder="Entrez une description de l'acteur"
+        />
       </div>
+
       <div className="flex space-x-3 pt-4 justify-end">
         <Button className="" type="submit">
           {isEdit ? 'Mettre à jour' : 'Créer'}
