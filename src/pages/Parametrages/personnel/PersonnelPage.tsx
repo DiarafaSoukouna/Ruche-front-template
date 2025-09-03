@@ -31,7 +31,9 @@ export default function PersonnelPage() {
       <Modal
         isOpen={showForm}
         onClose={handleCloseForm}
-        title={editingPersonnel ? "Modifier le personnel" : "Ajouter un personnel"}
+        title={
+          editingPersonnel ? "Modifier l'utilisateur" : "Ajouter un utilisateur"
+        }
         size="xl"
       >
         <PersonnelForm personnel={editingPersonnel} onClose={handleCloseForm} />

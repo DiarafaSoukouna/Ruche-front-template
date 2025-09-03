@@ -84,7 +84,7 @@ export default function FonctionList({ onEdit, onAdd }: FonctionListProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Fonctions</h2>
+        <div></div>
         <Button onClick={onAdd} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
           Ajouter une fonction

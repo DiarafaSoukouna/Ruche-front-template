@@ -249,7 +249,7 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl text-foreground font-bold">Utilisateurs</h2>
+        <div></div>
         <div className="flex gap-2">
           <Button
             variant="outline"
