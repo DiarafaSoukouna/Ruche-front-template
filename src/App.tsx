@@ -26,6 +26,7 @@ import Ugls from "./pages/Parametrages/Ugl";
 import ConventionPage from "./pages/Parametrages/convention/ConventionPage";
 import NiveauStructureConfigPage from "./pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage";
 import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
+import FonctionPage from "./pages/Parametrages/personnel/FonctionPage";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -83,6 +84,12 @@ const AppContent: React.FC = () => {
           <Route
             path="/acteurs"
             element={isAuthenticated ? <Acteurs /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/fonctions"
+            element={
+              isAuthenticated ? <FonctionPage /> : <Navigate to="/login" />
+            }
           />
           <Route
             path="/utilisateurs"

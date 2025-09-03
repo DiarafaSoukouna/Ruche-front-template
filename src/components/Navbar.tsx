@@ -18,6 +18,7 @@ import {
   LogOutIcon,
   KeyIcon,
   Settings2Icon,
+  BriefcaseIcon,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -78,6 +79,7 @@ const Navbar: React.FC = () => {
         { name: "Unités de gestion", href: "/unite_gestion", icon: LayoutGrid },
         { name: "Acteurs", href: "/acteurs", icon: User },
         { name: "Utilisateurs", href: "/utilisateurs", icon: UsersIcon },
+        { name: "Fonctions", href: "/fonctions", icon: BriefcaseIcon },
         {
           name: "Niveau Structure",
           href: "/niveau-structure-config",

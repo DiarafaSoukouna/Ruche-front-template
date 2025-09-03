@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { NiveauStructureConfig } from "../types/entities";
 
 // Schéma de validation pour Plan Site basé sur la documentation
 export const planSiteSchema = z.object({
@@ -94,39 +95,7 @@ export const planSiteFormSchema = planSiteSchema
       path: ["parent_ds"],
     }
   )
-  .refine(
-    (data) => {
-      // Validation: intitulé approprié selon le niveau
-      const niveau = data.niveau_ds;
-      const intitule = data.intutile_ds.toLowerCase();
-
-      if (niveau === 0) {
-        // Niveau racine: ministère, gouvernement, etc.
-        const rootKeywords = [
-          "ministère",
-          "gouvernement",
-          "présidence",
-          "cabinet",
-        ];
-        return rootKeywords.some((keyword) => intitule.includes(keyword));
-      } else if (niveau === 1) {
-        // Premier niveau: direction générale, secrétariat, etc.
-        const level1Keywords = [
-          "direction",
-          "secrétariat",
-          "département",
-          "division",
-        ];
-        return level1Keywords.some((keyword) => intitule.includes(keyword));
-      }
-      return true; // Pas de validation spécifique pour les autres niveaux
-    },
-    {
-      message:
-        "L'intitulé devrait correspondre au niveau hiérarchique (ex: Ministère pour niveau 0, Direction pour niveau 1)",
-      path: ["intutile_ds"],
-    }
-  );
+;
 
 export type PlanSiteFormData = z.infer<typeof planSiteFormSchema>;
 
@@ -142,4 +111,68 @@ export const validateNiveauHierarchique = (
 export const validateCodeDS = (code: string): boolean => {
   const genericCodes = ["TEST", "TEMP", "TMP", "XXX", "ABC", "123"];
   return !genericCodes.includes(code.toUpperCase()) && code.length >= 2;
+};
+
+// Dynamic validation function using niveau_structure_config
+export const validatePlanSiteWithConfig = (
+  data: { niveau_ds: number; parent_ds?: number; intutile_ds: string },
+  niveauConfigs: NiveauStructureConfig[]
+): { isValid: boolean; message?: string } => {
+  const { niveau_ds, parent_ds, intutile_ds } = data;
+  
+  // Find the configuration for this niveau
+  const config = niveauConfigs.find(c => c.nombre_nsc === niveau_ds);
+  
+  if (!config) {
+    return {
+      isValid: false,
+      message: `Niveau ${niveau_ds} non configuré dans niveau_structure_config`
+    };
+  }
+  
+  // Validate parent-child relationship based on configuration
+  if (niveau_ds === 1) {
+    // Premier niveau doit avoir parent_ds = 0 ou null
+    if (parent_ds !== 0 && parent_ds !== undefined && parent_ds !== null) {
+      return {
+        isValid: false,
+        message: `Le niveau racine (${config.libelle_nsc}) doit avoir parent_ds = 0`
+      };
+    }
+  } else if (niveau_ds > 1) {
+    // Niveaux supérieurs doivent avoir un parent valide
+    if (!parent_ds || parent_ds === 0) {
+      return {
+        isValid: false,
+        message: `Le niveau ${config.libelle_nsc} doit avoir un parent valide`
+      };
+    }
+  }
+  
+  // Validate code length based on configuration
+  if (config.code_number_nsc) {
+    const expectedLength = parseInt(config.code_number_nsc);
+    if (!isNaN(expectedLength) && intutile_ds.length > expectedLength * 10) {
+      return {
+        isValid: false,
+        message: `L'intitulé pour ${config.libelle_nsc} est trop long selon la configuration`
+      };
+    }
+  }
+  
+  return { isValid: true };
+};
+
+// Create dynamic schema factory
+export const createPlanSiteFormSchemaWithConfig = (niveauConfigs: NiveauStructureConfig[]) => {
+  return planSiteFormSchema.refine(
+    (data) => {
+      const validation = validatePlanSiteWithConfig(data, niveauConfigs);
+      return validation.isValid;
+    },
+    {
+      message: "Validation échouée selon la configuration niveau_structure_config",
+      path: ["niveau_ds"],
+    }
+  );
 };
