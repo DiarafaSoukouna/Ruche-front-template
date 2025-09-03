@@ -86,13 +86,20 @@ export default function TitrePersonnelList({
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div></div>
-        <Button onClick={onAdd} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Ajouter un titre
-        </Button>
+    <div className="space-y-8">
+      {/* Header avec contrôles */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Titres de Personnel
+          </h1>
+        </div>
+        <div className="flex gap-4">
+          <Button onClick={onAdd} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Ajouter un titre
+          </Button>
+        </div>
       </div>
 
       <Table<TitrePersonnel & { id?: string | number }>

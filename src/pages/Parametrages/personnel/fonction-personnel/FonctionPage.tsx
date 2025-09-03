@@ -26,12 +26,14 @@ export default function FonctionPage() {
   };
 
   return (
-    <div className="p-6">
+    <div>
       <FonctionList onAdd={handleAdd} onEdit={handleEdit} />
       <Modal
         isOpen={showForm}
         onClose={handleCloseForm}
-        title={editingFonction ? "Modifier la fonction" : "Ajouter une fonction"}
+        title={
+          editingFonction ? "Modifier la fonction" : "Ajouter une fonction"
+        }
         size="lg"
       >
         <FonctionForm fonction={editingFonction} onClose={handleCloseForm} />

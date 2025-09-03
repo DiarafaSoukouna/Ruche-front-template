@@ -140,13 +140,18 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div></div>
-        <Button variant={"primary"} onClick={onAdd}>
-          <Plus size={20} />
-          Nouvelle Convention
-        </Button>
+    <div className="space-y-8">
+      {/* Header avec contrôles */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Conventions</h1>
+        </div>
+        <div className="flex gap-4">
+          <Button variant={"primary"} onClick={onAdd}>
+            <Plus size={20} />
+            Nouvelle Convention
+          </Button>
+        </div>
       </div>
 
       <Table<Convention & { id?: string | number }>

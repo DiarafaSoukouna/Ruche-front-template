@@ -247,10 +247,13 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div></div>
-        <div className="flex gap-2">
+    <div className="space-y-8">
+      {/* Header avec contrôles */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Utilisateurs</h1>
+        </div>
+        <div className="flex gap-4">
           <Button
             variant="outline"
             onClick={() => setShowTitreModal(true)}
