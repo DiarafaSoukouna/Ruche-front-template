@@ -79,11 +79,6 @@ const Navbar: React.FC = () => {
         { name: 'Acteurs', href: '/acteurs', icon: User },
         { name: 'Utilisateurs', href: '/utilisateurs', icon: UsersIcon },
         {
-          name: 'Niveau Structure',
-          href: '/niveau-structure-config',
-          icon: LayoutGrid,
-        },
-        {
           name: 'Partenaire Financier',
           href: '/part_financier',
           icon: HandshakeIcon,

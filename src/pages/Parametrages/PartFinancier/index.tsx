@@ -18,12 +18,14 @@ import FormPartFinancier from './form'
 import { deletePartFinancier } from '../../../functions/partenaire_financiers/delete'
 import { toast } from 'react-toastify'
 import ConfirmModal from '../../../components/ConfirModal'
+import { getAllActeurs } from '../../../functions/acteurs/gets'
+import { ActeurType } from '../Acteurs/types'
 
 const PartFinanciers = () => {
     //   const [acteurs, setPartFinanciers] = useState([])
     // const [acteurs, set]
     const [showModal, setShowModal] = useState(false)
-    const [partFinanciers, setPartFinanciers] = useState<typePartFinancier[]>([])
+    const [partFinanciers, setPartFinanciers] = useState<ActeurType[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [isDelete, setIsDelete] = useState(false)
     const [part_financier, setPart_financier] = useState<typePartFinancier>({
@@ -65,10 +67,15 @@ const PartFinanciers = () => {
     const fetchPartFinanciers = async () => {
         setLoading(true)
         try {
-            const res = await allPartFinancier()
-            setPartFinanciers(res)
+            const res = await getAllActeurs()
+            if (res?.data) {
+                const filteredActeurs = res.data.filter((acteur:any) =>
+                    acteur.categorie_acteur && acteur.categorie_acteur.includes(3)
+                )
+                setPartFinanciers(filteredActeurs)
+            }
         } catch (error) {
-            toast.error("Erreur lors de la récuperation du parténaire finanicié")
+            toast.error("Erreur lors de la récupération du partenaire financier")
             console.error(error)
         } finally {
             setLoading(false)
@@ -103,7 +110,7 @@ const PartFinanciers = () => {
 
     const columns = [
         {
-            key: 'code_part',
+            key: 'code_acteur',
             title: 'Code',
             render: (value: String) => (
                 <div className="flex items-center">
@@ -114,8 +121,8 @@ const PartFinanciers = () => {
             ),
         },
         {
-            key: 'definition_part',
-            title: 'Definition',
+            key: 'nom_acteur',
+            title: 'Nom',
             render: (value: String) => (
                 <div className="flex items-center">
                     <div>
@@ -125,8 +132,8 @@ const PartFinanciers = () => {
             ),
         },
         {
-            key: 'sigle_part',
-            title: 'Sigle',
+            key: 'personne_responsable',
+            title: 'Responsable',
             render: (value: String) => (
                 <div className="flex items-center">
                     <div>
@@ -135,12 +142,35 @@ const PartFinanciers = () => {
                 </div>
             ),
         },
+        {
+            key: 'contact',
+            title: 'Contact',
+            render: (value: String) => (
+                <div className="flex items-center">
+                    <div>
+                        <div className="font-medium text-gray-900">{value}</div>
+                    </div>
+                </div>
+            ),
+        },
+        {
+            key: 'adresse_email',
+            title: 'Email',
+            render: (value: String) => (
+                <div className="flex items-center">
+                    <div>
+                        <div className="font-medium text-gray-900">{value}</div>
+                    </div>
+                </div>
+            ),
+        },
+
         {
             key: 'actions',
             title: 'Actions',
             render: (_: any, row: any) => (
                 <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" onClick={() => onEdit(row)}>
+                    {/* <Button variant="outline" size="sm" onClick={() => onEdit(row)}>
                         <EditIcon className="w-3 h-3" />
                     </Button>
                     <Button
@@ -148,11 +178,11 @@ const PartFinanciers = () => {
                         size="sm"
                         onClick={() => {
                             setIsDelete(true)
-                            setPart_financier(row)
+                            setActeur(row)
                         }}
                     >
                         <TrashIcon className="w-3 h-3" />
-                    </Button>
+                    </Button> */}
                 </div>
             ),
         },
