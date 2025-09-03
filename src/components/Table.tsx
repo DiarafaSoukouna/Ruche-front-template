@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import Button from './Button'
 import Input from './Input'
+import Card from './Card'
 
 interface Column<T> {
   key: keyof T
@@ -19,6 +20,7 @@ interface TableProps<T> {
   data: T[]
   itemsPerPage?: number
   className?: string
+  title?: string
   onRowClick?: (row: T) => void
 }
 
@@ -29,6 +31,7 @@ function Table<T extends { id?: string | number }>({
   data,
   itemsPerPage = 10,
   className = '',
+  title = '',
   onRowClick,
 }: TableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1)
@@ -86,8 +89,8 @@ function Table<T extends { id?: string | number }>({
           sortConfig.order === 'asc'
             ? 'desc'
             : sortConfig.order === 'desc'
-            ? null
-            : 'asc',
+              ? null
+              : 'asc',
       })
     } else {
       setSortConfig({ key, order: 'asc' })
@@ -108,109 +111,117 @@ function Table<T extends { id?: string | number }>({
       className={`bg-background rounded-xl shadow-sm border border-border ${className}`}
     >
       {/* Barre de recherche */}
-      <div className="px-6 py-4">
-        <Input
-          type="text"
-          placeholder="Recherche..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value)
-            setCurrentPage(1)
-          }}
-        />
-      </div>
-
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto">
-          <thead className="bg-gray-50 border-b border-border">
-            <tr>
-              {columns.map((column) => (
-                <th
-                  key={String(column.key)}
-                  className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer select-none"
-                  onClick={() => handleSort(column.key)}
-                >
-                  {column.title} {getSortIcon(column.key)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {currentData.map((row, idx) => (
-              <tr
-                key={row.id || idx}
-                className={`transition-colors duration-150 hover:bg-primary-50 ${
-                  onRowClick ? 'cursor-pointer' : ''
-                }`}
-                onClick={() => onRowClick && onRowClick(row)}
-              >
-                {columns.map((column) => (
-                  <td
-                    key={String(column.key)}
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
-                  >
-                    {column.render
-                      ? column.render(row[column.key], row)
-                      : (row[column.key] as unknown as React.ReactNode)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="px-6 py-4 flex items-center justify-between border-t border-border bg-background">
-          <div className="text-sm text-gray-600">
-            Affichage de {startIndex + 1} à{' '}
-            {Math.min(endIndex, sortedData.length)} sur {sortedData.length}{' '}
-            résultats
+      <Card>
+        <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h4 className="text-2xl font-bold text-gray-900">{title}</h4>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => goToPage(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeftIcon className="w-4 h-4" />
-            </Button>
+          <div>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter(
-                (page) =>
-                  page === 1 ||
-                  page === totalPages ||
-                  Math.abs(page - currentPage) <= 1
-              )
-              .map((page, index, array) => (
-                <React.Fragment key={page}>
-                  {index > 0 && array[index - 1] !== page - 1 && (
-                    <span className="text-gray-400">...</span>
-                  )}
-                  <Button
-                    variant={currentPage === page ? 'primary' : 'outline'}
-                    size="sm"
-                    onClick={() => goToPage(page)}
-                  >
-                    {page}
-                  </Button>
-                </React.Fragment>
-              ))}
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              <ChevronRightIcon className="w-4 h-4" />
-            </Button>
+            <Input
+              type="text"
+              placeholder="Recherche..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+                setCurrentPage(1)
+              }}
+            />
           </div>
         </div>
-      )}
+
+        <div className="overflow-x-auto">
+          <table className="w-full table-auto">
+            <thead className="bg-gray-50 border-b border-border">
+              <tr>
+                {columns.map((column) => (
+                  <th
+                    key={String(column.key)}
+                    className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer select-none"
+                    onClick={() => handleSort(column.key)}
+                  >
+                    {column.title} {getSortIcon(column.key)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {currentData.map((row, idx) => (
+                <tr
+                  key={row.id || idx}
+                  className={`transition-colors duration-150 hover:bg-primary-50 ${onRowClick ? 'cursor-pointer' : ''
+                    }`}
+                  onClick={() => onRowClick && onRowClick(row)}
+                >
+                  {columns.map((column) => (
+                    <td
+                      key={String(column.key)}
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                    >
+                      {column.render
+                        ? column.render(row[column.key], row)
+                        : (row[column.key] as unknown as React.ReactNode)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 flex items-center justify-between border-t border-border bg-background">
+            <div className="text-sm text-gray-600">
+              Affichage de {startIndex + 1} à{' '}
+              {Math.min(endIndex, sortedData.length)} sur {sortedData.length}{' '}
+              résultats
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeftIcon className="w-4 h-4" />
+              </Button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(
+                  (page) =>
+                    page === 1 ||
+                    page === totalPages ||
+                    Math.abs(page - currentPage) <= 1
+                )
+                .map((page, index, array) => (
+                  <React.Fragment key={page}>
+                    {index > 0 && array[index - 1] !== page - 1 && (
+                      <span className="text-gray-400">...</span>
+                    )}
+                    <Button
+                      variant={currentPage === page ? 'primary' : 'outline'}
+                      size="sm"
+                      onClick={() => goToPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  </React.Fragment>
+                ))}
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                <ChevronRightIcon className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+      </Card>
     </div>
   )
 }

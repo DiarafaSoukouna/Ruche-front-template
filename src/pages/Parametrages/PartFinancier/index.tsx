@@ -53,7 +53,7 @@ const PartFinanciers = () => {
             setShowModal(false)
             toast.success(isEdit ?
                 "Parténaire financié mise à jour avec succès"
-            : "Parténaire financié ajouté avec succès"
+                : "Parténaire financié ajouté avec succès"
             )
             fetchPartFinanciers()
             clean()
@@ -199,22 +199,19 @@ const PartFinanciers = () => {
                 onClose={() => close()}
                 title={'Supprimer cet partenaire'}
                 size="md"
-                confimationButon={()=>deletePartFinancier(part_financier.id_partenaire!)}
+                confimationButon={() => deletePartFinancier(part_financier.id_partenaire!)}
             >
             </ConfirmModal>
 
-            <Card title="Liste des partenaires financiers" className="overflow-hidden">
-                {loading ?
-                    (<div className="text-center">
-                        <RiseLoader color='blue' />
-                    </div>
-                    ) :
-                    partFinanciers.length > 0 ?
-                    (<Table columns={columns} data={partFinanciers} itemsPerPage={5} />)
+            {loading ?
+                (<div className="text-center">
+                    <RiseLoader color='green' />
+                </div>
+                ) :
+                partFinanciers.length > 0 ?
+                    (<Table title="Liste des partenaires financiers" columns={columns} data={partFinanciers} itemsPerPage={5} />)
                     : <div className='text-center'>Parténaire financier non disponible</div>
-                }
-
-            </Card>
+            }
         </div>
     )
 }
