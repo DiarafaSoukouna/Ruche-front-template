@@ -1,33 +1,34 @@
 import Button from "../../../components/Button";
-import { addLocalite } from "../../../functions/localites/post";
-import { updateLocalite } from "../../../functions/localites/put";
 import { typeLocalite } from "../../../functions/localites/types";
 import Select from "react-select";
-import { typeNiveauLocalite } from "../../../functions/niveauLocalites/types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { oneNiveauLocalite } from "../../../functions/niveauLocalites/gets";
+import { oneNiveauStructure } from "../../../functions/niveauStructures/gets";
+import { typeNiveauStructure } from "../../../functions/niveauStructures/types";
+import { typePlanSite } from "../../../functions/planSites/types";
+import { updatePlanSite } from "../../../functions/planSites/put";
+import { addPlanSite } from "../../../functions/planSites/post";
 
 interface Props {
     onClose: () => void;
-    localiteByNiveau: (id: number) => void;
+    planByNiveau: (id: number) => void;
     niveau: number;
     currentId: number;
-    niveauLocalites: typeNiveauLocalite[];
-    editRow: typeLocalite | null;
+    niveauStructures: typeNiveauStructure[];
+    editRow: typePlanSite | null;
 }
 
 type Errors = {
-    intitule_loca?: string;
-    code_national_loca?: string;
-    code_loca?: string;
+    intitule_ds?: string;
+    code_relai_ds?: string;
+    code_ds?: string;
 };
 
-const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, niveau, currentId, localiteByNiveau }) => {
+const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niveau, currentId, planByNiveau }) => {
 
     const parentIndex = niveau - 2;
-    const parentInfo = niveauLocalites[parentIndex]
-    const curentInfo = niveauLocalites[niveau - 1]
+    const parentInfo = niveauStructures[parentIndex]
+    const curentInfo = niveauStructures[niveau - 1]
     const [localiteByNiv, setLocaliteByNiv] = useState<typeLocalite[]>([])
     const [errors, setErrors] = useState<Errors>({});
 
@@ -35,17 +36,17 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
         const newErrors: Errors = {};
 
         if (!data.intitule_loca || data.intitule_loca.trim() === "") {
-            newErrors.intitule_loca = "Le libellé est obligatoire.";
+            newErrors.intitule_ds = "Le libellé est obligatoire.";
         }
 
         if (!data.code_national_loca || data.code_national_loca.trim() === "") {
-            newErrors.code_national_loca = "Le code national est obligatoire.";
-        } else if (data.code_national_loca.length !== Number(curentInfo.Code_number_nlc)) {
-            newErrors.code_national_loca = `Le code doit contenir exactementh ${curentInfo.Code_number_nlc } caractères.`;
+            newErrors.code_relai_ds = "Le code national est obligatoire.";
+        } else if (data.code_relai_ds.length !== Number(curentInfo.code_number_nsc)) {
+            newErrors.code_relai_ds = `Le code doit contenir exactementh ${curentInfo.code_number_nsc } caractères.`;
         }
 
-        if (!data.code_loca || data.code_loca.trim() === "") {
-            newErrors.code_loca = "Le code est obligatoire.";
+        if (!data.code_ds || data.code_ds.trim() === "") {
+            newErrors.code_ds = "Le code est obligatoire.";
         }
 
         return newErrors;
@@ -65,32 +66,32 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
         }
         setErrors({});
 
-        let payload: typeLocalite;
+        let payload: typePlanSite;
         if (parentInfo) {
             payload = {
-                intitule_loca: data.intitule_loca as string,
-                code_national_loca: data.code_national_loca as string,
-                code_loca: data.code_loca as string,
-                parent_loca: data.parent_loca as string,
-                niveau_loca: currentId,
-                id_loca: editRow?.id_loca,
+                intitule_ds: data.intitule_ds as string,
+                code_relai_ds: data.code_relai_ds as string,
+                code_ds: data.code_ds as string,
+                parent_ds: data.parent_ds as string,
+                niveau_ds: currentId,
+                id_ds: editRow?.id_ds,
             };
         } else {
             payload = {
-                intitule_loca: data.intitule_loca as string,
-                code_national_loca: data.code_national_loca as string,
-                code_loca: data.code_loca as string,
-                niveau_loca: currentId,
-                id_loca: editRow?.id_loca,
+                intitule_ds: data.intitule_ds as string,
+                code_relai_ds: data.code_relai_ds as string,
+                code_ds: data.code_ds as string,
+                niveau_ds: currentId,
+                id_ds: editRow?.id_ds,
             };
         }
 
         try {
             let res;
             if (editRow) {
-                res = await updateLocalite(payload);
+                res = await updatePlanSite(payload);
             } else {
-                res = await addLocalite(payload);
+                res = await addPlanSite(payload);
                 form.reset();
             }
             toast.success(editRow ?
@@ -98,7 +99,7 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
                 "Localité ajoutée avec succès"
             );
             onClose()
-            localiteByNiveau(currentId)
+            planByNiveau(currentId)
         } catch (error) {
             console.log("error", error);
         }
@@ -106,7 +107,7 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
 
     const OneNiveau = async (id: number) => {
         try {
-            const res = await oneNiveauLocalite(id);
+            const res = await oneNiveauStructure(id);
             setLocaliteByNiv(res.localites);
         } catch (error) {
             toast.error('Erreur lors de la recuperation du niveau localité')
@@ -115,12 +116,12 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
 
     useEffect(() => {
         if (parentInfo) {
-            OneNiveau(parentInfo.id_nlc!)
+            OneNiveau(parentInfo.id_nsc!)
         }
     }, [])
 
-    const defaultValue = typeof editRow?.parent_loca === 'object' && editRow.parent_loca !== null ?
-        editRow.parent_loca as typeLocalite :
+    const defaultValue = typeof editRow?.parent_ds === 'object' && editRow.parent_ds !== null ?
+        editRow.parent_ds as typePlanSite :
         ''
     console.log(curentInfo, niveau)
     return (
@@ -134,14 +135,14 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
                             Libellé
                         </label>
                         <input
-                            name="intitule_loca"
+                            name="intitule_ds"
                             placeholder="Entrer le libellé"
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 
-                              ${errors.intitule_loca ? "border-red-500" : "border-gray-300"}`}
-                            defaultValue={editRow?.intitule_loca || ""}
+                              ${errors.intitule_ds ? "border-red-500" : "border-gray-300"}`}
+                            defaultValue={editRow?.intitule_ds || ""}
                         />
-                        {errors.intitule_loca && (
-                            <p className="text-red-500 text-sm mt-1">{errors.intitule_loca}</p>
+                        {errors.intitule_ds && (
+                            <p className="text-red-500 text-sm mt-1">{errors.intitule_ds}</p>
                         )}
                     </div>
 
@@ -151,41 +152,41 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
                             Code
                         </label>
                         <input
-                            name="code_loca"
+                            name="code_ds"
                             placeholder="Entrer le code"
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 
-                              ${errors.code_loca ? "border-red-500" : "border-gray-300"}`}
-                            defaultValue={editRow?.code_loca || ""}
+                              ${errors.code_ds ? "border-red-500" : "border-gray-300"}`}
+                            defaultValue={editRow?.code_ds || ""}
                         />
-                        {errors.code_loca && (
-                            <p className="text-red-500 text-sm mt-1">{errors.code_loca}</p>
+                        {errors.code_ds && (
+                            <p className="text-red-500 text-sm mt-1">{errors.code_ds}</p>
                         )}
                     </div>
                     <div className="col-span-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Code national
+                            Code rélai
                         </label>
                         <input
-                            name="code_national_loca"
+                            name="code_relai_ds"
                             placeholder="Entrer le code national"
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 
-                              ${errors.code_national_loca ? "border-red-500" : "border-gray-300"}`}
-                            defaultValue={editRow?.code_national_loca || ""}
+                              ${errors.code_relai_ds ? "border-red-500" : "border-gray-300"}`}
+                            defaultValue={editRow?.code_relai_ds || ""}
                         />
-                        {errors.code_national_loca && (
-                            <p className="text-red-500 text-sm mt-1">{errors.code_national_loca}</p>
+                        {errors.code_relai_ds && (
+                            <p className="text-red-500 text-sm mt-1">{errors.code_relai_ds}</p>
                         )}
                     </div>
                     {parentInfo &&
                         <div className="col-span-6">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                {parentInfo.libelle_nlc}
+                                {parentInfo.libelle_nsc}
                             </label>
                             <Select
-                                name="parent_loca"
+                                name="parent_ds"
                                 defaultValue={defaultValue ? {
-                                    value: String(defaultValue?.id_loca),
-                                    label: defaultValue.intitule_loca
+                                    value: String(defaultValue?.id_ds),
+                                    label: defaultValue.intitule_ds
                                 } : null}
                                 options={localiteByNiv.map(item => ({
                                     value: String(item.id_loca),
@@ -211,4 +212,4 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
     );
 };
 
-export default FormLocalite;
+export default FormPlanSite;

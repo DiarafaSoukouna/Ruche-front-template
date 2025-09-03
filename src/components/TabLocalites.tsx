@@ -24,10 +24,17 @@ export const Tab = ({ children }: TabProps) => {
   return <>{children}</>;
 };
 
+<<<<<<< HEAD
 const Tabs = ({
   children,
   defaultActiveTab,
   className = "",
+=======
+const TabsLocalites = ({ 
+  children, 
+  defaultActiveTab, 
+  className = '', 
+>>>>>>> 3b9f76935ed15856628e4688a1c7129a24947bc5
   defaulBoutonLabel,
   setAddBoutonLabel,
   onAddTab,
@@ -99,6 +106,10 @@ const Tabs = ({
   );
 };
 
-Tabs.Tab = Tab;
+TabsLocalites .Tab = Tab;
 
+<<<<<<< HEAD
 export default Tabs;
+=======
+export default TabsLocalites  ;
+>>>>>>> 3b9f76935ed15856628e4688a1c7129a24947bc5
