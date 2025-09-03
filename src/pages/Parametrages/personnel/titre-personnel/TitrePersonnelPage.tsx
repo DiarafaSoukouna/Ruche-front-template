@@ -26,7 +26,7 @@ export default function TitrePersonnelPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div>
       <TitrePersonnelList onAdd={handleAdd} onEdit={handleEdit} />
 
       <Modal

@@ -26,12 +26,16 @@ export default function TypeZonePage() {
   };
 
   return (
-    <div className="p-6">
+    <div>
       <TypeZoneList onAdd={handleAdd} onEdit={handleEdit} />
       <Modal
         isOpen={showForm}
         onClose={handleCloseForm}
-        title={editingTypeZone ? "Modifier le type de zone" : "Ajouter un type de zone"}
+        title={
+          editingTypeZone
+            ? "Modifier le type de zone"
+            : "Ajouter un type de zone"
+        }
         size="md"
       >
         <TypeZoneForm typeZone={editingTypeZone} onClose={handleCloseForm} />

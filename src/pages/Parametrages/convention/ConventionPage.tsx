@@ -26,7 +26,7 @@ export default function ConventionPage() {
   };
 
   return (
-    <div className="p-6">
+    <div>
       <ConventionList onAdd={handleAdd} onEdit={handleEdit} />
 
       <Modal
