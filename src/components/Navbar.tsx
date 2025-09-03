@@ -18,6 +18,7 @@ import {
   LogOutIcon,
   KeyIcon,
   Settings2Icon,
+  BriefcaseIcon,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -73,11 +74,12 @@ const Navbar: React.FC = () => {
       name: 'Paramétrage',
       icon: CogIcon,
       children: [
-        // { name: "Produits", href: "/products", icon: ShoppingBagIcon },
+        { name: 'Produits', href: '/products', icon: ShoppingBagIcon },
         { name: 'Localités', href: '/localites', icon: MapPinIcon },
         { name: 'Unités de gestion', href: '/unite_gestion', icon: LayoutGrid },
         { name: 'Acteurs', href: '/acteurs', icon: User },
         { name: 'Utilisateurs', href: '/utilisateurs', icon: UsersIcon },
+        { name: 'Fonctions', href: '/fonctions', icon: BriefcaseIcon },
         {
           name: 'Niveau Structure',
           href: '/niveau-structure-config',
@@ -118,7 +120,7 @@ const Navbar: React.FC = () => {
                 </span>
               </div>
               <span className="text-xl font-bold text-primary">
-                Systeme informatisé de suivi évaluation
+                Système informatisé de suivi-évaluation
               </span>
             </div>
           </div>

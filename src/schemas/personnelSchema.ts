@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { TitrePersonnelEnum } from "../types/entities";
 
 // Schéma pour la création de personnel (PersonnelRequest)
 export const personnelCreateSchema = z.object({
@@ -11,10 +10,8 @@ export const personnelCreateSchema = z.object({
   // ID personnel - string, requis
   id_personnel_perso: z.string().min(1, "Identifiant requis"),
 
-  // Titre personnel - enum TitrePersonnelEnum, optionnel
-  titre_personnel: z.enum([TitrePersonnelEnum.M, TitrePersonnelEnum.F], {
-    error: "Titre requis",
-  }),
+  // Titre personnel - integer, requis
+  titre_personnel: z.number("Titre requis").min(1, "Titre requis"),
 
   // Prénom - string, requis
   prenom_perso: z.string().min(1, "Prénom requis"),
@@ -25,11 +22,11 @@ export const personnelCreateSchema = z.object({
   // Contact - string, requis
   contact_perso: z.string("Contact requis").min(1, "Contact requis"),
 
-  // Fonction - string, requis
-  fonction_perso: z.string("Fonction requise").min(1, "Fonction requise"),
+  // Fonction - number (ID de la fonction), requis
+  fonction_perso: z.number("Fonction requise").min(1, "Fonction requise"),
 
-  // Description fonction - string, optionnel
-  description_fonction_perso: z.string().optional(),
+  // Service - number (ID du plan site), optionnel
+  service_perso: z.number("Service requis").min(1, "Service requis").optional(),
 
   // Niveau - integer, requis
   niveau_perso: z
@@ -48,8 +45,6 @@ export const personnelCreateSchema = z.object({
   // Rapport annuel - boolean, optionnel
   rapport_annuel_perso: z.boolean().optional(),
 
-  // Statut - string, requis
-  statut: z.string("Statut requis").min(1, "Statut requis"),
 
   // Région - integer (ID de la localité), requis
   region_perso: z.int("Région requise").min(1, "Région requise"),

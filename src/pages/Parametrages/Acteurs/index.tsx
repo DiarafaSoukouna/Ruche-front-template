@@ -334,9 +334,12 @@ const Acteurs = () => {
         <CategorieActeur />
       </Modal>
 
-      <Card title="Liste des acteurs" className="overflow-hidden">
-        <Table columns={columns} data={allActeurs} itemsPerPage={5} />
-      </Card>
+      <Table
+        columns={columns}
+        data={allActeurs}
+        itemsPerPage={5}
+        title="Liste des acteurs"
+      />
     </div>
   )
 }
