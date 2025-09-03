@@ -1,84 +1,74 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import Button from '../components/Button';
-import { EyeIcon, EyeOffIcon, LockIcon, User, Loader2 } from 'lucide-react';
-import { useMutation } from '@tanstack/react-query';
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
+import { EyeIcon, EyeOffIcon, LockIcon, User, Loader2 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    id_personnel_perso: '',
-    password: ''
+    id_personnel_perso: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
-  // --- Mutation pour login normal ---
   const loginMutation = useMutation({
-    mutationFn: async () => {
-      return await login(formData.id_personnel_perso, formData.password);
-    },
+    mutationFn: async () =>
+      await login(formData.id_personnel_perso, formData.password),
     onSuccess: (success) => {
-      if (success) {
-        navigate('/dashboard');
-      } else {
-        setError('Email ou mot de passe incorrect');
-      }
+      if (success) navigate("/dashboard");
+      else setError("Email ou mot de passe incorrect");
     },
-    onError: () => {
-      setError('Une erreur est survenue');
-    }
+    onError: () => setError("Une erreur est survenue"),
   });
 
-  // --- Mutation pour login Google ---
   const googleMutation = useMutation({
-    mutationFn: async () => {
-      return await loginWithGoogle();
-    },
-    onSuccess: () => {
-      navigate('/dashboard');
-    },
-    onError: () => {
-      setError('Échec de la connexion avec Google');
-    }
+    mutationFn: async () => await loginWithGoogle(),
+    onSuccess: () => navigate("/dashboard"),
+    onError: () => setError("Échec de la connexion avec Google"),
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
+    setError("");
     loginMutation.mutate();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background dark:bg-background flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
+        <div className="bg-card dark:bg-card rounded-2xl shadow-xl p-8 border border-border">
           <div className="text-center mb-8">
-            <div className="mx-auto h-16 w-16 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
-              <LockIcon className="h-8 w-8 text-white" />
+            <div className="mx-auto h-16 w-16 bg-primary rounded-xl flex items-center justify-center mb-4">
+              <LockIcon className="h-8 w-8 text-primary-foreground" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900">Connexion</h2>
-            <p className="mt-2 text-gray-600">Accédez à votre espace d'administration</p>
+            <h2 className="text-3xl font-bold text-foreground dark:text-foreground">
+              Connexion
+            </h2>
+            <p className="mt-2 text-muted-foreground dark:text-muted-foreground">
+              Accédez à votre espace d'administration
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="id_personnel_perso" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="id_personnel_perso"
+                className="block text-sm font-medium text-foreground dark:text-foreground mb-2"
+              >
                 Identifiants
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-muted-foreground dark:text-muted-foreground" />
                 </div>
                 <input
                   id="id_personnel_perso"
@@ -87,46 +77,49 @@ const Login = () => {
                   required
                   value={formData.id_personnel_perso}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="pl-10 w-full px-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-ring text-foreground dark:text-foreground bg-background dark:bg-background placeholder-muted-foreground dark:placeholder-muted-foreground transition-colors"
                   placeholder="user!@#$"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-foreground dark:text-foreground mb-2"
+              >
                 Mot de passe
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                  <LockIcon className="h-5 w-5 text-gray-400" />
+                  <LockIcon className="h-5 w-5 text-muted-foreground dark:text-muted-foreground" />
                 </div>
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="pl-10 pr-12 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="pl-10 pr-12 w-full px-4 py-3 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-ring text-foreground dark:text-foreground bg-background dark:bg-background placeholder-muted-foreground dark:placeholder-muted-foreground transition-colors"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground dark:text-muted-foreground"
                 >
                   {showPassword ? (
-                    <EyeOffIcon className="h-5 w-5 text-gray-400" />
+                    <EyeOffIcon className="h-5 w-5" />
                   ) : (
-                    <EyeIcon className="h-5 w-5 text-gray-400" />
+                    <EyeIcon className="h-5 w-5" />
                   )}
                 </button>
               </div>
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-destructive/20 border border-destructive text-destructive-foreground px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -137,25 +130,29 @@ const Login = () => {
               size="lg"
               disabled={loginMutation.isPending}
             >
-              {loginMutation.isPending && <Loader2 className="h-5 w-5 animate-spin" />}
+              {loginMutation.isPending && (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              )}
               Se connecter
             </Button>
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-input dark:border-input" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Ou</span>
+                <span className="px-2 bg-card dark:bg-card text-muted-foreground dark:text-muted-foreground">
+                  Ou
+                </span>
               </div>
             </div>
 
             <Button
               type="button"
-              className="w-full py-3 flex justify-center items-center gap-3 !bg-white hover:!bg-gray-50 border !border-gray-300 !text-gray-700 shadow-sm"
+              className="w-full py-3 flex justify-center items-center gap-3 !bg-card dark:!bg-card hover:!bg-secondary dark:hover:!bg-secondary border !border-input dark:!border-input !text-foreground dark:!text-foreground shadow-sm"
               size="lg"
               onClick={() => {
-                setError('');
+                setError("");
                 googleMutation.mutate();
               }}
               disabled={googleMutation.isPending}
