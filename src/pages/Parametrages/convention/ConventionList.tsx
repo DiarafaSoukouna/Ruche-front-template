@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
-import DataTable from "../../../components/DataTable";
+import Table from "../../../components/Table";
 import Button from "../../../components/Button";
-import { apiClient } from "../../../lib/api";
+import { conventionService } from "../../../services/conventionService";
 import { Convention } from "../../../types/entities";
 
 interface ConventionListProps {
@@ -14,18 +14,19 @@ interface ConventionListProps {
 export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
   const queryClient = useQueryClient();
 
+  // Fetch convention data
+  const { data: conventions = [], isLoading } = useQuery<Convention[]>({
+    queryKey: ["/convention/"],
+    queryFn: conventionService.getAll,
+  });
+
   const deleteMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await apiClient.request(`/convention/${id}/`, {
-        method: "DELETE",
-      });
-    },
+    mutationFn: conventionService.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/convention/"] });
-      toast.success("Convention supprimée avec succès");
     },
     onError: () => {
-      toast.error("Erreur lors de la suppression de la convention");
+      toast.error("Erreur lors de la suppression");
     },
   });
 
@@ -39,37 +40,40 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
 
   const columns = [
     {
-      header: "Code",
-      accessor: "code_convention" as keyof Convention,
+      key: "code_convention" as keyof Convention,
+      title: "Code",
     },
     {
-      header: "Intitulé",
-      accessor: "intutile_conv" as keyof Convention,
+      key: "intutile_conv" as keyof Convention,
+      title: "Intitulé",
     },
     {
-      header: "Référence",
-      accessor: "reference_conv" as keyof Convention,
+      key: "reference_conv" as keyof Convention,
+      title: "Référence",
     },
     {
-      header: "Montant",
-      accessor: ((convention: Convention) => {
+      key: "montant_conv" as keyof Convention,
+      title: "Montant",
+      render: (_: Convention[keyof Convention], convention: Convention) => {
         return new Intl.NumberFormat("fr-FR", {
           style: "currency",
           currency: "XOF",
         }).format(convention.montant_conv);
-      }) as (row: Convention) => React.ReactNode,
+      },
     },
     {
-      header: "Date signature",
-      accessor: ((convention: Convention) => {
+      key: "date_signature_conv" as keyof Convention,
+      title: "Date signature",
+      render: (_: Convention[keyof Convention], convention: Convention) => {
         return new Date(convention.date_signature_conv).toLocaleDateString(
           "fr-FR"
         );
-      }) as (row: Convention) => React.ReactNode,
+      },
     },
     {
-      header: "État",
-      accessor: ((convention: Convention) => {
+      key: "etat_conv" as keyof Convention,
+      title: "État",
+      render: (_: Convention[keyof Convention], convention: Convention) => {
         const stateColors = {
           active: "bg-green-100 text-green-800",
           inactive: "bg-gray-100 text-gray-800",
@@ -89,11 +93,12 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
             {convention.etat_conv}
           </span>
         );
-      }) as (row: Convention) => React.ReactNode,
+      },
     },
     {
-      header: "Partenaire",
-      accessor: ((convention: Convention) => {
+      key: "partenaire_conv" as keyof Convention,
+      title: "Partenaire",
+      render: (_: Convention[keyof Convention], convention: Convention) => {
         if (!convention.partenaire_conv) {
           return <span className="text-gray-400">Aucun</span>;
         }
@@ -106,11 +111,12 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
         ) : (
           <span className="text-red-500">Acteur introuvable</span>
         );
-      }) as (row: Convention) => React.ReactNode,
+      },
     },
     {
-      header: "Actions",
-      accessor: ((convention: Convention) => (
+      key: "id_convention" as keyof Convention,
+      title: "Actions",
+      render: (_: Convention[keyof Convention], convention: Convention) => (
         <div className="flex space-x-2">
           <Button
             variant="outline"
@@ -130,7 +136,7 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
             <Trash2 size={16} />
           </Button>
         </div>
-      )) as (row: Convention) => React.ReactNode,
+      ),
     },
   ];
 
@@ -149,12 +155,17 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
         </Button>
       </div>
 
-      <DataTable<Convention>
-        columns={columns}
-        rowKey={(convention) => convention.id_convention!}
-        endpoint="/convention/"
-        className="bg-white rounded-lg shadow"
-      />
+      {isLoading ? (
+        <div className="flex justify-center items-center min-h-[400px]">
+          <div className="text-gray-500">Chargement...</div>
+        </div>
+      ) : (
+        <Table<Convention & { id?: string | number }>
+          columns={columns}
+          data={conventions.map(c => ({ ...c, id: c.id_convention }))}
+          className="bg-white rounded-lg shadow"
+        />
+      )}
     </div>
   );
 }
