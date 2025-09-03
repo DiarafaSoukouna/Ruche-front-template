@@ -134,12 +134,8 @@ export default function PersonnelForm({
     mutation.mutate(data);
   };
 
-  const onError = (errors: Record<string, { message?: string }>) => {
-    console.log("Validation errors:", errors);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Controller
           control={control}

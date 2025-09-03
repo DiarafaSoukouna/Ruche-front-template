@@ -142,7 +142,7 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl text-foreground font-bold">Conventions</h2>
+        <div></div>
         <Button variant={"primary"} onClick={onAdd}>
           <Plus size={20} />
           Nouvelle Convention

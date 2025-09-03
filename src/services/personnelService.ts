@@ -14,7 +14,7 @@ export const personnelService = {
     }
   },
 
-  // Récupérer un personnel par ID
+  // Récupérer un utilisateur par ID
   async getById(n_personnel: number): Promise<Personnel> {
     try {
       const response = await apiClient.request<Personnel>(
@@ -41,7 +41,7 @@ export const personnelService = {
     }
   },
 
-  // Mettre à jour un personnel
+  // Mettre à jour un utilisateur
   async update(
     n_personnel: number,
     data: PersonnelFormData
@@ -70,7 +70,7 @@ export const personnelService = {
     }
   },
 
-  // Supprimer un personnel
+  // Supprimer un utilisateur
   async delete(n_personnel: number): Promise<void> {
     try {
       await apiClient.request<void>(`/personnel/${n_personnel}/`, {
@@ -96,7 +96,7 @@ export const personnelService = {
     }
   },
 
-  // Activer un personnel
+  // Activer un utilisateur
   async enable(n_personnel: number): Promise<void> {
     try {
       await apiClient.request<void>(`/personnel/${n_personnel}/enable/`, {
@@ -109,7 +109,7 @@ export const personnelService = {
     }
   },
 
-  // Désactiver un personnel
+  // Désactiver un utilisateur
   async disable(n_personnel: number): Promise<void> {
     try {
       await apiClient.request<void>(`/personnel/${n_personnel}/disable/`, {
