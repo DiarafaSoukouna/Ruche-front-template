@@ -23,10 +23,11 @@ import PartFinanciers from './pages/Parametrages/PartFinancier'
 import ChangePassword from './pages/ChangePassword'
 import Ugls from './pages/Parametrages/Ugl'
 import ConventionPage from './pages/Parametrages/convention/ConventionPage'
-import NiveauStructureConfigPage from './pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage'
+// import NiveauStructureConfigPage from './pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage'
 import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
 import ZoneCollecte from './pages/Parametrages/ZoneCollecte/index'
 import PlanSitePage from './pages/Parametrages/planSite'
+import FonctionPage from './pages/Parametrages/personnel/FonctionPage'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -86,6 +87,12 @@ const AppContent: React.FC = () => {
             element={isAuthenticated ? <Acteurs /> : <Navigate to="/login" />}
           />
           <Route
+            path="/fonctions"
+            element={
+              isAuthenticated ? <FonctionPage /> : <Navigate to="/login" />
+            }
+          />
+          <Route
             path="/utilisateurs"
             element={
               isAuthenticated ? <PersonnelPage /> : <Navigate to="/login" />
@@ -103,7 +110,9 @@ const AppContent: React.FC = () => {
           />
           <Route
             path="/plan_sites"
-            element={isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />}
+            element={
+              isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />
+            }
           />
           <Route
             path="/type-zones"

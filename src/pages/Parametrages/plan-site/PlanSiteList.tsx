@@ -5,6 +5,7 @@ import Table from "../../../components/Table";
 import Button from "../../../components/Button";
 import { apiClient } from "../../../lib/api";
 import type { PlanSite, NiveauStructureConfig } from "../../../types/entities";
+import Card from "../../../components/Card";
 
 interface PlanSiteListProps {
   onEdit: (planSite: PlanSite) => void;
@@ -12,7 +13,11 @@ interface PlanSiteListProps {
   onViewDetails?: (planSiteId: number) => void;
 }
 
-export default function PlanSiteList({ onAdd, onEdit, onViewDetails }: PlanSiteListProps) {
+export default function PlanSiteList({
+  onAdd,
+  onEdit,
+  onViewDetails,
+}: PlanSiteListProps) {
   const queryClient = useQueryClient();
 
   // Fetch plan site data
@@ -35,7 +40,7 @@ export default function PlanSiteList({ onAdd, onEdit, onViewDetails }: PlanSiteL
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiClient.request(`/plan_site/${id}/`, { method: 'DELETE' });
+      await apiClient.request(`/plan_site/${id}/`, { method: "DELETE" });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/plan_site/"] });
@@ -56,7 +61,7 @@ export default function PlanSiteList({ onAdd, onEdit, onViewDetails }: PlanSiteL
 
   // Get level name helper using niveau_structure_config
   const getLevelName = (level: number) => {
-    const config = niveauConfigs.find(c => c.nombre_nsc === level);
+    const config = niveauConfigs.find((c) => c.nombre_nsc === level);
     return config?.libelle_nsc || `Niveau ${level}`;
   };
 
@@ -68,9 +73,12 @@ export default function PlanSiteList({ onAdd, onEdit, onViewDetails }: PlanSiteL
       "bg-green-100 text-green-800 border-green-200",
       "bg-yellow-100 text-yellow-800 border-yellow-200",
       "bg-indigo-100 text-indigo-800 border-indigo-200",
-      "bg-pink-100 text-pink-800 border-pink-200"
+      "bg-pink-100 text-pink-800 border-pink-200",
     ];
-    return colors[(level - 1) % colors.length] || "bg-gray-100 text-gray-800 border-gray-200";
+    return (
+      colors[(level - 1) % colors.length] ||
+      "bg-gray-100 text-gray-800 border-gray-200"
+    );
   };
 
   const columns = [
@@ -85,11 +93,14 @@ export default function PlanSiteList({ onAdd, onEdit, onViewDetails }: PlanSiteL
       key: "intutile_ds" as keyof PlanSite,
       title: "Intitulé",
       render: (_: PlanSite[keyof PlanSite], planSite: PlanSite) => {
-        const parent = planSites.find(p => p.id_ds === planSite.parent_ds);
+        const parent = planSites.find((p) => p.id_ds === planSite.parent_ds);
         const indent = (planSite.niveau_ds - 1) * 20;
-        
+
         return (
-          <div style={{ paddingLeft: `${indent}px` }} className="flex items-center">
+          <div
+            style={{ paddingLeft: `${indent}px` }}
+            className="flex items-center"
+          >
             <span className="text-gray-400 mr-2">
               {"└".repeat(Math.max(0, planSite.niveau_ds - 1))}
             </span>
@@ -109,7 +120,11 @@ export default function PlanSiteList({ onAdd, onEdit, onViewDetails }: PlanSiteL
       key: "niveau_ds" as keyof PlanSite,
       title: "Niveau",
       render: (_: PlanSite[keyof PlanSite], planSite: PlanSite) => (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getLevelColor(planSite.niveau_ds)}`}>
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getLevelColor(
+            planSite.niveau_ds
+          )}`}
+        >
           {getLevelName(planSite.niveau_ds)}
         </span>
       ),
@@ -121,7 +136,7 @@ export default function PlanSiteList({ onAdd, onEdit, onViewDetails }: PlanSiteL
         if (!planSite.parent_ds) {
           return <span className="text-gray-400 italic">Structure racine</span>;
         }
-        const parent = planSites.find(p => p.id_ds === planSite.parent_ds);
+        const parent = planSites.find((p) => p.id_ds === planSite.parent_ds);
         return parent ? (
           <span className="text-sm">
             {parent.intutile_ds} ({parent.code_ds})
@@ -202,11 +217,13 @@ export default function PlanSiteList({ onAdd, onEdit, onViewDetails }: PlanSiteL
           <div className="text-gray-500">Chargement...</div>
         </div>
       ) : (
-        <Table<PlanSite & { id?: string | number }>
-          columns={columns}
-          data={planSites.map(p => ({ ...p, id: p.id_ds }))}
-          className="min-h-[400px]"
-        />
+        <Card title="Liste des plan sites" className="overflow-hidden">
+          <Table<PlanSite & { id?: string | number }>
+            columns={columns}
+            data={planSites.map((p) => ({ ...p, id: p.id_ds }))}
+            className="min-h-[400px]"
+          />
+        </Card>
       )}
     </div>
   );
