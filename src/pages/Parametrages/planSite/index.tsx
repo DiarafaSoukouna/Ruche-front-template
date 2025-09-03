@@ -30,9 +30,9 @@ const PlanSitePage: React.FC = () => {
         try {
             const res = await allNiveauStructure();
             setNiveauStructures(res)
-            setAddBoutonLabel(res[2]?.libelle_nsc || '');
-            setCurrentId(res[2]?.id_nsc || '');
-            setTabActive(res[2]?.nombre_nsc || 0);
+            setAddBoutonLabel(res[0]?.libelle_nsc || '');
+            setCurrentId(res[0]?.id_nsc || '');
+            setTabActive(res[0]?.nombre_nsc || 0);
             setLoadingNiv(false)
             console.log(res);
         } catch (error) {
@@ -153,7 +153,7 @@ const PlanSitePage: React.FC = () => {
                             onClick={() => handleAddForm(true)}
                         >
                             <PlusIcon size={16} className="mr-2" />
-                            Nouvelle {addBoutonLabel}
+                            Ajouter {addBoutonLabel}
                         </Button>
                     </div>
                 </div>
