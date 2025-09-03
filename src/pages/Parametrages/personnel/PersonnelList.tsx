@@ -1,25 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Edit, Trash2, Plus, Check, X, Settings } from "lucide-react";
+import { Edit, TrashIcon, Plus, Check, X, Settings } from "lucide-react";
 import Button from "../../../components/Button";
-import Card from "../../../components/Card";
 import Table from "../../../components/Table";
 import Modal from "../../../components/Modal";
-import type {
-  Personnel,
-  Region,
-  Structure,
-  UGL,
-  Fonction,
-  PlanSite,
-  TitrePersonnel,
-} from "../../../types/entities";
+import type { Personnel, Region, UGL } from "../../../types/entities";
 import { personnelService } from "../../../services/personnelService";
-import { fonctionService } from "../../../services/fonctionService";
-import { planSiteService } from "../../../services/planSiteService";
-import { titrePersonnelService } from "../../../services/titrePersonnelService";
 import { apiClient } from "../../../lib/api";
-import TitrePersonnelPage from "../titre-personnel/TitrePersonnelPage";
+import TitrePersonnelPage from "./titre-personnel/TitrePersonnelPage";
 
 interface PersonnelListProps {
   onEdit: (personnel: Personnel) => void;
@@ -31,7 +19,7 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
   const [showTitreModal, setShowTitreModal] = useState(false);
 
   // Fetch personnel data
-  const { data: personnel = [], isLoading } = useQuery<Personnel[]>({
+  const { data: personnels = [] } = useQuery<Personnel[]>({
     queryKey: ["personnel"],
     queryFn: async (): Promise<Personnel[]> => {
       const response = await apiClient.request("/personnel/");
@@ -48,35 +36,12 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
     },
   });
 
-  const { data: structures = [] } = useQuery<Structure[]>({
-    queryKey: ["/acteur/"],
-    queryFn: async (): Promise<Structure[]> => {
-      const response = await apiClient.request("/acteur/");
-      return Array.isArray(response) ? response : [];
-    },
-  });
-
   const { data: ugls = [] } = useQuery<UGL[]>({
     queryKey: ["/ugl/"],
     queryFn: async (): Promise<UGL[]> => {
       const response = await apiClient.request("/ugl/");
       return Array.isArray(response) ? response : [];
     },
-  });
-
-  const { data: fonctions = [] } = useQuery<Fonction[]>({
-    queryKey: ["fonctions"],
-    queryFn: fonctionService.getAll,
-  });
-
-  const { data: planSites = [] } = useQuery<PlanSite[]>({
-    queryKey: ["planSites"],
-    queryFn: planSiteService.getAll,
-  });
-
-  const { data: titres = [] } = useQuery<TitrePersonnel[]>({
-    queryKey: ["titresPersonnel"],
-    queryFn: titrePersonnelService.getAll,
   });
 
   const deleteMutation = useMutation({
@@ -101,7 +66,9 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
   });
 
   const handleDelete = (id: number) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce personnel ?")) {
+    if (
+      window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")
+    ) {
       deleteMutation.mutate(id);
     }
   };
@@ -110,7 +77,9 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
     const isActive = personnel.statut === 1;
     const action = isActive ? "désactiver" : "activer";
 
-    if (window.confirm(`Êtes-vous sûr de vouloir ${action} ce personnel ?`)) {
+    if (
+      window.confirm(`Êtes-vous sûr de vouloir ${action} cet utilisateur ?`)
+    ) {
       if (isActive) {
         disableMutation.mutate(personnel.n_personnel!);
       } else {
@@ -125,27 +94,22 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       title: "ID",
     },
     {
-      key: "id_personnel_perso" as keyof Personnel,
-      title: "Identifiant",
-    },
-    {
       key: "titre_personnel" as keyof Personnel,
       title: "Titre",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.titre_personnel) return "-";
-        const titre = titres.find(
-          (t) => t.id_titre === personnel.titre_personnel
-        );
-        return titre ? titre.libelle_titre : `ID: ${personnel.titre_personnel}`;
+        return typeof personnel.titre_personnel === "object"
+          ? personnel.titre_personnel.libelle_titre
+          : `ID: ${personnel.titre_personnel}`;
       },
-    },
-    {
-      key: "nom_perso" as keyof Personnel,
-      title: "Nom",
     },
     {
       key: "prenom_perso" as keyof Personnel,
       title: "Prénom",
+    },
+    {
+      key: "id_personnel_perso" as keyof Personnel,
+      title: "Identifiant",
     },
     {
       key: "email" as keyof Personnel,
@@ -160,11 +124,8 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       title: "Fonction",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.fonction_perso) return "-";
-        const fonction = fonctions.find(
-          (f) => f.id_fonction === personnel.fonction_perso
-        );
-        return fonction
-          ? `${fonction.nom_fonction}`
+        return typeof personnel.fonction_perso === "object"
+          ? `${personnel.fonction_perso.nom_fonction}`
           : `ID: ${personnel.fonction_perso}`;
       },
     },
@@ -173,28 +134,9 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       title: "Service/Direction",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.service_perso) return "-";
-        const service = planSites.find(
-          (ps) => ps.id_ds === personnel.service_perso
-        );
-        return service ? (
-          <div className="max-w-xs">
-            <div className="font-medium truncate" title={service.intutile_ds}>
-              {service.intutile_ds}
-            </div>
-            <div className="text-xs text-gray-500">
-              {service.code_ds} • Niveau {service.niveau_ds}
-            </div>
-          </div>
-        ) : (
-          `ID: ${personnel.service_perso}`
-        );
-      },
-    },
-    {
-      key: "niveau_perso" as keyof Personnel,
-      title: "Niveau d'accès",
-      render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
-        return personnel.niveau_perso === 1 ? "Editeur" : "Visiteur";
+        return typeof personnel.service_perso === "object"
+          ? `${personnel.service_perso.intutile_ds}`
+          : `${personnel.service_perso}`;
       },
     },
     {
@@ -202,13 +144,8 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       title: "Structure",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.structure_perso) return "-";
-        const structureId =
-          typeof personnel.structure_perso === "string"
-            ? parseInt(personnel.structure_perso)
-            : personnel.structure_perso;
-        const structure = structures.find((s) => s.id_acteur === structureId);
-        return structure
-          ? `${structure.nom_acteur} (${structure.code_acteur})`
+        return typeof personnel.structure_perso === "object"
+          ? `${personnel.structure_perso.nom_acteur} (${personnel.structure_perso.code_acteur})`
           : `ID: ${personnel.structure_perso}`;
       },
     },
@@ -241,73 +178,29 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       },
     },
     {
-      key: "statut" as keyof Personnel,
-      title: "Statut",
+      key: "niveau_perso" as keyof Personnel,
+      title: "Niveau d'accès",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
-        const isActive = personnel.statut === 1;
-        return (
-          <div className="flex items-center gap-2">
-            <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                isActive
-                  ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
-              }`}
-            >
-              {isActive ? "Actif" : "Inactif"}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleToggleStatus(personnel)}
-              className={`p-1 ${
-                isActive
-                  ? "border-red-600 text-red-600 hover:bg-red-50"
-                  : "border-green-600 text-green-600 hover:bg-green-50"
-              }`}
-              disabled={enableMutation.isPending || disableMutation.isPending}
-              title={isActive ? "Désactiver" : "Activer"}
-            >
-              {isActive ? (
-                <X className="h-4 w-4" />
-              ) : (
-                <Check className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
-        );
+        return personnel.niveau_perso === 1 ? "Editeur" : "Visiteur";
       },
     },
     {
-      key: "rapport_mensuel_perso" as keyof Personnel,
-      title: "Rapports",
+      key: "statut" as keyof Personnel,
+      title: "Statut",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => (
-        <div className="text-xs flex gap-2 flex-wrap items-center">
-          {personnel.rapport_mensuel_perso && (
-            <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-              Mensuel
-            </div>
-          )}
-          {personnel.rapport_trimestriel_perso && (
-            <div className="bg-green-100 text-green-800 px-2 py-1 rounded">
-              Trimestriel
-            </div>
-          )}
-          {personnel.rapport_semestriel_perso && (
-            <div className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-              Semestriel
-            </div>
-          )}
-          {personnel.rapport_annuel_perso && (
-            <div className="bg-purple-100 text-purple-800 px-2 py-1 rounded">
-              Annuel
-            </div>
-          )}
-        </div>
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            personnel.statut === 1
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {personnel.statut === 1 ? "Actif" : "Inactif"}
+        </span>
       ),
     },
     {
-      key: "n_personnel" as keyof Personnel,
+      key: "actions" as keyof Personnel,
       title: "Actions",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => (
         <div className="flex gap-2">
@@ -319,30 +212,48 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
           >
             <Edit className="h-4 w-4" />
           </Button>
+          {personnel.statut === 1 ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleToggleStatus(personnel)}
+              className="p-1 border-orange-600 text-orange-600 hover:bg-orange-50 focus:ring-orange-500"
+              disabled={disableMutation.isPending}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleToggleStatus(personnel)}
+              className="p-1 !border-green-600 text-green-600 hover:bg-green-50 focus:ring-green-500"
+              disabled={enableMutation.isPending}
+            >
+              <Check className="h-4 w-4" />
+            </Button>
+          )}
           <Button
-            variant="outline"
+            variant="danger"
             size="sm"
             onClick={() => handleDelete(personnel.n_personnel!)}
-            className="p-1 border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500"
             disabled={deleteMutation.isPending}
           >
-            <Trash2 className="h-4 w-4" />
+            <TrashIcon className="h-4 w-4" />
           </Button>
         </div>
       ),
     },
   ];
 
-  console.log(personnel);
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Utilisateurs</h2>
+        <h2 className="text-2xl text-foreground font-bold">Utilisateurs</h2>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            onClick={() => setShowTitreModal(true)} 
+          <Button
+            variant="outline"
+            onClick={() => setShowTitreModal(true)}
             className="flex items-center gap-2"
           >
             <Settings className="h-4 w-4" />
@@ -355,19 +266,11 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="text-gray-500">Chargement...</div>
-        </div>
-      ) : (
-        <Card title="Liste des utilisateurs" className="overflow-hidden">
-          <Table<Personnel & { id?: string | number }>
-            columns={columns}
-            data={personnel.map((p) => ({ ...p, id: p.n_personnel }))}
-            className="min-h-[400px]"
-          />
-        </Card>
-      )}
+      <Table<Personnel & { id?: string | number }>
+        title="Liste des utilisateurs"
+        columns={columns}
+        data={personnels.map((p) => ({ ...p, id: p.n_personnel }))}
+      />
 
       {/* Modal pour gérer les titres */}
       <Modal

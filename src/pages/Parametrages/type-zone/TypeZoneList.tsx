@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, TrashIcon } from "lucide-react";
 import { toast } from "react-toastify";
 import Table from "../../../components/Table";
 import Button from "../../../components/Button";
@@ -17,7 +17,7 @@ export default function TypeZoneList({ onEdit, onAdd }: TypeZoneListProps) {
   const queryClient = useQueryClient();
 
   // Fetch type zone data
-  const { data: typeZones = [], isLoading } = useQuery<TypeZone[]>({
+  const { data: typeZones = [] } = useQuery<TypeZone[]>({
     queryKey: ["/type_zone/"],
     queryFn: async (): Promise<TypeZone[]> => {
       const response = await apiClient.request("/type_zone/");
@@ -54,7 +54,7 @@ export default function TypeZoneList({ onEdit, onAdd }: TypeZoneListProps) {
       title: "Nom",
     },
     {
-      key: "id_type_zone" as keyof TypeZone,
+      key: "actions" as keyof TypeZone,
       title: "Actions",
       render: (_: TypeZone[keyof TypeZone], typeZone: TypeZone) => (
         <div className="flex gap-2">
@@ -67,13 +67,12 @@ export default function TypeZoneList({ onEdit, onAdd }: TypeZoneListProps) {
             <Edit className="h-4 w-4" />
           </Button>
           <Button
-            variant="outline"
+            variant="danger"
             size="sm"
             onClick={() => handleDelete(typeZone.id_type_zone!)}
-            className="p-1 border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500"
             disabled={deleteMutation.isPending}
           >
-            <Trash2 className="h-4 w-4" />
+            <TrashIcon className="h-4 w-4" />
           </Button>
         </div>
       ),
@@ -90,17 +89,12 @@ export default function TypeZoneList({ onEdit, onAdd }: TypeZoneListProps) {
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="text-gray-500">Chargement...</div>
-        </div>
-      ) : (
-        <Table<TypeZone & { id?: string | number }>
-          columns={columns}
-          data={typeZones.map(t => ({ ...t, id: t.id_type_zone }))}
-          className="min-h-[400px]"
-        />
-      )}
+      <Table<TypeZone & { id?: string | number }>
+        title="Liste des types de zone"
+        columns={columns}
+        data={typeZones.map((t) => ({ ...t, id: t.id_type_zone }))}
+        className="min-h-[400px]"
+      />
     </div>
   );
 }

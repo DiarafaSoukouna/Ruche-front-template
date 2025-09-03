@@ -8,16 +8,16 @@ export const personnelCreateSchema = z.object({
     .max(254, "Email ne peut pas dépasser 254 caractères"),
 
   // ID personnel - string, requis
-  id_personnel_perso: z.string().min(1, "Identifiant requis"),
+  id_personnel_perso: z.string("Identifiant requis").min(1, "Identifiant requis"),
 
   // Titre personnel - integer, requis
   titre_personnel: z.number("Titre requis").min(1, "Titre requis"),
 
   // Prénom - string, requis
-  prenom_perso: z.string().min(1, "Prénom requis"),
+  prenom_perso: z.string("Prénom requis").min(1, "Prénom requis"),
 
   // Nom - string, requis
-  nom_perso: z.string().min(1, "Nom requis"),
+  nom_perso: z.string("Nom requis").min(1, "Nom requis"),
 
   // Contact - string, requis
   contact_perso: z.string("Contact requis").min(1, "Contact requis"),
@@ -56,7 +56,7 @@ export const personnelCreateSchema = z.object({
   ugl_perso: z.int("UGL requise").min(1, "UGL requise"),
 
   // Projet actif - string, optionnel
-  projet_active_perso: z.string().optional(),
+  projet_active_perso: z.string("Projet actif requis").optional(),
 });
 
 // Types pour les formulaires

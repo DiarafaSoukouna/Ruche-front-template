@@ -23,11 +23,10 @@ import PartFinanciers from './pages/Parametrages/PartFinancier'
 import ChangePassword from './pages/ChangePassword'
 import Ugls from './pages/Parametrages/Ugl'
 import ConventionPage from './pages/Parametrages/convention/ConventionPage'
-import NiveauStructureConfigPage from './pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage'
 import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
 import ZoneCollecte from './pages/Parametrages/ZoneCollecte/index'
 import PlanSitePage from './pages/Parametrages/planSite'
-import FonctionPage from "./pages/Parametrages/personnel/FonctionPage";
+import FonctionPage from "./pages/Parametrages/personnel/fonction-personnel/FonctionPage";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)

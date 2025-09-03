@@ -1,11 +1,5 @@
 // Types pour les entités de paramètres
-
-export enum TitrePersonnelEnum {
-  F = "F", // Féminin
-  M = "M", // Masculin
-}
-
-export interface TitrePersonnel {
+export interface TitrePersonnel extends Record<string, unknown> {
   id_titre: number;
   libelle_titre: string;
   description_titre?: string;
@@ -14,13 +8,13 @@ export interface TitrePersonnel {
 export interface Personnel extends Record<string, unknown> {
   n_personnel?: number;
   id_personnel_perso?: string;
-  titre_personnel?: number | string | null;
+  titre_personnel?: number | TitrePersonnel | null;
   nom_perso?: string;
   prenom_perso?: string;
   email?: string;
   contact_perso?: string;
-  fonction_perso?: number | null;
-  service_perso?: number | null;
+  fonction_perso?: number | Fonction | null;
+  service_perso?: number | PlanSite | null;
   niveau_perso?: number;
   rapport_mensuel_perso?: boolean;
   rapport_trimestriel_perso?: boolean;
@@ -28,7 +22,7 @@ export interface Personnel extends Record<string, unknown> {
   rapport_annuel_perso?: boolean;
   statut?: number;
   region_perso?: number | null;
-  structure_perso?: string | null;
+  structure_perso?: string | Acteur | null;
   ugl_perso?: string | null;
   projet_active_perso?: string[];
   pass?: string;
@@ -70,7 +64,7 @@ export interface Convention extends Record<string, unknown> {
   partenaire_conv: Partial<Acteur> | null;
 }
 
-export interface Region {
+export interface Region extends Record<string, unknown> {
   id_loca: number;
   code_loca: string;
   intitule_loca: string;
@@ -79,7 +73,7 @@ export interface Region {
   niveau_loca: number;
 }
 
-export interface Structure {
+export interface Structure extends Record<string, unknown> {
   id_acteur: number;
   code_acteur: string;
   nom_acteur: string;
@@ -90,7 +84,7 @@ export interface Structure {
   categorie_acteur: number;
 }
 
-export interface UGL {
+export interface UGL extends Record<string, unknown> {
   id_ugl: number;
   code_ugl: string;
   nom_ugl: string;
@@ -123,4 +117,7 @@ export type RegionFormData = Omit<Region, "id_loca">;
 export type StructureFormData = Omit<Structure, "id_acteur">;
 export type UGLFormData = Omit<UGL, "id_ugl">;
 export type FonctionFormData = Omit<Fonction, "id_fonction">;
-export type NiveauStructureConfigFormData = Omit<NiveauStructureConfig, "id_nsc">;
+export type NiveauStructureConfigFormData = Omit<
+  NiveauStructureConfig,
+  "id_nsc"
+>;

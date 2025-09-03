@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronRight, Building, Search, X } from "lucide-react";
 import { FieldError } from "react-hook-form";
@@ -85,10 +85,11 @@ export default function HierarchicalServiceSelect({
   const serviceTree = buildTree(planSites);
 
   // Filter services based on search
-  const filterTree = (nodes: ServiceNode[], searchTerm: string): ServiceNode[] => {
+  const filterTree = useCallback((nodes: ServiceNode[], searchTerm: string): ServiceNode[] => {
     if (!searchTerm) return nodes;
 
     const filtered: ServiceNode[] = [];
+    const nodesToExpand: number[] = [];
     
     nodes.forEach(node => {
       const matchesSearch = 
@@ -103,17 +104,51 @@ export default function HierarchicalServiceSelect({
           children: filteredChildren
         });
         
-        // Auto-expand nodes that match or have matching children
+        // Collect nodes to expand
         if (matchesSearch || filteredChildren.length > 0) {
-          setExpandedNodes(prev => new Set([...prev, node.planSite.id_ds!]));
+          nodesToExpand.push(node.planSite.id_ds!);
         }
       }
     });
 
     return filtered;
-  };
+  }, []);
 
   const filteredTree = filterTree(serviceTree, searchTerm);
+
+  // Auto-expand nodes when search results change
+  useEffect(() => {
+    if (!searchTerm) return;
+    
+    const nodesToExpand: number[] = [];
+    
+    const collectExpandableNodes = (nodes: ServiceNode[]) => {
+      nodes.forEach(node => {
+        const matchesSearch = 
+          node.planSite.intutile_ds.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          node.planSite.code_ds.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const hasMatchingChildren = node.children.some(child => 
+          child.planSite.intutile_ds.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          child.planSite.code_ds.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        
+        if (matchesSearch || hasMatchingChildren) {
+          nodesToExpand.push(node.planSite.id_ds!);
+        }
+        
+        collectExpandableNodes(node.children);
+      });
+    };
+    
+    collectExpandableNodes(serviceTree);
+    
+    setExpandedNodes(prev => {
+      const currentIds = Array.from(prev);
+      const newIds = nodesToExpand.filter(id => !currentIds.includes(id));
+      return newIds.length > 0 ? new Set([...prev, ...newIds]) : prev;
+    });
+  }, [searchTerm, serviceTree]);
 
   // Get level configuration
   const getLevelConfig = (level: number) => {
@@ -184,19 +219,19 @@ export default function HierarchicalServiceSelect({
         >
           {/* Expand/Collapse button */}
           {hasChildren && (
-            <button
+            <div
               onClick={(e) => {
                 e.stopPropagation();
                 toggleNode(node.planSite.id_ds!);
               }}
-              className="mr-2 p-1 hover:bg-background/80 dark:hover:bg-background/60 rounded transition-colors"
+              className="mr-2 p-1 hover:bg-background/80 dark:hover:bg-background/60 rounded transition-colors cursor-pointer"
             >
               {isExpanded ? (
                 <ChevronDown className="h-4 w-4" />
               ) : (
                 <ChevronRight className="h-4 w-4" />
               )}
-            </button>
+            </div>
           )}
           
           {!hasChildren && <div className="w-6 mr-2" />}
@@ -267,16 +302,15 @@ export default function HierarchicalServiceSelect({
           
           <div className="flex items-center gap-1">
             {selectedService && (
-              <button
-                type="button"
+              <div
                 onClick={(e) => {
                   e.stopPropagation();
                   handleClear();
                 }}
-                className="p-1 hover:bg-muted/80 dark:hover:bg-muted/60 rounded transition-colors"
+                className="p-1 hover:bg-muted/80 dark:hover:bg-muted/60 rounded transition-colors cursor-pointer"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </div>
             )}
             <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
           </div>
