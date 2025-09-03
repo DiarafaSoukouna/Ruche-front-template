@@ -162,19 +162,12 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
+          
+
           <form className="mx-auto w-full max-w-md mt-3">
-            <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="w-4 h-4 text-primary" />
-              </div>
-              <input
-                type="search"
-                id="default-search"
-                className="block w-full px-4 py-2 ps-8 text-sm text-foreground border border-input rounded-xl bg-secondary focus:ring-primary-50 text-dark focus:border-primary"
-                placeholder=" Rechercher..."
-                required
-              />
-            </div>
+
+                      <ChangeProjectModal />
+
           </form>
 
           <div className="flex items-center space-x-4">
@@ -219,7 +212,7 @@ const Navbar: React.FC = () => {
                         Changer de mot de passe
                       </Link>
 
-                      <button
+                      {/* <button
                         onClick={() => {
                           setShowChangeProjectModal(true)
                         }}
@@ -228,7 +221,7 @@ const Navbar: React.FC = () => {
                         <Box className="w-4 h-4 mr-3" />
                         Changer de programme
                       </button>
-                      <ChangeProjectModal />
+                      <ChangeProjectModal /> */}
 
                       <button
                         onClick={() => {

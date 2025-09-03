@@ -1,5 +1,6 @@
 import { typeLocalite } from "../functions/localites/types";
 import { Acteur } from "./entities";
+import { ProgrammeTypes } from "./programme";
 
 export interface Projet {
   id_projet: number;
@@ -10,7 +11,7 @@ export interface Projet {
   date_signature_projet: string;
   date_demarrage_projet: string;
   partenaire_projet?: Acteur;
-  programme_projet?: number;
+  programme_projet?: ProgrammeTypes;
   structure_projet: Acteur[];
   signataires_projet: Acteur[];
   partenaires_execution_projet: Acteur[];
