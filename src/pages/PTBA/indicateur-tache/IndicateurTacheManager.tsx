@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { X, BarChart3 } from "lucide-react";
 import Button from "../../../components/Button";
@@ -32,6 +32,10 @@ export default function IndicateurTacheManager({
     queryKey: ["indicateurs-activite", activite.id_ptba],
     queryFn: () => indicateurTacheService.getByActivite(activite.id_ptba),
   });
+
+  const filteredIndicateurs = useMemo(()=>{
+return indicateurs.filter((i)=> i.id_activite === activite.id_ptba)
+  }, [activite.id_ptba, indicateurs])
 
   const handleAdd = () => {
     setEditingIndicateur(undefined);
@@ -115,7 +119,7 @@ export default function IndicateurTacheManager({
           ) : (
             <div className="p-6">
               <IndicateurTacheList
-                indicateurs={indicateurs}
+                indicateurs={filteredIndicateurs}
                 idActivite={activite.id_ptba}
                 onEdit={handleEdit}
                 onAdd={handleAdd}
@@ -142,7 +146,7 @@ export default function IndicateurTacheManager({
                 )}
               </div>
               <div className="text-xs text-gray-500">
-                {indicateurs.length} indicateur(s) associé(s)
+                {filteredIndicateurs.length} indicateur(s) associé(s)
               </div>
             </div>
           </div>

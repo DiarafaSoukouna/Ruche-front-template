@@ -103,6 +103,9 @@ export default function TacheActivitePtbaList({
                 <th className="px-2 py-3 text-center font-medium text-gray-900 min-w-[60px]">
                   Resp.
                 </th>
+                <th className="px-2 py-3 text-center font-medium text-gray-900 min-w-[60px]">
+                  Assign.
+                </th>
                 {moisAbbr.map((mois, index) => (
                   <th
                     key={index}
@@ -165,7 +168,22 @@ export default function TacheActivitePtbaList({
                     {/* Colonne Responsable */}
                     <td className="px-2 py-3 text-center">
                       <span className="text-xs font-medium text-gray-700">
-                        {tache.responsable_gt}
+                        {typeof tache.responsable_gt === "object"
+                          ? tache.responsable_gt?.prenom_perso +
+                            " " +
+                            tache.responsable_gt?.nom_perso
+                          : "Non affecté"}
+                      </span>
+                    </td>
+
+                    {/* Personnel assigné */}
+                    <td className="px-2 py-3 text-center">
+                      <span className="text-xs font-medium text-gray-700">
+                        {typeof tache.id_personnel_gt === "object"
+                          ? tache.id_personnel_gt?.prenom_perso +
+                            " " +
+                            tache.id_personnel_gt?.nom_perso
+                          : "Non affecté"}
                       </span>
                     </td>
 

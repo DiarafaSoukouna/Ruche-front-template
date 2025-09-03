@@ -31,6 +31,17 @@ export default function NiveauCadreAnalytiqueTableForm() {
     queryFn: niveauCadreAnalytiqueService.getAll,
   })
 
+  // Filter niveaux by current programme
+  const niveauxDuProgramme = useMemo(() => {
+    if (!currentProgramme) return existingNiveaux;
+    return existingNiveaux.filter(
+      (niveau) =>
+        niveau.programme === currentProgramme.code_programme ||
+        (niveau.programme as Programme)?.code_programme ===
+          currentProgramme.code_programme
+    );
+  }, [existingNiveaux, currentProgramme]);
+
   // Initialize niveaux from existing data
   const initializedRef = useRef(false)
 
@@ -228,7 +239,7 @@ export default function NiveauCadreAnalytiqueTableForm() {
                     type="number"
                     min="1"
                     max="10"
-                    value={niveau.code_number_nca}
+                    value={niveau.nombre_nca}
                     onChange={(e) =>
                       handleFieldChange(
                         index,

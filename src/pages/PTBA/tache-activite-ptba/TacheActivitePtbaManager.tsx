@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import TacheActivitePtbaList from "./TacheActivitePtbaList";
 import TacheActivitePtbaForm from "./TacheActivitePtbaForm";
@@ -22,6 +22,14 @@ export default function TacheActivitePtbaManager({
     queryKey: ["taches-activite", activite.id_ptba],
     queryFn: () => tacheActivitePtbaService.getByActivite(activite.id_ptba),
   });
+
+  const filteredTaches = useMemo(() => {
+    const vs = taches.filter(
+      (tache) =>
+        tache.id_activite === activite.id_ptba
+    );
+    return vs;
+  }, [taches, activite.id_ptba]);
 
   const handleAdd = () => {
     setEditingTache(undefined);
@@ -71,7 +79,7 @@ export default function TacheActivitePtbaManager({
         ) : (
           <div className="p-6">
             <TacheActivitePtbaList
-              taches={taches}
+              taches={filteredTaches}
               idActivite={activite.id_ptba}
               onEdit={handleEdit}
               onAdd={handleAdd}
@@ -97,7 +105,7 @@ export default function TacheActivitePtbaManager({
               )}
             </div>
             <div className="text-xs text-gray-500">
-              {taches.length} tâche(s) associée(s)
+              {filteredTaches.length} tâche(s) associée(s)
             </div>
           </div>
         </div>
