@@ -198,7 +198,7 @@ const PartFinanciers = () => {
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Parténaires Financiers</h1>
                 </div>
-                <div className="flex gap-4">
+                {/* <div className="flex gap-4">
                     <Button
                         onClick={() => {
                             (setShowModal(true), setIsEdit(false))
@@ -208,7 +208,7 @@ const PartFinanciers = () => {
                         <PlusIcon className="w-4 h-4 mr-2" />
                         Nouveau Part Financier
                     </Button>
-                </div>
+                </div> */}
             </div>
             <Modal
                 isOpen={showModal}
