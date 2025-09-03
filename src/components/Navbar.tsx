@@ -96,7 +96,6 @@ const Navbar: React.FC = () => {
         },
         { name: 'Zone de Collecte', href: '/zone-collecte', icon: MapPinIcon },
 
-        { name: 'Plans de Site', href: '/plan_sites', icon: Building2 },
         { name: 'Conventions', href: '/conventions', icon: FileSignature },
 
         { name: 'Zone de Collecte', href: '/zone-collecte', icon: MapPinIcon },
@@ -133,6 +132,7 @@ const Navbar: React.FC = () => {
           href: '/cadre_strategique',
           icon: TargetIcon,
         },
+        // { name: 'Plans de Site', href: '/plan_sites', icon: Building2 },
         {
           name: 'Indicateurs du CMR',
           href: '/indicateurs_cmr',
