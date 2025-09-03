@@ -196,7 +196,7 @@ const PartFinanciers = () => {
             {/* Header avec contrôles */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Parténaires Financiers</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Partenaires financiers</h1>
                 </div>
                 {/* <div className="flex gap-4">
                     <Button
