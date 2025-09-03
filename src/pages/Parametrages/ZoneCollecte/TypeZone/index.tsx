@@ -3,20 +3,21 @@ import Card from '../../../../components/Card'
 import Table from '../../../../components/Table'
 import Button from '../../../../components/Button'
 import { EditIcon, PlusIcon, TrashIcon } from 'lucide-react'
-import { getAllCategories } from '../../../../functions/categoriesActeurs/gets'
-import { updateCategorie } from '../../../../functions/categoriesActeurs/put'
-import { addCategorie } from '../../../../functions/categoriesActeurs/post'
-import { DeleteCategorie } from '../../../../functions/categoriesActeurs/delete'
-import Form from '../categories/form'
+import { getAllTypeZones } from '../../../../functions/typeZone/gets'
+import { updateTypeZone } from '../../../../functions/typeZone/put'
+import { addTypeZone } from '../../../../functions/typeZone/post'
+import { DeleteTypeZone } from '../../../../functions/typeZone/delete'
+import Form from './form'
 import { RiseLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
+import { TypesZoneTypes } from './types'
 
-const CategorieActeur = () => {
-  const [categories, setCategories] = useState<any[]>([])
-  const [categorieActeur, setCategorieActeur] = useState({
-    id_categorie: 0,
-    code_cat: '',
-    nom_categorie: '',
+const TypeZone = () => {
+  const [typesZone, setTypesZone] = useState<TypesZoneTypes[]>([])
+  const [typeZone, setTypeZone] = useState<TypesZoneTypes>({
+    id_type_zone: 0,
+    code_type_zone: '',
+    nom_type_zone: '',
   })
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -24,10 +25,10 @@ const CategorieActeur = () => {
     setIsEdit(false)
     setIsDelete(false)
     setShowForm(false)
-    setCategorieActeur({
-      id_categorie: 0,
-      code_cat: '',
-      nom_categorie: '',
+    setTypeZone({
+      id_type_zone: 0,
+      code_type_zone: '',
+      nom_type_zone: '',
     })
   }
   const [showForm, setShowForm] = useState<Boolean>(false)
@@ -39,18 +40,18 @@ const CategorieActeur = () => {
     try {
       setLoading(true)
       if (isEdit) {
-        const res = await updateCategorie(categorieActeur)
+        const res = await updateTypeZone(typeZone)
         if (res) {
-          fetchCategories()
+          fetchTypesZone()
           clean()
-          toast.success('Catégorie mise à jour avec succès')
+          toast.success('Type de zone mis à jour avec succès')
         }
       } else {
-        const res = await addCategorie(categorieActeur)
+        const res = await addTypeZone(typeZone)
         if (res) {
-          fetchCategories()
+          fetchTypesZone()
           clean()
-          toast.success('Catégorie créee à jour avec succès')
+          toast.success('Type de zone créé avec succès')
         }
       }
       setLoading(false)
@@ -62,7 +63,7 @@ const CategorieActeur = () => {
 
   const columns = [
     {
-      key: 'id_categorie',
+      key: 'id_type_zone',
       title: 'ID',
       render: (value: string) => (
         <div className="flex items-center">
@@ -73,7 +74,7 @@ const CategorieActeur = () => {
       ),
     },
     {
-      key: 'code_cat',
+      key: 'code_type_zone',
       title: 'Code',
       render: (value: string) => (
         <div className="flex items-center">
@@ -84,8 +85,8 @@ const CategorieActeur = () => {
       ),
     },
     {
-      key: 'nom_categorie',
-      title: 'Nom catégorie',
+      key: 'nom_type_zone',
+      title: 'Nom type de zone',
       render: (value: string) => (
         <div className="flex items-center">
           <div>
@@ -103,7 +104,7 @@ const CategorieActeur = () => {
             variant="outline"
             size="sm"
             onClick={() => (
-              setCategorieActeur(row), setIsEdit(true), setShowForm(true)
+              setTypeZone(row), setIsEdit(true), setShowForm(true)
             )}
           >
             <EditIcon className="w-3 h-3" />
@@ -112,7 +113,7 @@ const CategorieActeur = () => {
             variant="danger"
             size="sm"
             onClick={() => {
-              setIsDelete(true), setCategorieActeur(row)
+              setIsDelete(true), setTypeZone(row)
             }}
           >
             <TrashIcon className="w-3 h-3" />
@@ -121,21 +122,21 @@ const CategorieActeur = () => {
       ),
     },
   ]
-  const fetchCategories = async () => {
+  const fetchTypesZone = async () => {
     try {
       setLoading(true)
 
-      const res = await getAllCategories()
-      setCategories(res)
+      const res = await getAllTypeZones()
+      setTypesZone(res)
       setLoading(false)
     } catch (error) {
       console.error(error)
     }
   }
-  const deleteCategorie = async (id: number) => {
+  const deleteTypeZone = async (id: number) => {
     try {
-      const res = await DeleteCategorie(id)
-      fetchCategories()
+      const res = await DeleteTypeZone(id)
+      fetchTypesZone()
       setIsDelete(false)
       clean()
     } catch (error) {
@@ -143,7 +144,7 @@ const CategorieActeur = () => {
     }
   }
   useEffect(() => {
-    fetchCategories()
+    fetchTypesZone()
   }, [])
   return (
     <div>
@@ -154,7 +155,7 @@ const CategorieActeur = () => {
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <label className="text-2xl font-bold text-gray-900">
-                    Catégories d'acteurs
+                    Types de zone
                   </label>
                 </div>
                 <Button variant="primary" onClick={() => setShowForm(true)}>
@@ -162,7 +163,7 @@ const CategorieActeur = () => {
                   Ajouter
                 </Button>
               </div>
-              <Table columns={columns} data={categories} itemsPerPage={5} />
+              <Table columns={columns} data={typesZone} itemsPerPage={5} />
             </div>
           )}
           {loading && (
@@ -174,7 +175,7 @@ const CategorieActeur = () => {
             <Card className="">
               <div className="space-y-6 w-100">
                 <p className="text-gray-700">
-                  Êtes-vous sûr(e) de vouloir supprimer cet acteur ? Cette
+                  Êtes-vous sûr(e) de vouloir supprimer ce type de zone ? Cette
                   action est irréversible.
                 </p>
                 <div className="flex justify-end space-x-3">
@@ -184,7 +185,7 @@ const CategorieActeur = () => {
                   <Button
                     variant="danger"
                     onClick={() => {
-                      deleteCategorie(categorieActeur.id_categorie)
+                      deleteTypeZone(typeZone.id_type_zone)
                     }}
                   >
                     Supprimer
@@ -196,8 +197,8 @@ const CategorieActeur = () => {
         </>
       ) : (
         <Form
-          categorie={categorieActeur}
-          setCategorie={setCategorieActeur}
+          typeZone={typeZone}
+          setTypeZone={setTypeZone}
           isEdit={isEdit}
           setIsEdit={setIsEdit}
           setShowForm={setShowForm}
@@ -207,4 +208,4 @@ const CategorieActeur = () => {
     </div>
   )
 }
-export default CategorieActeur
+export default TypeZone

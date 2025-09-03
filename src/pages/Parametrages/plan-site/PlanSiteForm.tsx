@@ -1,15 +1,12 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 import Button from "../../../components/Button";
-import { apiClient } from "../../../lib/api";
-import type { PlanSite, NiveauStructureConfig } from "../../../types/entities";
+import { planSiteService } from "../../../services/planSiteService";
 import {
   planSiteSchema,
   type PlanSiteFormData,
 } from "../../../schemas/planSiteSchema";
-import Select from "react-select";
+import type { PlanSite } from "../../../types/entities";
 
 interface PlanSiteFormProps {
   planSite?: PlanSite;
@@ -109,65 +106,33 @@ export default function PlanSiteForm({ planSite, onClose }: PlanSiteFormProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Code <span className="text-red-500">*</span>
-          </label>
-          <input
+          <Input
             {...register("code_ds")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            label="Code"
+            placeholder="Entrez le code"
+            error={errors.code_ds}
+            required
           />
-          {errors.code_ds && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.code_ds.message}
-            </p>
-          )}
+        </div>
+
+        <div>
+          <Input
+            {...register("intutile_ds")}
+            label="Intitulé"
+            placeholder="Entrez l'intitulé"
+            error={errors.intutile_ds}
+            required
+          />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Intitulé <span className="text-red-500">*</span>
+            Niveau hiérarchique <span className="text-red-500">*</span>
           </label>
           <input
-            {...register("intutile_ds")}
+            type="number"
+            {...register("niveau_ds", { valueAsNumber: true })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.intutile_ds && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.intutile_ds.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Niveau
-          </label>
-          <Controller
-            name="niveau_ds"
-            control={control}
-            render={({ field }) => (
-              <Select
-                {...field}
-                options={niveauConfigs.map((config) => ({
-                  value: config.nombre_nsc,
-                  label: `${config.nombre_nsc} - ${config.libelle_nsc}`,
-                }))}
-                className="w-full"
-                classNamePrefix="react-select"
-                onChange={(selectedOption) =>
-                  field.onChange(selectedOption?.value)
-                }
-                value={
-                  niveauConfigs
-                    .map((config) => ({
-                      value: config.nombre_nsc,
-                      label: `${config.nombre_nsc} - ${config.libelle_nsc}`,
-                    }))
-                    .find((option) => option.value === field.value) || null
-                }
-                placeholder="Sélectionnez un niveau"
-              />
-            )}
           />
           {errors.niveau_ds && (
             <p className="text-red-500 text-sm mt-1">
@@ -178,37 +143,12 @@ export default function PlanSiteForm({ planSite, onClose }: PlanSiteFormProps) {
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Structure parente <span className="text-red-500">*</span>
+            Code parent <span className="text-red-500">*</span>
           </label>
-          <Controller
-            name="parent_ds"
-            control={control}
-            render={({ field }) => (
-              <Select
-                {...field}
-                options={[
-                  ...availableParents.map((parent) => ({
-                    value: parent.id_ds,
-                    label: `${parent.intitule_ds} (${parent.code_ds}) - Niveau ${parent.niveau_ds}`,
-                  })),
-                ]}
-                isClearable
-                className="react-select-container"
-                classNamePrefix="react-select"
-                placeholder="Sélectionnez une structure parente..."
-                onChange={(option) =>
-                  field.onChange(option ? Number(option.value) : null)
-                }
-                value={
-                  availableParents
-                    .map((parent) => ({
-                      value: parent.id_ds,
-                      label: `${parent.intitule_ds} (${parent.code_ds}) - Niveau ${parent.niveau_ds}`,
-                    }))
-                    .find((opt) => opt.value === field.value) || null
-                }
-              />
-            )}
+          <input
+            type="number"
+            {...register("parent_ds", { valueAsNumber: true })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
           />
           {errors.parent_ds && (
             <p className="text-red-500 text-sm mt-1">
@@ -218,19 +158,10 @@ export default function PlanSiteForm({ planSite, onClose }: PlanSiteFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Code relai <span className="text-red-500">*</span>
-          </label>
-          <input
+          <Input
             {...register("code_relai_ds")}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-            placeholder="Code de liaison (optionnel)"
           />
-          {errors.code_relai_ds && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.code_relai_ds.message}
-            </p>
-          )}
         </div>
       </div>
 

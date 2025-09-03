@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 import {
   BrowserRouter as Router,
   Routes,
@@ -23,30 +23,33 @@ import PartFinanciers from './pages/Parametrages/PartFinancier'
 import ChangePassword from './pages/ChangePassword'
 import Ugls from './pages/Parametrages/Ugl'
 import ConventionPage from './pages/Parametrages/convention/ConventionPage'
+import NiveauStructureConfigPage from './pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage'
+import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
+import ZoneCollecte from './pages/Parametrages/ZoneCollecte/index'
 import PlanSitePage from './pages/Parametrages/planSite'
 
 const AppContent: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const isAuthenticated = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true)
+  const isAuthenticated = useState<boolean>(true)
   // const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     // Simulate initial loading
     const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+      setLoading(false)
+    }, 2000)
 
-    return () => clearTimeout(timer);
-  }, []);
+    return () => clearTimeout(timer)
+  }, [])
 
   if (loading) {
-    return <LoadingScreen />;
+    return <LoadingScreen />
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       {isAuthenticated && <Navbar />}
-      <main className={isAuthenticated ? "px-4 sm:px-6 lg:px-8 py-8" : ""}>
+      <main className={isAuthenticated ? 'px-4 sm:px-6 lg:px-8 py-8' : ''}>
         <Routes>
           <Route
             path="/login"
@@ -75,7 +78,7 @@ const AppContent: React.FC = () => {
           <Route
             path="/"
             element={
-              <Navigate to={isAuthenticated ? "/dashboard" : "/login"} />
+              <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />
             }
           />
           <Route
@@ -115,16 +118,32 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
+            path="/autres-parametrages"
+            element={
+              isAuthenticated ? (
+                <AutresParametrages />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
             path="/change-password"
             element={
               isAuthenticated ? <ChangePassword /> : <Navigate to="/login" />
             }
           />
+          <Route
+            path="/zone-collecte"
+            element={
+              isAuthenticated ? <ZoneCollecte /> : <Navigate to="/login" />
+            }
+          />
         </Routes>
       </main>
     </div>
-  );
-};
+  )
+}
 
 const App: React.FC = () => {
   return (
@@ -145,7 +164,7 @@ const App: React.FC = () => {
         />
       </Router>
     </AuthProvider>
-  );
-};
+  )
+}
 
-export default App;
+export default App

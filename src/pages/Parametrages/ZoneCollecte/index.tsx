@@ -1,26 +1,19 @@
 import { useState, useEffect } from 'react'
 import Card from '../../../components/Card'
-import {
-  Pencil,
-  Trash,
-  PlusIcon,
-  EditIcon,
-  TrashIcon,
-  ListTreeIcon,
-} from 'lucide-react'
+import { PlusIcon, EditIcon, TrashIcon, ListTreeIcon } from 'lucide-react'
 import Button from '../../../components/Button'
 import Form from './form'
-import { ActeurType } from './types'
-import { CategorieTypes } from './categories/types'
+import { ZoneCollecteTypes } from './types'
+import { TypesZoneTypes } from './TypeZone/types'
 import Modal from '../../../components/Modal'
-import { addActeur } from '../../../functions/acteurs/post'
-import { UpdateActeur } from '../../../functions/acteurs/put'
-import { getAllActeurs } from '../../../functions/acteurs/gets'
-import { DeleteActeur } from '../../../functions/acteurs/delete'
-
+import { addZoneCollecte } from '../../../functions/zoneCollecte/post'
+import { updateZoneCollecte } from '../../../functions/zoneCollecte/put'
+import { getAllZoneCollecte } from '../../../functions/zoneCollecte/gets'
+import { DeleteZoneCollecte } from '../../../functions/zoneCollecte/delete'
+import { getAllTypeZones } from '../../../functions/typeZone/gets'
+import TypeZone from './TypeZone/index'
 import Table from '../../../components/Table'
-import { getAllCategories } from '../../../functions/categoriesActeurs/gets'
-import CategorieActeur from './categories/index'
+
 import { RiseLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 
@@ -28,32 +21,26 @@ const Acteurs = () => {
   //   const [acteurs, setActeurs] = useState([])
   // const [acteurs, set]
   const [showModal, setShowModal] = useState(false)
-  const [allActeurs, setAllActeurs] = useState<ActeurType[]>([])
-  const [categories, setCategories] = useState<CategorieTypes[]>([])
+  const [allZoneCollecte, setAllZoneCollecte] = useState<ZoneCollecteTypes[]>(
+    []
+  )
+  const [showModalTypeZone, setShowModalTypeZone] = useState(false)
+  const [typesZone, setTypesZone] = useState<TypesZoneTypes[]>([])
   const [isDelete, setIsDelete] = useState(false)
-  const [showModalCategorie, setShowModalCategorie] = useState(false)
-  const [acteur, setActeur] = useState<ActeurType>({
-    id_acteur: undefined,
-    code_acteur: '',
-    nom_acteur: '',
-    description_acteur: '',
-    personne_responsable: '',
-    contact: '',
-    adresse_email: '',
-    categorie_acteur: [],
+  const [zoneCollecte, setZoneCollecte] = useState<ZoneCollecteTypes>({
+    id_zone_collecte: 0,
+    code_zone: '',
+    nom_zone: '',
+    type_zone: '',
   })
   const [loading, setLoading] = useState<boolean>(false)
 
   const clean = () => {
-    setActeur({
-      id_acteur: undefined,
-      code_acteur: '',
-      nom_acteur: '',
-      description_acteur: '',
-      personne_responsable: '',
-      contact: '',
-      adresse_email: '',
-      categorie_acteur: [],
+    setZoneCollecte({
+      id_zone_collecte: 0,
+      code_zone: '',
+      nom_zone: '',
+      type_zone: '',
     })
   }
 
@@ -62,24 +49,22 @@ const Acteurs = () => {
     try {
       setLoading(true)
       if (isEdit) {
-        const { id_acteur, ...data } = acteur
-        if (!id_acteur) return
-        const res = await UpdateActeur(data, id_acteur)
+        const res = await updateZoneCollecte(zoneCollecte)
         if (res) {
           setShowModal(false)
-          fetchActeurs()
+          fetchZoneCollectes()
           clean()
           toast.success('Acteur modifié avec succès')
         }
       } else {
-        const res = await addActeur(acteur)
+        const res = await addZoneCollecte(zoneCollecte)
         if (res) {
           setShowModal(false)
-          fetchActeurs()
+          fetchZoneCollectes()
           clean()
           toast.success('Acteur crée avec succès')
         }
-        console.log(acteur)
+        console.log(zoneCollecte)
       }
       setLoading(false)
     } catch (error) {
@@ -87,12 +72,24 @@ const Acteurs = () => {
       toast.error("Erreur lors de l'action")
     }
   }
-  const fetchActeurs = async () => {
+  const fetchZoneCollectes = async () => {
     try {
       setLoading(true)
-      const res = await getAllActeurs()
-      if (res?.data) {
-        setAllActeurs(res.data)
+      const res = await getAllZoneCollecte()
+      if (res) {
+        setAllZoneCollecte(res)
+        setLoading(false)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  const fetchTypeZone = async () => {
+    try {
+      setLoading(true)
+      const res = await getAllTypeZones()
+      if (res) {
+        setTypesZone(res)
         setLoading(false)
       }
     } catch (error) {
@@ -100,29 +97,20 @@ const Acteurs = () => {
     }
   }
 
-  const deleteActeur = async (id: number) => {
+  const deleteZoneCollecte = async (id: number) => {
     try {
       setLoading(true)
 
-      await DeleteActeur(id)
+      await DeleteZoneCollecte(id)
       setIsDelete(false)
-      fetchActeurs()
+      fetchZoneCollectes()
       clean()
       setLoading(false)
     } catch (error) {
       console.error(error)
     }
   }
-  const fetchCategories = async () => {
-    try {
-      const res = await getAllCategories()
-      if (res) {
-        setCategories(res)
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
+
   const close = () => {
     setShowModal(false)
     setIsEdit(false)
@@ -132,14 +120,14 @@ const Acteurs = () => {
   const [isEdit, setIsEdit] = useState(false)
 
   const onEdit = (acteur: any) => {
-    setActeur(acteur)
+    setZoneCollecte(acteur)
     setShowModal(true)
     setIsEdit(true)
   }
 
   const columns = [
     {
-      key: 'code_acteur',
+      key: 'code_zone',
       title: 'Code',
       render: (value: String) => (
         <div className="flex items-center">
@@ -150,7 +138,7 @@ const Acteurs = () => {
       ),
     },
     {
-      key: 'nom_acteur',
+      key: 'nom_zone',
       title: 'Nom',
       render: (value: String) => (
         <div className="flex items-center">
@@ -160,71 +148,25 @@ const Acteurs = () => {
         </div>
       ),
     },
-    // {
-    //   key: 'description_acteur',
-    //   title: 'Description',
-    //   render: (value: String) => (
-    //     <div className="flex items-center">
-    //       <div>
-    //         <div className="font-medium text-gray-900">{value}</div>
-    //       </div>
-    //     </div>
-    //   ),
-    // },
+
     {
-      key: 'personne_responsable',
-      title: 'Responsable',
-      render: (value: String) => (
+      key: 'type_zone',
+      title: 'Type de zone',
+      render: (value: number) => (
         <div className="flex items-center">
           <div>
-            <div className="font-medium text-gray-900">{value}</div>
+            <div className="font-medium text-gray-900">
+              {/* {returnCategories(value)} */}
+              {
+                typesZone.find(({ id_type_zone }) => id_type_zone == value)
+                  ?.nom_type_zone
+              }
+            </div>
           </div>
         </div>
       ),
     },
-    {
-      key: 'contact',
-      title: 'Contact',
-      render: (value: String) => (
-        <div className="flex items-center">
-          <div>
-            <div className="font-medium text-gray-900">{value}</div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: 'adresse_email',
-      title: 'Email',
-      render: (value: String) => (
-        <div className="flex items-center">
-          <div>
-            <div className="font-medium text-gray-900">{value}</div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: 'categorie_acteur',
-      title: 'Catégorie',
-      render: (value: number[]) => (
-        <div className="flex flex-wrap gap-2 items-start whitespace-normal">
-          {value.map((id) => {
-            const category = categories.find(
-              ({ id_categorie }) => id_categorie === id
-            )
-            return category ? (
-              <div
-                key={id}
-                className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded"
-              >
-                {category.nom_categorie}
-              </div>
-            ) : null
-          })}
-        </div>
-      ),
-    },
+
     {
       key: 'actions',
       title: 'Actions',
@@ -238,7 +180,7 @@ const Acteurs = () => {
             size="sm"
             onClick={() => {
               setIsDelete(true)
-              setActeur(row)
+              setZoneCollecte(row)
             }}
           >
             <TrashIcon className="w-3 h-3" />
@@ -248,8 +190,8 @@ const Acteurs = () => {
     },
   ]
   useEffect(() => {
-    fetchActeurs()
-    fetchCategories()
+    fetchZoneCollectes()
+    fetchTypeZone()
   }, [])
 
   return (
@@ -257,7 +199,7 @@ const Acteurs = () => {
       {/* Header avec contrôles */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Acteurs</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Zone de Collecte</h1>
         </div>
         <div className="flex gap-4">
           <Button
@@ -265,20 +207,19 @@ const Acteurs = () => {
               setShowModal(true)
             }}
             size="md"
-            variant="primary"
           >
             <PlusIcon className="w-4 h-4 mr-2" />
-            Nouvel acteur
+            Nouvelle Zone
           </Button>
           <Button
             variant="outline"
-            onClick={() => {
-              setShowModalCategorie(true)
-            }}
             size="md"
+            onClick={() => {
+              setShowModalTypeZone(true)
+            }}
           >
             <ListTreeIcon className="w-4 h-4 mr-2" />
-            Catégorie acteur
+            Types de zones
           </Button>
         </div>
       </div>
@@ -286,12 +227,12 @@ const Acteurs = () => {
       <Modal
         isOpen={showModal}
         onClose={() => close()}
-        title={isEdit ? "Modifier l'acteur" : 'Nouvel acteur'}
-        size="xl"
+        title={isEdit ? 'Modifier la zone' : 'Nouvelle zone'}
+        size="md"
       >
         <Form
-          acteur={acteur}
-          setActeur={setActeur}
+          zoneCollecte={zoneCollecte}
+          setZoneCollecte={setZoneCollecte}
           isEdit={isEdit}
           handleSubmit={handleSubmit}
         />
@@ -318,7 +259,7 @@ const Acteurs = () => {
             </Button>
             <Button
               variant="danger"
-              onClick={() => deleteActeur(acteur.id_acteur!)}
+              onClick={() => deleteZoneCollecte(zoneCollecte.id_zone_collecte!)}
             >
               Supprimer
             </Button>
@@ -326,16 +267,15 @@ const Acteurs = () => {
         </div>
       </Modal>
       <Modal
-        isOpen={showModalCategorie}
-        onClose={() => setShowModalCategorie(false)}
-        title={"Espace de configuration des catégories d'acteur"}
+        isOpen={showModalTypeZone}
+        onClose={() => setShowModalTypeZone(false)}
+        title={'Espace de configuration des types de zones'}
         size="xl"
       >
-        <CategorieActeur />
+        <TypeZone />
       </Modal>
-
-      <Card title="Liste des acteurs" className="overflow-hidden">
-        <Table columns={columns} data={allActeurs} itemsPerPage={5} />
+      <Card className="overflow-hidden" title="Liste des zones de collecte">
+        <Table columns={columns} data={allZoneCollecte} itemsPerPage={5} />
       </Card>
     </div>
   )

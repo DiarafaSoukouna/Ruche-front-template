@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { EyeIcon, EyeOffIcon, KeyIcon, ArrowLeftIcon } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Button from "../components/Button";
 import { useAuth } from "../contexts/AuthContext";
 import {
@@ -24,6 +24,7 @@ export default function ChangePassword() {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
     reset,
   } = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordSchema),
@@ -33,56 +34,68 @@ export default function ChangePassword() {
 
   const mutation = useMutation({
     mutationFn: async (data: ChangePasswordFormData) => {
-      if (!user) {
-        throw new Error("Utilisateur non connecté");
-      }
+      if (!user) throw new Error("Utilisateur non connecté");
 
       await authService.changePassword(user.n_personnel!, {
         currentPassword: data.oldPassword,
         newPassword: data.newPassword,
         confirmPassword: data.confirmNewPassword,
       });
-      toast.success("Mot de passe modifié avec succès");
+    },
+    onSuccess: () => {
+      toast.success("Mot de passe modifié avec succès ✅");
       reset();
       navigate("/dashboard");
     },
-    onSuccess: () => {},
     onError: (error: Error) => {
-      toast.error(error.message || "Erreur lors du changement de mot de passe");
+      toast.error(
+        error.message || "Erreur lors du changement de mot de passe ❌"
+      );
     },
   });
 
-  const onSubmit = (data: ChangePasswordFormData) => {
-    mutation.mutate(data);
-  };
+  const onSubmit = (data: ChangePasswordFormData) => mutation.mutate(data);
+
+  const newPassword = watch("newPassword");
+  const passwordStrength = useMemo(() => {
+    if (!newPassword) return "";
+    const hasLower = /[a-z]/.test(newPassword);
+    const hasUpper = /[A-Z]/.test(newPassword);
+    const hasNumber = /[0-9]/.test(newPassword);
+    const hasLength = newPassword.length >= 8;
+    const score = [hasLower, hasUpper, hasNumber, hasLength].filter(
+      Boolean
+    ).length;
+    if (score <= 2) return "Faible";
+    if (score === 3) return "Moyen";
+    return "Fort";
+  }, [newPassword]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background py-8 text-foreground transition-colors">
       <div className="max-w-md mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-card text-card-foreground rounded-lg shadow-md p-6 transition-colors">
           {/* Header */}
           <div className="flex items-center mb-6">
             <button
               onClick={() => navigate(-1)}
-              className="mr-4 p-2 text-gray-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+              className="mr-4 p-2 text-muted-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
             >
               <ArrowLeftIcon className="w-5 h-5" />
             </button>
             <div className="flex items-center">
-              <KeyIcon className="w-6 h-6 text-blue-600 mr-3" />
-              <h1 className="text-2xl font-bold text-gray-900">
-                Changer de mot de passe
-              </h1>
+              <KeyIcon className="w-6 h-6 text-primary mr-3" />
+              <h1 className="text-2xl font-bold">Changer de mot de passe</h1>
             </div>
           </div>
 
           {/* User Info */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <span className="font-medium">Utilisateur:</span>{" "}
+          <div className="mb-6 p-4 bg-secondary text-secondary-foreground rounded-lg">
+            <p className="text-sm">
+              <span className="font-medium">Utilisateur :</span>{" "}
               {user?.prenom_perso || "Utilisateur"}
             </p>
-            <p className="text-xs text-blue-600">
+            <p className="text-xs opacity-80">
               {user?.id_personnel_perso || ""}
             </p>
           </div>
@@ -91,20 +104,21 @@ export default function ChangePassword() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Current Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mot de passe actuel <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium mb-2">
+                Mot de passe actuel <span className="text-destructive">*</span>
               </label>
               <div className="relative">
                 <input
                   type={showCurrentPassword ? "text" : "password"}
                   {...register("oldPassword")}
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  autoComplete="current-password"
+                  className="w-full px-3 py-2 pr-10 border border-input rounded-md bg-background focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                   placeholder="Entrez votre mot de passe actuel"
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground"
                 >
                   {showCurrentPassword ? (
                     <EyeOffIcon className="w-5 h-5" />
@@ -114,7 +128,7 @@ export default function ChangePassword() {
                 </button>
               </div>
               {errors.oldPassword && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-destructive text-sm mt-1">
                   {errors.oldPassword.message}
                 </p>
               )}
@@ -122,20 +136,21 @@ export default function ChangePassword() {
 
             {/* New Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nouveau mot de passe <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium mb-2">
+                Nouveau mot de passe <span className="text-destructive">*</span>
               </label>
               <div className="relative">
                 <input
                   type={showNewPassword ? "text" : "password"}
                   {...register("newPassword")}
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  autoComplete="new-password"
+                  className="w-full px-3 py-2 pr-10 border border-input rounded-md bg-background focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                   placeholder="Entrez votre nouveau mot de passe"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground"
                 >
                   {showNewPassword ? (
                     <EyeOffIcon className="w-5 h-5" />
@@ -145,33 +160,48 @@ export default function ChangePassword() {
                 </button>
               </div>
               {errors.newPassword && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-destructive text-sm mt-1">
                   {errors.newPassword.message}
                 </p>
               )}
-              <p className="text-xs text-gray-500 mt-1">
-                Le mot de passe doit contenir au moins 8 caractères avec une
-                minuscule, une majuscule et un chiffre
-              </p>
+              <div className="flex justify-between items-center mt-1">
+                <p className="text-xs text-muted-foreground">
+                  Min. 8 caractères, incluant majuscule, minuscule et chiffre
+                </p>
+                {newPassword && (
+                  <p
+                    className={`text-xs font-medium ${
+                      passwordStrength === "Faible"
+                        ? "text-destructive"
+                        : passwordStrength === "Moyen"
+                        ? "text-tertiary"
+                        : "text-primary"
+                    }`}
+                  >
+                    Force : {passwordStrength}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2">
                 Confirmer le nouveau mot de passe{" "}
-                <span className="text-red-500">*</span>
+                <span className="text-destructive">*</span>
               </label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   {...register("confirmNewPassword")}
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  autoComplete="new-password"
+                  className="w-full px-3 py-2 pr-10 border border-input rounded-md bg-background focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                   placeholder="Confirmez votre nouveau mot de passe"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground"
                 >
                   {showConfirmPassword ? (
                     <EyeOffIcon className="w-5 h-5" />
@@ -181,7 +211,7 @@ export default function ChangePassword() {
                 </button>
               </div>
               {errors.confirmNewPassword && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-destructive text-sm mt-1">
                   {errors.confirmNewPassword.message}
                 </p>
               )}
