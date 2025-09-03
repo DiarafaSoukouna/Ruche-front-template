@@ -143,13 +143,8 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Conventions
-        </h2>
-        <Button
-          onClick={onAdd}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-        >
+        <h2 className="text-2xl font-bold text-gray-900">Conventions</h2>
+        <Button variant={"primary"} onClick={onAdd}>
           <Plus size={20} />
           Nouvelle Convention
         </Button>
@@ -162,8 +157,7 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
       ) : (
         <Table<Convention & { id?: string | number }>
           columns={columns}
-          data={conventions.map(c => ({ ...c, id: c.id_convention }))}
-          className="bg-white rounded-lg shadow"
+          data={conventions.map((c) => ({ ...c, id: c.id_convention }))}
         />
       )}
     </div>

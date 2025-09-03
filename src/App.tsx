@@ -24,8 +24,8 @@ import PartFinanciers from './pages/Parametrages/PartFinancier'
 import ChangePassword from './pages/ChangePassword'
 import Ugls from './pages/Parametrages/Ugl'
 import ConventionPage from './pages/Parametrages/convention/ConventionPage'
-import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
 import NiveauStructureConfigPage from './pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage'
+import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
 import ZoneCollecte from './pages/Parametrages/ZoneCollecte/index'
 
 const AppContent: React.FC = () => {

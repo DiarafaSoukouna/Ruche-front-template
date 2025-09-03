@@ -73,11 +73,16 @@ const Navbar: React.FC = () => {
       name: 'Paramétrage',
       icon: CogIcon,
       children: [
-        // { name: 'Produits', href: '/products', icon: ShoppingBagIcon },
+        // { name: "Produits", href: "/products", icon: ShoppingBagIcon },
         { name: 'Localités', href: '/localites', icon: MapPinIcon },
         { name: 'Unités de gestion', href: '/unite_gestion', icon: LayoutGrid },
         { name: 'Acteurs', href: '/acteurs', icon: User },
         { name: 'Utilisateurs', href: '/utilisateurs', icon: UsersIcon },
+        {
+          name: 'Niveau Structure',
+          href: '/niveau-structure-config',
+          icon: LayoutGrid,
+        },
         { name: 'Plans de Site', href: '/plan-sites', icon: Building2 },
         { name: 'Types de Zone', href: '/type-zones', icon: MapPinIcon },
         {
@@ -102,15 +107,17 @@ const Navbar: React.FC = () => {
     typeof href === 'string' ? location.pathname === href : false
 
   return (
-    <nav className="bg-white shadow-lg border-b border-blue-100 sticky top-0 z-50">
+    <nav className="bg-background text-foreground shadow-lg border-b border-primary-50 sticky top-0 z-50">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white font-bold text-sm">R</span>
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-3">
+                <span className="text-primary-foreground font-bold text-sm">
+                  R
+                </span>
               </div>
-              <span className="text-xl font-bold text-blue-900">
+              <span className="text-xl font-bold text-primary">
                 Systeme informatisé de suivi évaluation
               </span>
             </div>
@@ -119,12 +126,12 @@ const Navbar: React.FC = () => {
           <form className="mx-auto w-full max-w-md mt-3">
             <div className="relative">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <Search className="w-4 h-4 text-primary" />
               </div>
               <input
                 type="search"
                 id="default-search"
-                className="block w-full px-4 py-2 ps-8 text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:ring-blue-500 text-dark focus:border-blue-500"
+                className="block w-full px-4 py-2 ps-8 text-sm text-foreground border border-input rounded-xl bg-secondary focus:ring-primary-50 text-dark focus:border-primary"
                 placeholder=" Rechercher..."
                 required
               />
@@ -133,16 +140,16 @@ const Navbar: React.FC = () => {
 
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3 gap-3">
-              <BellIcon className="w-5 h-5 text-gray-600 hover:text-blue-700 cursor-pointer" />
+              <BellIcon className="w-5 h-5 text-muted-foreground hover:text-primary cursor-pointer" />
 
               {/* User Dropdown */}
               <div className="relative" ref={userDropdownRef}>
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center space-x-2 rounded-full w-10 h-10 bg-blue-600 hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="flex items-center space-x-2 rounded-full w-10 h-10 bg-primary hover:bg-primary/90 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 >
-                  <div className="rounded-full w-10 h-10 bg-blue-600 flex items-center justify-center">
-                    <p className="text-sm font-medium text-white">
+                  <div className="rounded-full w-10 h-10 bg-primary flex items-center justify-center">
+                    <p className="text-sm font-medium text-primary-foreground">
                       {user
                         ? getUserInitials(
                             `${user.prenom_perso} ${user.nom_perso}`
@@ -153,13 +160,13 @@ const Navbar: React.FC = () => {
                 </button>
 
                 {userDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-card rounded-lg shadow-lg border border-border z-50">
                     <div className="py-2">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">
+                      <div className="px-4 py-2 border-b border-border">
+                        <p className="text-sm font-medium text-foreground">
                           {user?.prenom_perso || 'Utilisateur'}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           {user?.id_personnel_perso || ''}
                         </p>
                       </div>
@@ -167,7 +174,7 @@ const Navbar: React.FC = () => {
                       <Link
                         to="/change-password"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                        className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-primary-50 hover:text-primary transition-colors"
                       >
                         <KeyIcon className="w-4 h-4 mr-3" />
                         Changer de mot de passe
@@ -178,7 +185,7 @@ const Navbar: React.FC = () => {
                           logout()
                           setUserDropdownOpen(false)
                         }}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+                        className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                       >
                         <LogOutIcon className="w-4 h-4 mr-3" />
                         Se déconnecter
@@ -191,30 +198,24 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
-      <hr className="h-px bg-gray-200 border-0"></hr>
+      <hr className="h-px bg-border border-0"></hr>
 
       <div className="ml-10 flex space-x-1 p-2">
         {navigationItems.map((item) => (
           <div key={item.name} className="relative">
             {item.children ? (
-              <div
-                className="relative"
-                // onMouseEnter={() => setDropdownOpen(item.name)}
-                // onMouseLeave={() => setDropdownOpen(null)}
-              >
+              <div className="relative">
                 <button
                   onMouseEnter={() => setDropdownOpen(item.name)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-1 transition-all duration-200
-                   ${
-                     item.children
-                       .map((child) => isActive(child.href))
-                       .includes(true)
-                       ? 'bg-blue-600 text-white shadow-md'
-                       : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
-                   } ${
-                    dropdownOpen === item.name
-                      ? 'bg-blue-50 text-blue-900'
-                      : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
+                  ${
+                    item.children
+                      .map((child) => isActive(child.href))
+                      .includes(true)
+                      ? 'bg-primary text-primary-foreground shadow-md'
+                      : dropdownOpen === item.name
+                      ? 'bg-primary-50 text-primary'
+                      : 'text-foreground hover:text-primary hover:bg-primary-50'
                   }`}
                 >
                   <item.icon className="w-4 h-4" />
@@ -227,7 +228,7 @@ const Navbar: React.FC = () => {
                 </button>
 
                 {dropdownOpen === item.name && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-blue-100 z-50">
+                  <div className="absolute left-0 mt-2 w-48 bg-card rounded-lg shadow-lg border border-border z-50">
                     <div
                       className="py-2"
                       onMouseLeave={() => setDropdownOpen(null)}
@@ -239,8 +240,8 @@ const Navbar: React.FC = () => {
                           onClick={() => setDropdownOpen(null)}
                           className={`flex items-center px-4 py-2 text-sm transition-colors ${
                             isActive(child.href)
-                              ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
-                              : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700'
+                              ? 'bg-primary-50 text-primary border-r-2 border-primary'
+                              : 'text-foreground hover:bg-primary-50 hover:text-primary'
                           }`}
                         >
                           <child.icon className="w-4 h-4 mr-3" />
@@ -256,8 +257,8 @@ const Navbar: React.FC = () => {
                 to={item.href as string}
                 className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 ${
                   isActive(item.href)
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-blue-700 hover:bg-blue-50'
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'text-foreground hover:text-primary hover:bg-primary-50'
                 }`}
                 onClick={() => setDropdownOpen(null)}
               >

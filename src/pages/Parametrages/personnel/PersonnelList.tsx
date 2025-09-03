@@ -73,7 +73,7 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
     },
     {
       key: "id_personnel_perso" as keyof Personnel,
-      title: "ID Personnel",
+      title: "Identifiant",
     },
     {
       key: "titre_personnel" as keyof Personnel,

@@ -261,7 +261,7 @@ const Acteurs = () => {
               setShowModal(true)
             }}
             size="md"
-            variant="yellow"
+            variant="primary"
           >
             <PlusIcon className="w-4 h-4 mr-2" />
             Nouvel acteur
