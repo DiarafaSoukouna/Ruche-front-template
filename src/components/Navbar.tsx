@@ -79,7 +79,7 @@ const Navbar: React.FC = () => {
         { name: 'Acteurs', href: '/acteurs', icon: User },
         { name: 'Utilisateurs', href: '/utilisateurs', icon: UsersIcon },
         {
-          name: 'Partenaire Financier',
+          name: 'Partenaire financier',
           href: '/part_financier',
           icon: HandshakeIcon,
         },
