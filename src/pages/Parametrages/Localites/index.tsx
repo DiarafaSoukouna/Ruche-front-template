@@ -29,11 +29,13 @@ const Localites: React.FC = () => {
         setLoadingNiv(true)
         try {
             const res = await allNiveauLocalite();
-            setNiveauLocalites(res)
-            setAddBoutonLabel(res[0].libelle_nlc)
-            setCurrentId(res[0].id_nlc)
-            setTabActive(res[0].nombre_nlc)
-            setLoadingNiv(false)
+            if (res) {
+                setNiveauLocalites(res)
+                setAddBoutonLabel(res[0].libelle_nlc)
+                setCurrentId(res[0].id_nlc)
+                setTabActive(res[0].nombre_nlc)
+                setLoadingNiv(false)
+            }
         } catch (error) {
             toast.error('Erreur lors de la recuperation des niveaux localités')
             setLoadingNiv(false)
@@ -144,22 +146,21 @@ const Localites: React.FC = () => {
                             </div>
                             <input
                                 type="text"
-                                className="pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                                 placeholder="Rechercher..."
                             />
                         </div>
 
-                        <button
+                        <Button
                             onClick={() => handleAddForm(true)}
-                            className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             <PlusIcon size={16} className="mr-2" />
                             Nouvelle {addBoutonLabel}
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
-                {loading ? <div className="text-center"><RiseLoader color="blue" /></div> :
+                {loading ? <div className="text-center"><RiseLoader color="green" /></div> :
                     niveauLocalites.length ?
                         niveauLocalites.map((nivLoc: typeNiveauLocalite) =>
                         (

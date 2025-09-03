@@ -109,20 +109,8 @@ const AppContent: React.FC = () => {
             element={isAuthenticated ? <Ugls /> : <Navigate to="/login" />}
           />
           <Route
-            path="/niveau-structure-config"
-            element={
-              isAuthenticated ? (
-                <NiveauStructureConfigPage />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route
-            path="/plan-sites"
-            element={
-              isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />
-            }
+            path="/plan_sites"
+            element={isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />}
           />
           <Route
             path="/type-zones"

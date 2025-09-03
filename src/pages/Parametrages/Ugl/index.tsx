@@ -221,16 +221,13 @@ const Ugls = () => {
           </div>
         </div>
       </Modal>
-
-      <Card title="Liste des unités de gestion" className="overflow-hidden">
-        {loading ? (
-          <div className="text-center">
-            <RiseLoader color="blue" />
-          </div>
-        ) : (
-          <Table columns={columns} data={ugls} itemsPerPage={5} />
-        )}
-      </Card>
+      {loading ? (
+        <div className="text-center">
+          <RiseLoader color="blue" />
+        </div>
+      ) : (
+        <Table title='Liste des unités de gestion' columns={columns} data={ugls} itemsPerPage={5} />
+      )}
     </div>
   )
 }

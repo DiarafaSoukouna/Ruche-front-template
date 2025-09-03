@@ -69,14 +69,14 @@ const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, children, className = 
       onClick={() => setActiveTab(value)}
       className={`relative px-6 py-3 text-sm font-medium tracking-wide transition-all 
         ${activeTab === value 
-          ? 'text-blue-600 font-semibold' 
+          ? 'text-green-600 font-semibold' 
           : 'text-gray-500'
         } bg-transparent rounded-none border-0 ${className}`}
     >
       {children}
       {activeTab === value && (
         <motion.div
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600"
           layoutId="activeTabIndicator"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

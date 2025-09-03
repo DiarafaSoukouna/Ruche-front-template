@@ -1,17 +1,12 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import type { SingleValue } from "react-select";
 import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import SelectInput from "../../../components/SelectInput";
-import { apiClient } from "../../../lib/api";
-import type { PlanSite, NiveauStructureConfig } from "../../../types/entities";
+import { planSiteService } from "../../../services/planSiteService";
 import {
   planSiteSchema,
   type PlanSiteFormData,
 } from "../../../schemas/planSiteSchema";
+import type { PlanSite } from "../../../types/entities";
 
 interface PlanSiteFormProps {
   planSite?: PlanSite;
@@ -131,77 +126,41 @@ export default function PlanSiteForm({ planSite, onClose }: PlanSiteFormProps) {
         </div>
 
         <div>
-          <Controller
-            name="niveau_ds"
-            control={control}
-            render={({ field }) => (
-              <SelectInput
-                {...field}
-                label="Niveau"
-                options={niveauConfigs.map((config) => ({
-                  value: config.nombre_nsc,
-                  label: `${config.nombre_nsc} - ${config.libelle_nsc}`,
-                }))}
-                placeholder="Sélectionnez un niveau"
-                value={
-                  niveauConfigs
-                    .map((config) => ({
-                      value: config.nombre_nsc,
-                      label: `${config.nombre_nsc} - ${config.libelle_nsc}`,
-                    }))
-                    .find((option) => option.value === field.value) || null
-                }
-                onChange={(option: SingleValue<{ value: string | number; label: string }>) =>
-                  field.onChange(option?.value)
-                }
-                error={errors.niveau_ds}
-              />
-            )}
+          <label className="block text-sm font-medium mb-1">
+            Niveau hiérarchique <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            {...register("niveau_ds", { valueAsNumber: true })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
           />
+          {errors.niveau_ds && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.niveau_ds.message}
+            </p>
+          )}
         </div>
 
         <div>
-          <Controller
-            name="parent_ds"
-            control={control}
-            render={({ field }) => (
-              <SelectInput
-                {...field}
-                label="Structure parente"
-                required
-                options={availableParents
-                  .filter((parent) => parent.id_ds !== undefined)
-                  .map((parent) => ({
-                    value: parent.id_ds!,
-                    label: `${parent.intitule_ds} (${parent.code_ds}) - Niveau ${parent.niveau_ds}`,
-                  }))}
-                isClearable
-                placeholder="Sélectionnez une structure parente..."
-                value={
-                  availableParents
-                    .filter((parent) => parent.id_ds !== undefined)
-                    .map((parent) => ({
-                      value: parent.id_ds!,
-                      label: `${parent.intitule_ds} (${parent.code_ds}) - Niveau ${parent.niveau_ds}`,
-                    }))
-                    .find((opt) => opt.value === field.value) || null
-                }
-                onChange={(option: SingleValue<{ value: string | number; label: string }>) =>
-                  field.onChange(option ? Number(option.value) : null)
-                }
-                error={errors.parent_ds}
-              />
-            )}
+          <label className="block text-sm font-medium mb-1">
+            Code parent <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            {...register("parent_ds", { valueAsNumber: true })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
           />
+          {errors.parent_ds && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.parent_ds.message}
+            </p>
+          )}
         </div>
 
         <div>
           <Input
             {...register("code_relai_ds")}
-            label="Code relai"
-            placeholder="Code de liaison (optionnel)"
-            error={errors.code_relai_ds}
-            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
