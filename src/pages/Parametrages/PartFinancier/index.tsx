@@ -209,7 +209,9 @@ const PartFinanciers = () => {
                         <RiseLoader color='blue' />
                     </div>
                     ) :
-                    <Table columns={columns} data={partFinanciers} itemsPerPage={5} />
+                    partFinanciers.length > 0 ?
+                    (<Table columns={columns} data={partFinanciers} itemsPerPage={5} />)
+                    : <div className='text-center'>Parténaire financier non disponible</div>
                 }
 
             </Card>

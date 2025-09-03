@@ -19,7 +19,7 @@ interface Props {
 }
 
 type Errors = {
-    intitule_ds?: string;
+    intutile_ds?: string;
     code_relai_ds?: string;
     code_ds?: string;
 };
@@ -35,14 +35,14 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
     const validate = (data: Record<string, any>) => {
         const newErrors: Errors = {};
 
-        if (!data.intitule_loca || data.intitule_loca.trim() === "") {
-            newErrors.intitule_ds = "Le libellé est obligatoire.";
+        if (!data.intutile_ds || data.intutile_ds.trim() === "") {
+            newErrors.intutile_ds = "Le libellé est obligatoire.";
         }
 
-        if (!data.code_national_loca || data.code_national_loca.trim() === "") {
+        if (!data.code_relai_ds || data.code_relai_ds.trim() === "") {
             newErrors.code_relai_ds = "Le code national est obligatoire.";
         } else if (data.code_relai_ds.length !== Number(curentInfo.code_number_nsc)) {
-            newErrors.code_relai_ds = `Le code doit contenir exactementh ${curentInfo.code_number_nsc } caractères.`;
+            newErrors.code_relai_ds = `Le code doit contenir exactement ${curentInfo.code_number_nsc} caractères.`;
         }
 
         if (!data.code_ds || data.code_ds.trim() === "") {
@@ -62,26 +62,28 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
         const newErrors = validate(data);
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            return; 
+            return;
         }
         setErrors({});
 
         let payload: typePlanSite;
         if (parentInfo) {
             payload = {
-                intitule_ds: data.intitule_ds as string,
+                intutile_ds: data.intutile_ds as string,
                 code_relai_ds: data.code_relai_ds as string,
                 code_ds: data.code_ds as string,
                 parent_ds: data.parent_ds as string,
                 niveau_ds: currentId,
+                niveau_structure: currentId,
                 id_ds: editRow?.id_ds,
             };
         } else {
             payload = {
-                intitule_ds: data.intitule_ds as string,
+                intutile_ds: data.intutile_ds as string,
                 code_relai_ds: data.code_relai_ds as string,
                 code_ds: data.code_ds as string,
                 niveau_ds: currentId,
+                niveau_structure: currentId,
                 id_ds: editRow?.id_ds,
             };
         }
@@ -94,13 +96,17 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
                 res = await addPlanSite(payload);
                 form.reset();
             }
-            toast.success(editRow ?
-                "Localité mise à jour avec succès" :
-                "Localité ajoutée avec succès"
-            );
+            if (res) {
+
+                toast.success(editRow ?
+                    "Plan site mise à jour avec succès" :
+                    "Plan site ajoutée avec succès"
+                );
+            }
             onClose()
             planByNiveau(currentId)
         } catch (error) {
+             toast.success("Erreur lors de l'ajout Plan site");
             console.log("error", error);
         }
     };
@@ -123,7 +129,7 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
     const defaultValue = typeof editRow?.parent_ds === 'object' && editRow.parent_ds !== null ?
         editRow.parent_ds as typePlanSite :
         ''
-    console.log(curentInfo, niveau)
+    console.log(currentId, niveauStructures)
     return (
         <div className="space-y-4">
             <form onSubmit={submit} name="niveauLocaliteForm">
@@ -135,14 +141,14 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
                             Libellé
                         </label>
                         <input
-                            name="intitule_ds"
+                            name="intutile_ds"
                             placeholder="Entrer le libellé"
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 
-                              ${errors.intitule_ds ? "border-red-500" : "border-gray-300"}`}
-                            defaultValue={editRow?.intitule_ds || ""}
+                              ${errors.intutile_ds ? "border-red-500" : "border-gray-300"}`}
+                            defaultValue={editRow?.intutile_ds || ""}
                         />
-                        {errors.intitule_ds && (
-                            <p className="text-red-500 text-sm mt-1">{errors.intitule_ds}</p>
+                        {errors.intutile_ds && (
+                            <p className="text-red-500 text-sm mt-1">{errors.intutile_ds}</p>
                         )}
                     </div>
 
@@ -186,9 +192,9 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
                                 name="parent_ds"
                                 defaultValue={defaultValue ? {
                                     value: String(defaultValue?.id_ds),
-                                    label: defaultValue.intitule_ds
+                                    label: defaultValue.intutile_ds
                                 } : null}
-                                options={localiteByNiv.map(item => ({
+                                options={localiteByNiv?.map(item => ({
                                     value: String(item.id_loca),
                                     label: item.intitule_loca
                                 }))}

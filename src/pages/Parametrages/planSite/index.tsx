@@ -30,10 +30,11 @@ const PlanSitePage: React.FC = () => {
         try {
             const res = await allNiveauStructure();
             setNiveauStructures(res)
-            setAddBoutonLabel(res[0].libelle_nlc)
-            setCurrentId(res[0].id_nlc)
-            setTabActive(res[0].nombre_nlc)
+            setAddBoutonLabel(res[2]?.libelle_nsc || '');
+            setCurrentId(res[2]?.id_nsc || '');
+            setTabActive(res[2]?.nombre_nsc || 0);
             setLoadingNiv(false)
+            console.log(res);
         } catch (error) {
             toast.error('Erreur lors de la recuperation des niveaux localités')
             setLoadingNiv(false)
@@ -97,7 +98,7 @@ const PlanSitePage: React.FC = () => {
         <>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Plan sites </h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Plan sites {tabActive} </h1>
                 </div>
                 <Button variant="outline" onClick={() => setLoadNiveau(true)}>
                     <MapPinIcon className="w-4 h-4 mr-2" />
@@ -111,7 +112,7 @@ const PlanSitePage: React.FC = () => {
                 <div className="mt-2 mb-2 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <TabsList className="flex space-x-2">
-                            { niveauStructures.length ? (
+                            {niveauStructures.length ? (
                                 niveauStructures.map((nivStruct: typeNiveauStructure) => (
                                     <div
                                         key={nivStruct.nombre_nsc}
@@ -196,13 +197,13 @@ const PlanSitePage: React.FC = () => {
                                                                 {plan.code_relai_ds}
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                                {plan.intitule_ds}
+                                                                {plan.intutile_ds}
                                                             </td>
                                                             {
                                                                 niveauStructures.slice(0, Number(tabActive) - 1).map((niv) => (
                                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                                                         {typeof plan.parent_ds === 'object' && plan.parent_ds !== null ?
-                                                                            (plan.parent_ds as typePlanSite).intitule_ds :
+                                                                            (plan.parent_ds as typePlanSite).intutile_ds :
                                                                             "-"
                                                                         }
                                                                         {niv.id_nsc}

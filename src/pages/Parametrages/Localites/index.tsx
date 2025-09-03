@@ -29,11 +29,13 @@ const Localites: React.FC = () => {
         setLoadingNiv(true)
         try {
             const res = await allNiveauLocalite();
-            setNiveauLocalites(res)
-            setAddBoutonLabel(res[0].libelle_nlc)
-            setCurrentId(res[0].id_nlc)
-            setTabActive(res[0].nombre_nlc)
-            setLoadingNiv(false)
+            if (res) {
+                setNiveauLocalites(res)
+                setAddBoutonLabel(res[0].libelle_nlc)
+                setCurrentId(res[0].id_nlc)
+                setTabActive(res[0].nombre_nlc)
+                setLoadingNiv(false)
+            }
         } catch (error) {
             toast.error('Erreur lors de la recuperation des niveaux localités')
             setLoadingNiv(false)
