@@ -15,14 +15,10 @@ interface SelectInputProps extends Omit<SelectProps<Option, false>, "options"> {
   required?: boolean;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({
-  options,
-  placeholder,
-  error,
-  label,
-  required,
-  ...rest
-}) => {
+const SelectInput: React.FC<SelectInputProps> = React.forwardRef<
+  HTMLDivElement,
+  SelectInputProps
+>(({ options, placeholder, error, label, required, ...rest }, ref) => {
   // Styles pour react-select utilisant ton thème CSS
   const customStyles = {
     control: (provided: any, state: any) => ({
@@ -77,7 +73,7 @@ const SelectInput: React.FC<SelectInputProps> = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full" ref={ref}>
       {label && (
         <label className="block text-sm font-medium text-foreground dark:text-foreground mb-2">
           {label} {required && <span className="text-destructive">*</span>}
@@ -97,6 +93,6 @@ const SelectInput: React.FC<SelectInputProps> = ({
       )}
     </div>
   );
-};
+});
 
 export default SelectInput;

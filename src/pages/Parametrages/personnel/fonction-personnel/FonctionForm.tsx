@@ -2,11 +2,11 @@ import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import TextArea from "../../../components/TextArea";
-import { fonctionService } from "../../../services/fonctionService";
-import type { Fonction } from "../../../types/entities";
+import Button from "../../../../components/Button";
+import Input from "../../../../components/Input";
+import TextArea from "../../../../components/TextArea";
+import { fonctionService } from "../../../../services/fonctionService";
+import type { Fonction } from "../../../../types/entities";
 
 // Schema de validation pour la fonction
 const fonctionSchema = z.object({

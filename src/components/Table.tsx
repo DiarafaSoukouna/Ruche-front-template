@@ -89,8 +89,8 @@ function Table<T extends { id?: string | number }>({
           sortConfig.order === 'asc'
             ? 'desc'
             : sortConfig.order === 'desc'
-              ? null
-              : 'asc',
+            ? null
+            : 'asc',
       })
     } else {
       setSortConfig({ key, order: 'asc' })
@@ -117,7 +117,6 @@ function Table<T extends { id?: string | number }>({
             <h6 className="text-2xl font-600 text-gray-900">{title}</h6>
           </div>
           <div>
-
             <Input
               type="text"
               placeholder="Recherche..."
@@ -132,12 +131,12 @@ function Table<T extends { id?: string | number }>({
 
         <div className="overflow-x-auto">
           <table className="w-full table-auto">
-            <thead className="bg-gray-50 border-b border-border">
+            <thead className="bg-muted text-muted-foreground border-b border-border">
               <tr>
                 {columns.map((column) => (
                   <th
                     key={String(column.key)}
-                    className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer select-none"
+                    className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer select-none"
                     onClick={() => handleSort(column.key)}
                   >
                     {column.title} {getSortIcon(column.key)}
@@ -145,18 +144,19 @@ function Table<T extends { id?: string | number }>({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-muted text-foreground">
               {currentData.map((row, idx) => (
                 <tr
                   key={row.id || idx}
-                  className={`transition-colors duration-150 hover:bg-primary-50 ${onRowClick ? 'cursor-pointer' : ''
-                    }`}
+                  className={`transition-colors duration-150 hover:bg-primary-50 ${
+                    onRowClick ? 'cursor-pointer' : ''
+                  }`}
                   onClick={() => onRowClick && onRowClick(row)}
                 >
                   {columns.map((column) => (
                     <td
                       key={String(column.key)}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                      className="px-6 py-4 whitespace-nowrap text-sm text-foreground"
                     >
                       {column.render
                         ? column.render(row[column.key], row)
@@ -171,8 +171,8 @@ function Table<T extends { id?: string | number }>({
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 flex items-center justify-between border-t border-border bg-background">
-            <div className="text-sm text-gray-600">
+          <div className="px-6 py-4 flex items-center justify-between border-t border-border bg-background text-foreground">
+            <div className="text-sm text-foreground">
               Affichage de {startIndex + 1} à{' '}
               {Math.min(endIndex, sortedData.length)} sur {sortedData.length}{' '}
               résultats
@@ -197,7 +197,7 @@ function Table<T extends { id?: string | number }>({
                 .map((page, index, array) => (
                   <React.Fragment key={page}>
                     {index > 0 && array[index - 1] !== page - 1 && (
-                      <span className="text-gray-400">...</span>
+                      <span className="text-foreground">...</span>
                     )}
                     <Button
                       variant={currentPage === page ? 'primary' : 'outline'}
@@ -220,7 +220,6 @@ function Table<T extends { id?: string | number }>({
             </div>
           </div>
         )}
-
       </Card>
     </div>
   )

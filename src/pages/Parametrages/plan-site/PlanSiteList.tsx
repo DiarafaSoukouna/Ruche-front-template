@@ -1,11 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Edit, TrashIcon, Eye } from "lucide-react";
 import { toast } from "react-toastify";
 import Table from "../../../components/Table";
 import Button from "../../../components/Button";
 import { apiClient } from "../../../lib/api";
 import type { PlanSite, NiveauStructureConfig } from "../../../types/entities";
-import Card from "../../../components/Card";
 
 interface PlanSiteListProps {
   onEdit: (planSite: PlanSite) => void;
@@ -181,14 +180,13 @@ export default function PlanSiteList({
             <Edit className="h-4 w-4" />
           </Button>
           <Button
-            variant="outline"
+            variant="danger"
             size="sm"
             onClick={() => handleDelete(planSite.id_ds!)}
-            className="p-1 border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500"
             disabled={deleteMutation.isPending}
             title="Supprimer"
           >
-            <Trash2 className="h-4 w-4" />
+            <TrashIcon className="h-4 w-4" />
           </Button>
         </div>
       ),
@@ -217,13 +215,12 @@ export default function PlanSiteList({
           <div className="text-gray-500">Chargement...</div>
         </div>
       ) : (
-        <Card title="Liste des plan sites" className="overflow-hidden">
-          <Table<PlanSite & { id?: string | number }>
-            columns={columns}
-            data={planSites.map((p) => ({ ...p, id: p.id_ds }))}
-            className="min-h-[400px]"
-          />
-        </Card>
+        <Table<PlanSite & { id?: string | number }>
+          title="Liste des plan sites"
+          columns={columns}
+          data={planSites.map((p) => ({ ...p, id: p.id_ds }))}
+          className="min-h-[400px]"
+        />
       )}
     </div>
   );

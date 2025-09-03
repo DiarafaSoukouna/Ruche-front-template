@@ -1,8 +1,8 @@
 import { useState } from "react";
 import FonctionList from "./FonctionList";
 import FonctionForm from "./FonctionForm";
-import Modal from "../../../components/Modal";
-import type { Fonction } from "../../../types/entities";
+import Modal from "../../../../components/Modal";
+import type { Fonction } from "../../../../types/entities";
 
 export default function FonctionPage() {
   const [showForm, setShowForm] = useState(false);

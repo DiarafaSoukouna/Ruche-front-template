@@ -1,11 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Edit, TrashIcon, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "react-toastify";
 import Table from "../../../components/Table";
 import Button from "../../../components/Button";
 import { niveauStructureConfigService } from "../../../services/niveauStructureConfigService";
 import type { NiveauStructureConfig } from "../../../types/entities";
-import Card from "../../../components/Card";
 
 interface NiveauStructureConfigListProps {
   onEdit: (id: number, config: NiveauStructureConfig) => void;
@@ -192,14 +191,13 @@ export default function NiveauStructureConfigList({
             <Edit className="h-4 w-4" />
           </Button>
           <Button
-            variant="outline"
+            variant="danger"
             size="sm"
             onClick={() => handleDelete(config.id_nsc!)}
-            className="p-1 border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500"
             disabled={deleteMutation.isPending}
             title="Supprimer"
           >
-            <Trash2 className="h-4 w-4" />
+            <TrashIcon className="h-4 w-4" />
           </Button>
         </div>
       ),
@@ -250,13 +248,12 @@ export default function NiveauStructureConfigList({
           <div className="text-gray-500">Chargement...</div>
         </div>
       ) : (
-        <Card title="Liste des configurations" className="overflow-hidden">
-          <Table<NiveauStructureConfig & { id?: string | number }>
-            columns={columns}
-            data={sortedConfigs.map((c) => ({ ...c, id: c.id_nsc }))}
-            className="min-h-[400px]"
-          />
-        </Card>
+        <Table<NiveauStructureConfig & { id?: string | number }>
+          title="Liste des configurations"
+          columns={columns}
+          data={sortedConfigs.map((c) => ({ ...c, id: c.id_nsc }))}
+          className="min-h-[400px]"
+        />
       )}
     </div>
   );

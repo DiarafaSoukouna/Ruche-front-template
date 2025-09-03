@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   HomeIcon,
   UsersIcon,
-  ShoppingBagIcon,
   BarChartIcon as ChartBarIcon,
   CogIcon,
   ChevronDownIcon,
@@ -74,26 +73,26 @@ const Navbar: React.FC = () => {
       name: 'Paramétrage',
       icon: CogIcon,
       children: [
-        // { name: 'Produits', href: '/products', icon: ShoppingBagIcon },
+        // { name: "Produits", href: "/products", icon: ShoppingBagIcon },
         { name: 'Localités', href: '/localites', icon: MapPinIcon },
         { name: 'Unités de gestion', href: '/unite_gestion', icon: LayoutGrid },
         { name: 'Acteurs', href: '/acteurs', icon: User },
         { name: 'Utilisateurs', href: '/utilisateurs', icon: UsersIcon },
         { name: 'Fonctions', href: '/fonctions', icon: BriefcaseIcon },
         {
-          name: 'Partenaire financier',
+          name: 'Partenaire Financier',
           href: '/part_financier',
           icon: HandshakeIcon,
-        },
-        {
-          name: 'Autres paramétrages',
-          href: '/autres-parametrages',
-          icon: Settings2Icon,
         },
         { name: 'Zone de Collecte', href: '/zone-collecte', icon: MapPinIcon },
 
         { name: 'Plans de Site', href: '/plan_sites', icon: Building2 },
         { name: 'Conventions', href: '/conventions', icon: FileSignature },
+        {
+          name: 'Autres paramétrages',
+          href: '/autres-parametrages',
+          icon: Settings2Icon,
+        },
       ],
       href: true,
     },

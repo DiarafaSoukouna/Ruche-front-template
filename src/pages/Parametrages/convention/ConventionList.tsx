@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, TrashIcon } from "lucide-react";
 import { toast } from "react-toastify";
 import Table from "../../../components/Table";
 import Button from "../../../components/Button";
@@ -15,7 +15,7 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
   const queryClient = useQueryClient();
 
   // Fetch convention data
-  const { data: conventions = [], isLoading } = useQuery<Convention[]>({
+  const { data: conventions = [] } = useQuery<Convention[]>({
     queryKey: ["/convention/"],
     queryFn: conventionService.getAll,
   });
@@ -114,7 +114,7 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
       },
     },
     {
-      key: "id_convention" as keyof Convention,
+      key: "actions" as keyof Convention,
       title: "Actions",
       render: (_: Convention[keyof Convention], convention: Convention) => (
         <div className="flex space-x-2">
@@ -127,13 +127,12 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
             <Edit size={16} />
           </Button>
           <Button
-            variant="outline"
+            variant="danger"
             size="sm"
             onClick={() => handleDelete(convention)}
-            className="p-1 border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500"
             disabled={deleteMutation.isPending}
           >
-            <Trash2 size={16} />
+            <TrashIcon size={16} />
           </Button>
         </div>
       ),
@@ -143,23 +142,18 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Conventions</h2>
+        <h2 className="text-2xl text-foreground font-bold">Conventions</h2>
         <Button variant={"primary"} onClick={onAdd}>
           <Plus size={20} />
           Nouvelle Convention
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="text-gray-500">Chargement...</div>
-        </div>
-      ) : (
-        <Table<Convention & { id?: string | number }>
-          columns={columns}
-          data={conventions.map((c) => ({ ...c, id: c.id_convention }))}
-        />
-      )}
+      <Table<Convention & { id?: string | number }>
+        title="Liste des conventions"
+        columns={columns}
+        data={conventions.map((c) => ({ ...c, id: c.id_convention }))}
+      />
     </div>
   );
 }
