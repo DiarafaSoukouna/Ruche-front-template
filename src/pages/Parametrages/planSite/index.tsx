@@ -45,9 +45,8 @@ const PlanSitePage: React.FC = () => {
         setLoading(true)
         try {
             const res = await oneNiveauStructure(id);
-            setStructures([])
-            // setStructures(res.planSites)
-            console.log('planSites', res.planSites);
+            setStructures(res.plansites)
+            console.log('planSites', res);
             setLoading(false)
         } catch (error) {
             toast.error('Erreur lors de la recuperation des localités')

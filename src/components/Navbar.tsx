@@ -74,14 +74,14 @@ const Navbar: React.FC = () => {
       name: 'Paramétrage',
       icon: CogIcon,
       children: [
-        { name: 'Produits', href: '/products', icon: ShoppingBagIcon },
+        // { name: 'Produits', href: '/products', icon: ShoppingBagIcon },
         { name: 'Localités', href: '/localites', icon: MapPinIcon },
         { name: 'Unités de gestion', href: '/unite_gestion', icon: LayoutGrid },
         { name: 'Acteurs', href: '/acteurs', icon: User },
         { name: 'Utilisateurs', href: '/utilisateurs', icon: UsersIcon },
         { name: 'Fonctions', href: '/fonctions', icon: BriefcaseIcon },
         {
-          name: 'Partenaire Financier',
+          name: 'Partenaire financier',
           href: '/part_financier',
           icon: HandshakeIcon,
         },

@@ -29,7 +29,7 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
     const parentIndex = niveau - 2;
     const parentInfo = niveauStructures[parentIndex]
     const curentInfo = niveauStructures[niveau - 1]
-    const [localiteByNiv, setLocaliteByNiv] = useState<typeLocalite[]>([])
+    const [localiteByNiv, setLocaliteByNiv] = useState<typePlanSite[]>([])
     const [errors, setErrors] = useState<Errors>({});
 
     const validate = (data: Record<string, any>) => {
@@ -114,7 +114,7 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
     const OneNiveau = async (id: number) => {
         try {
             const res = await oneNiveauStructure(id);
-            setLocaliteByNiv(res.localites);
+            setLocaliteByNiv(res.plansites);
         } catch (error) {
             toast.error('Erreur lors de la recuperation du niveau localité')
         }
@@ -129,7 +129,7 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
     const defaultValue = typeof editRow?.parent_ds === 'object' && editRow.parent_ds !== null ?
         editRow.parent_ds as typePlanSite :
         ''
-    console.log(currentId, niveauStructures)
+    console.log(niveau, curentInfo)
     return (
         <div className="space-y-4">
             <form onSubmit={submit} name="niveauLocaliteForm">
@@ -195,8 +195,8 @@ const FormPlanSite: React.FC<Props> = ({ editRow, onClose, niveauStructures, niv
                                     label: defaultValue.intutile_ds
                                 } : null}
                                 options={localiteByNiv?.map(item => ({
-                                    value: String(item.id_loca),
-                                    label: item.intitule_loca
+                                    value: String(item.id_ds),
+                                    label: item.intutile_ds
                                 }))}
                                 isClearable
                                 placeholder="Sélectionner un parent..."
