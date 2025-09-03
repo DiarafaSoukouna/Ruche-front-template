@@ -83,20 +83,20 @@ const Navbar: React.FC = () => {
           href: '/niveau-structure-config',
           icon: LayoutGrid,
         },
-        { name: 'Plans de Site', href: '/plan-sites', icon: Building2 },
-        { name: 'Types de Zone', href: '/type-zones', icon: MapPinIcon },
         {
           name: 'Partenaire Financier',
           href: '/part_financier',
           icon: HandshakeIcon,
         },
-        { name: 'Conventions', href: '/conventions', icon: FileSignature },
         {
           name: 'Autres paramétrages',
           href: '/autres-parametrages',
           icon: Settings2Icon,
         },
         { name: 'Zone de Collecte', href: '/zone-collecte', icon: MapPinIcon },
+
+        { name: 'Plans de Site', href: '/plan_sites', icon: Building2 },
+        { name: 'Conventions', href: '/conventions', icon: FileSignature },
       ],
       href: true,
     },

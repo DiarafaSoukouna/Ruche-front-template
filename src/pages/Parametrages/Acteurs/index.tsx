@@ -40,7 +40,7 @@ const Acteurs = () => {
     personne_responsable: '',
     contact: '',
     adresse_email: '',
-    categorie_acteur: 0,
+    categorie_acteur: [],
   })
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -53,7 +53,7 @@ const Acteurs = () => {
       personne_responsable: '',
       contact: '',
       adresse_email: '',
-      categorie_acteur: 0,
+      categorie_acteur: [],
     })
   }
 
@@ -160,17 +160,17 @@ const Acteurs = () => {
         </div>
       ),
     },
-    {
-      key: 'description_acteur',
-      title: 'Description',
-      render: (value: String) => (
-        <div className="flex items-center">
-          <div>
-            <div className="font-medium text-gray-900">{value}</div>
-          </div>
-        </div>
-      ),
-    },
+    // {
+    //   key: 'description_acteur',
+    //   title: 'Description',
+    //   render: (value: String) => (
+    //     <div className="flex items-center">
+    //       <div>
+    //         <div className="font-medium text-gray-900">{value}</div>
+    //       </div>
+    //     </div>
+    //   ),
+    // },
     {
       key: 'personne_responsable',
       title: 'Responsable',
@@ -207,17 +207,21 @@ const Acteurs = () => {
     {
       key: 'categorie_acteur',
       title: 'Catégorie',
-      render: (value: number) => (
-        <div className="flex items-center">
-          <div>
-            <div className="font-medium text-gray-900">
-              {/* {returnCategories(value)} */}
-              {
-                categories.find(({ id_categorie }) => id_categorie == value)
-                  ?.nom_categorie
-              }
-            </div>
-          </div>
+      render: (value: number[]) => (
+        <div className="flex flex-wrap gap-2 items-start whitespace-normal">
+          {value.map((id) => {
+            const category = categories.find(
+              ({ id_categorie }) => id_categorie === id
+            )
+            return category ? (
+              <div
+                key={id}
+                className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded"
+              >
+                {category.nom_categorie}
+              </div>
+            ) : null
+          })}
         </div>
       ),
     },

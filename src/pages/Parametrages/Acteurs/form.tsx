@@ -65,29 +65,32 @@ const Form: React.FC<FormProps> = ({
             Catégorie
           </label>
           <Select
+            isMulti
             value={
-              categories.find(
-                (cat: any) => cat.id_categorie === acteur.categorie_acteur
-              )
-                ? {
-                    value: acteur.categorie_acteur,
-                    label: categories.find(
-                      (cat: any) => cat.id_categorie === acteur.categorie_acteur
-                    )?.nom_categorie,
-                  }
-                : null
+              Array.isArray(acteur.categorie_acteur)
+                ? categories
+                    .filter((cat: any) =>
+                      acteur.categorie_acteur.includes(cat.id_categorie)
+                    )
+                    .map((cat: any) => ({
+                      value: cat.id_categorie,
+                      label: cat.nom_categorie,
+                    }))
+                : []
             }
             onChange={(selected) =>
               setActeur({
                 ...acteur,
-                categorie_acteur: Number(selected?.value),
+                categorie_acteur: Array.isArray(selected)
+                  ? selected.map((s: any) => s.value)
+                  : [],
               })
             }
             options={categories.map((cat: any) => ({
               value: cat.id_categorie, // garder number
               label: cat.nom_categorie,
             }))}
-            placeholder="Sélectionner une catégorie"
+            placeholder="Sélectionner une ou plusieurs catégories"
             isClearable
           />
         </div>
