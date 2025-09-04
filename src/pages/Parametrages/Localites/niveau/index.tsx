@@ -9,7 +9,10 @@ import { RiseLoader } from "react-spinners";
 import { typeNiveauLocalite } from "../../../../functions/niveauLocalites/types";
 import FormNiveau from "./form";
 import { toast } from "react-toastify";
-const NiveauLocalite = () => {
+interface NivSTrProps {
+    allNiveau: () => void
+}
+const NiveauLocalite:React.FC<NivSTrProps> = ({allNiveau}) => {
     const [niveauLocalites, setNiveauLocalites] = useState([]);
     const [loading, setLoading] = useState(false);
     const [formInputs, setFormInputs] = useState<typeNiveauLocalite[]>([]);
@@ -30,6 +33,7 @@ const NiveauLocalite = () => {
     const del = async (id: number) => {
         try {
             await deleteNiveauLocalite(id);
+            allNiveau();
             all();
         } catch (error) {
             console.error(error);
@@ -53,6 +57,7 @@ const NiveauLocalite = () => {
             await addNiveauLocalite(formInputs)
             toast.success("Niveau localité ajouté avec succès")
             console.log;
+            allNiveau();
             setFormInputs([]);
             all();
         } catch (error) {
