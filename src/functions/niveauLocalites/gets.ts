@@ -1,5 +1,4 @@
 import { instance } from "../../axios"
-import { api } from "../../lib/api"
 
 export const allNiveauLocalite = async () => {
     try {
@@ -9,9 +8,9 @@ export const allNiveauLocalite = async () => {
         return error
     }
 }
-export const getOne = async (id:Number) => {
+export const oneNiveauLocalite = async (id:number|undefined) => {
     try {
-        const res = await instance.get("niveau_localite_config/" + id)
+        const res = await instance.get("niveau_localite_config/" + id + "/")
         return res.data
     } catch (error) {
         return error

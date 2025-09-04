@@ -5,22 +5,28 @@ export enum TitrePersonnelEnum {
   M = "M", // Masculin
 }
 
+export interface TitrePersonnel {
+  id_titre: number;
+  libelle_titre: string;
+  description_titre?: string;
+}
+
 export interface Personnel extends Record<string, unknown> {
   n_personnel?: number;
-  email: string;
-  id_personnel_perso: string;
-  titre_personnel?: TitrePersonnelEnum;
-  prenom_perso?: string;
+  id_personnel_perso?: string;
+  titre_personnel?: number | string | null;
   nom_perso?: string;
+  prenom_perso?: string;
+  email?: string;
   contact_perso?: string;
-  fonction_perso?: string;
-  description_fonction_perso?: string;
+  fonction_perso?: number | null;
+  service_perso?: number | null;
   niveau_perso?: number;
   rapport_mensuel_perso?: boolean;
   rapport_trimestriel_perso?: boolean;
   rapport_semestriel_perso?: boolean;
   rapport_annuel_perso?: boolean;
-  statut?: string;
+  statut?: number;
   region_perso?: number | null;
   structure_perso?: string | null;
   ugl_perso?: string | null;
@@ -94,6 +100,12 @@ export interface UGL {
   region_concerne_ugl: number[];
 }
 
+export interface Fonction extends Record<string, unknown> {
+  id_fonction?: number;
+  nom_fonction: string;
+  description_fonction: string;
+}
+
 export interface NiveauStructureConfig extends Record<string, unknown> {
   id_nsc?: number;
   nombre_nsc: number;
@@ -110,4 +122,5 @@ export type ActeurFormData = Omit<Acteur, "id_acteur">;
 export type RegionFormData = Omit<Region, "id_loca">;
 export type StructureFormData = Omit<Structure, "id_acteur">;
 export type UGLFormData = Omit<UGL, "id_ugl">;
+export type FonctionFormData = Omit<Fonction, "id_fonction">;
 export type NiveauStructureConfigFormData = Omit<NiveauStructureConfig, "id_nsc">;

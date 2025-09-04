@@ -150,7 +150,7 @@ export default function DataTable<T extends Record<string, unknown>>(
             placeholder="Rechercher dans le tableau..."
             value={searchText}
             onChange={handleSearchChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm"
           />
         </div>
         <Button

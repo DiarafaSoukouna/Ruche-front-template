@@ -95,4 +95,30 @@ export const personnelService = {
       throw error;
     }
   },
+
+  // Activer un personnel
+  async enable(n_personnel: number): Promise<void> {
+    try {
+      await apiClient.request<void>(`/personnel/${n_personnel}/enable/`, {
+        method: "PUT",
+      });
+      toast.success("Personnel activé avec succès");
+    } catch (error) {
+      toast.error("Erreur lors de l'activation du personnel");
+      throw error;
+    }
+  },
+
+  // Désactiver un personnel
+  async disable(n_personnel: number): Promise<void> {
+    try {
+      await apiClient.request<void>(`/personnel/${n_personnel}/disable/`, {
+        method: "PUT",
+      });
+      toast.success("Personnel désactivé avec succès");
+    } catch (error) {
+      toast.error("Erreur lors de la désactivation du personnel");
+      throw error;
+    }
+  },
 };

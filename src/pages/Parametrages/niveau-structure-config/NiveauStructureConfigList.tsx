@@ -5,6 +5,7 @@ import Table from "../../../components/Table";
 import Button from "../../../components/Button";
 import { niveauStructureConfigService } from "../../../services/niveauStructureConfigService";
 import type { NiveauStructureConfig } from "../../../types/entities";
+import Card from "../../../components/Card";
 
 interface NiveauStructureConfigListProps {
   onEdit: (id: number, config: NiveauStructureConfig) => void;
@@ -249,11 +250,13 @@ export default function NiveauStructureConfigList({
           <div className="text-gray-500">Chargement...</div>
         </div>
       ) : (
-        <Table<NiveauStructureConfig & { id?: string | number }>
-          columns={columns}
-          data={sortedConfigs.map((c) => ({ ...c, id: c.id_nsc }))}
-          className="min-h-[400px]"
-        />
+        <Card title="Liste des configurations" className="overflow-hidden">
+          <Table<NiveauStructureConfig & { id?: string | number }>
+            columns={columns}
+            data={sortedConfigs.map((c) => ({ ...c, id: c.id_nsc }))}
+            className="min-h-[400px]"
+          />
+        </Card>
       )}
     </div>
   );

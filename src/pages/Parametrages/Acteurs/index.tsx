@@ -21,6 +21,8 @@ import { DeleteActeur } from '../../../functions/acteurs/delete'
 import Table from '../../../components/Table'
 import { getAllCategories } from '../../../functions/categoriesActeurs/gets'
 import CategorieActeur from './categories/index'
+import { RiseLoader } from 'react-spinners'
+import { toast } from 'react-toastify'
 
 const Acteurs = () => {
   //   const [acteurs, setActeurs] = useState([])
@@ -38,8 +40,10 @@ const Acteurs = () => {
     personne_responsable: '',
     contact: '',
     adresse_email: '',
-    categorie_acteur: 1,
+    categorie_acteur: [],
   })
+  const [loading, setLoading] = useState<boolean>(false)
+
   const clean = () => {
     setActeur({
       id_acteur: undefined,
@@ -49,12 +53,14 @@ const Acteurs = () => {
       personne_responsable: '',
       contact: '',
       adresse_email: '',
-      categorie_acteur: 1,
+      categorie_acteur: [],
     })
   }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
+      setLoading(true)
       if (isEdit) {
         const { id_acteur, ...data } = acteur
         if (!id_acteur) return
@@ -63,6 +69,7 @@ const Acteurs = () => {
           setShowModal(false)
           fetchActeurs()
           clean()
+          toast.success('Acteur modifié avec succès')
         }
       } else {
         const res = await addActeur(acteur)
@@ -70,18 +77,23 @@ const Acteurs = () => {
           setShowModal(false)
           fetchActeurs()
           clean()
+          toast.success('Acteur crée avec succès')
         }
         console.log(acteur)
       }
+      setLoading(false)
     } catch (error) {
       console.error(error)
+      toast.error("Erreur lors de l'action")
     }
   }
   const fetchActeurs = async () => {
     try {
+      setLoading(true)
       const res = await getAllActeurs()
       if (res?.data) {
         setAllActeurs(res.data)
+        setLoading(false)
       }
     } catch (error) {
       console.error(error)
@@ -90,10 +102,13 @@ const Acteurs = () => {
 
   const deleteActeur = async (id: number) => {
     try {
+      setLoading(true)
+
       await DeleteActeur(id)
       setIsDelete(false)
       fetchActeurs()
       clean()
+      setLoading(false)
     } catch (error) {
       console.error(error)
     }
@@ -145,17 +160,17 @@ const Acteurs = () => {
         </div>
       ),
     },
-    {
-      key: 'description_acteur',
-      title: 'Description',
-      render: (value: String) => (
-        <div className="flex items-center">
-          <div>
-            <div className="font-medium text-gray-900">{value}</div>
-          </div>
-        </div>
-      ),
-    },
+    // {
+    //   key: 'description_acteur',
+    //   title: 'Description',
+    //   render: (value: String) => (
+    //     <div className="flex items-center">
+    //       <div>
+    //         <div className="font-medium text-gray-900">{value}</div>
+    //       </div>
+    //     </div>
+    //   ),
+    // },
     {
       key: 'personne_responsable',
       title: 'Responsable',
@@ -192,17 +207,21 @@ const Acteurs = () => {
     {
       key: 'categorie_acteur',
       title: 'Catégorie',
-      render: (value: number) => (
-        <div className="flex items-center">
-          <div>
-            <div className="font-medium text-gray-900">
-              {/* {returnCategories(value)} */}
-              {
-                categories.find(({ id_categorie }) => id_categorie == value)
-                  ?.nom_categorie
-              }
-            </div>
-          </div>
+      render: (value: number[]) => (
+        <div className="flex flex-wrap gap-2 items-start whitespace-normal">
+          {value.map((id) => {
+            const category = categories.find(
+              ({ id_categorie }) => id_categorie === id
+            )
+            return category ? (
+              <div
+                key={id}
+                className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded"
+              >
+                {category.nom_categorie}
+              </div>
+            ) : null
+          })}
         </div>
       ),
     },
@@ -246,6 +265,7 @@ const Acteurs = () => {
               setShowModal(true)
             }}
             size="md"
+            variant="primary"
           >
             <PlusIcon className="w-4 h-4 mr-2" />
             Nouvel acteur
@@ -262,6 +282,7 @@ const Acteurs = () => {
           </Button>
         </div>
       </div>
+
       <Modal
         isOpen={showModal}
         onClose={() => close()}
@@ -275,6 +296,11 @@ const Acteurs = () => {
           handleSubmit={handleSubmit}
         />
       </Modal>
+      {loading && (
+        <div className="text-center">
+          <RiseLoader color="green" />
+        </div>
+      )}
       <Modal
         isOpen={isDelete}
         onClose={() => close()}
@@ -308,9 +334,12 @@ const Acteurs = () => {
         <CategorieActeur />
       </Modal>
 
-      <Card title="Liste des acteurs" className="overflow-hidden">
-        <Table columns={columns} data={allActeurs} itemsPerPage={5} />
-      </Card>
+      <Table
+        columns={columns}
+        data={allActeurs}
+        itemsPerPage={5}
+        title="Liste des acteurs"
+      />
     </div>
   )
 }

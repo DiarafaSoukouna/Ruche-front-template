@@ -6,37 +6,73 @@ import Select from "react-select";
 import { typeNiveauLocalite } from "../../../functions/niveauLocalites/types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { oneNiveauLocalite } from "../../../functions/niveauLocalites/gets";
 
 interface Props {
-    all: () => void;
     onClose: () => void;
+    localiteByNiveau: (id: number) => void;
     niveau: number;
-    parent: number;
+    currentId: number;
     niveauLocalites: typeNiveauLocalite[];
-    localites: typeLocalite[];
     editRow: typeLocalite | null;
 }
 
-const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, parent, niveauLocalites, niveau, localites }) => {
+type Errors = {
+    intitule_loca?: string;
+    code_national_loca?: string;
+    code_loca?: string;
+};
 
-    const parentIndex = parent - 1;
+const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, niveau, currentId, localiteByNiveau }) => {
+
+    const parentIndex = niveau - 2;
     const parentInfo = niveauLocalites[parentIndex]
-    const [localite, setLocalite] = useState<typeLocalite[]>([])
+    const curentInfo = niveauLocalites[niveau - 1]
     const [localiteByNiv, setLocaliteByNiv] = useState<typeLocalite[]>([])
+    const [errors, setErrors] = useState<Errors>({});
+
+    const validate = (data: Record<string, any>) => {
+        const newErrors: Errors = {};
+
+        if (!data.intitule_loca || data.intitule_loca.trim() === "") {
+            newErrors.intitule_loca = "Le libellé est obligatoire.";
+        }
+
+        if (!data.code_national_loca || data.code_national_loca.trim() === "") {
+            newErrors.code_national_loca = "Le code national est obligatoire.";
+        } else if (data.code_national_loca.length !== Number(curentInfo.Code_number_nlc)) {
+            newErrors.code_national_loca = `Le code doit contenir exactementh ${curentInfo.Code_number_nlc } caractères.`;
+        }
+
+        if (!data.code_loca || data.code_loca.trim() === "") {
+            newErrors.code_loca = "Le code est obligatoire.";
+        }
+
+        return newErrors;
+    };
+
     const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget;
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
+
+        // Validation
+        const newErrors = validate(data);
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return; 
+        }
+        setErrors({});
+
         let payload: typeLocalite;
-        console.log("data", data)
         if (parentInfo) {
             payload = {
                 intitule_loca: data.intitule_loca as string,
                 code_national_loca: data.code_national_loca as string,
                 code_loca: data.code_loca as string,
                 parent_loca: data.parent_loca as string,
-                niveau_loca: niveau,
+                niveau_loca: currentId,
                 id_loca: editRow?.id_loca,
             };
         } else {
@@ -44,69 +80,72 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, parent, niveauLo
                 intitule_loca: data.intitule_loca as string,
                 code_national_loca: data.code_national_loca as string,
                 code_loca: data.code_loca as string,
-                niveau_loca: niveau,
+                niveau_loca: currentId,
                 id_loca: editRow?.id_loca,
             };
         }
+
         try {
             let res;
             if (editRow) {
                 res = await updateLocalite(payload);
-                console.log("Updated:", res);
             } else {
                 res = await addLocalite(payload);
                 form.reset();
-                console.log("Created:", res);
             }
             toast.success(editRow ?
-                "Localité mise a jour avec succès" :
-                "Localité ajoutée avec succès")
+                "Localité mise à jour avec succès" :
+                "Localité ajoutée avec succès"
+            );
             onClose()
-            all();
+            localiteByNiveau(currentId)
         } catch (error) {
             console.log("error", error);
         }
     };
-    const LocaliteByNiveau = async (id: number | null) => {
-        const res = localites.filter((loc) => loc.niveau_loca === id);
-        setLocaliteByNiv(res);
-        return res;
-    };
+
+    const OneNiveau = async (id: number) => {
+        try {
+            const res = await oneNiveauLocalite(id);
+            setLocaliteByNiv(res.localites);
+        } catch (error) {
+            toast.error('Erreur lors de la recuperation du niveau localité')
+        }
+    }
+
     useEffect(() => {
         if (parentInfo) {
-            LocaliteByNiveau(parentInfo.id_nlc ? parentInfo.id_nlc : null)
+            OneNiveau(parentInfo.id_nlc!)
         }
     }, [])
-    console.log('parentInfo', editRow)
+
     const defaultValue = typeof editRow?.parent_loca === 'object' && editRow.parent_loca !== null ?
         editRow.parent_loca as typeLocalite :
         ''
+    console.log(curentInfo, niveau)
     return (
         <div className="space-y-4">
             <form onSubmit={submit} name="niveauLocaliteForm">
                 <div className="grid grid-cols-12 gap-4">
+
+                    {/* Libellé */}
                     <div className="col-span-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Libelle
+                            Libellé
                         </label>
                         <input
                             name="intitule_loca"
-                            placeholder="Entrer le libelle"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Entrer le libellé"
+                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 
+                              ${errors.intitule_loca ? "border-red-500" : "border-gray-300"}`}
                             defaultValue={editRow?.intitule_loca || ""}
                         />
+                        {errors.intitule_loca && (
+                            <p className="text-red-500 text-sm mt-1">{errors.intitule_loca}</p>
+                        )}
                     </div>
-                    <div className="col-span-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Code national
-                        </label>
-                        <input
-                            name="code_national_loca"
-                            placeholder="Entrer le code natonal"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            defaultValue={editRow?.code_national_loca || ""}
-                        />
-                    </div>
+
+
                     <div className="col-span-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Code
@@ -114,9 +153,28 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, parent, niveauLo
                         <input
                             name="code_loca"
                             placeholder="Entrer le code"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 
+                              ${errors.code_loca ? "border-red-500" : "border-gray-300"}`}
                             defaultValue={editRow?.code_loca || ""}
                         />
+                        {errors.code_loca && (
+                            <p className="text-red-500 text-sm mt-1">{errors.code_loca}</p>
+                        )}
+                    </div>
+                    <div className="col-span-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Code national
+                        </label>
+                        <input
+                            name="code_national_loca"
+                            placeholder="Entrer le code national"
+                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 
+                              ${errors.code_national_loca ? "border-red-500" : "border-gray-300"}`}
+                            defaultValue={editRow?.code_national_loca || ""}
+                        />
+                        {errors.code_national_loca && (
+                            <p className="text-red-500 text-sm mt-1">{errors.code_national_loca}</p>
+                        )}
                     </div>
                     {parentInfo &&
                         <div className="col-span-6">
@@ -138,13 +196,13 @@ const FormLocalite: React.FC<Props> = ({ editRow, all, onClose, parent, niveauLo
                             />
                         </div>
                     }
-
                 </div>
+
                 <div className="flex space-x-3 pt-4 justify-end">
-                    <Button variant="outline" onClick={onClose} className="">
+                    <Button variant="outline" onClick={onClose}>
                         Annuler
                     </Button>
-                    <Button className="" type="submit">
+                    <Button type="submit">
                         {editRow ? "Mettre à jour" : "Valider"}
                     </Button>
                 </div>

@@ -1,8 +1,8 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../../../components/Button";
+import Input from "../../../components/Input";
 import { typeZoneService } from "../../../services/typeZoneService";
 import {
   typeZoneSchema,
@@ -20,7 +20,7 @@ export default function TypeZoneForm({ typeZone, onClose }: TypeZoneFormProps) {
   const isEdit = !!typeZone;
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<TypeZoneFormData>({
@@ -32,7 +32,10 @@ export default function TypeZoneForm({ typeZone, onClose }: TypeZoneFormProps) {
           code_type_zone: typeZone.code_type_zone,
           nom_type_zone: typeZone.nom_type_zone || "",
         }
-      : {},
+      : {
+          code_type_zone: "",
+          nom_type_zone: "",
+        },
   });
 
   const mutation = useMutation({
@@ -42,15 +45,7 @@ export default function TypeZoneForm({ typeZone, onClose }: TypeZoneFormProps) {
         : typeZoneService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/type_zone/"] });
-      toast.success(
-        isEdit
-          ? "Type de zone modifié avec succès"
-          : "Type de zone créé avec succès"
-      );
       onClose();
-    },
-    onError: () => {
-      toast.error("Erreur lors de la sauvegarde");
     },
   });
 
@@ -60,31 +55,33 @@ export default function TypeZoneForm({ typeZone, onClose }: TypeZoneFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium mb-1">Code *</label>
-        <input
-          {...register("code_type_zone")}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-        />
-        {errors.code_type_zone && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.code_type_zone.message}
-          </p>
+      <Controller
+        control={control}
+        name="code_type_zone"
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Code"
+            placeholder="Code du type de zone"
+            error={errors.code_type_zone}
+            required
+          />
         )}
-      </div>
+      />
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Nom</label>
-        <input
-          {...register("nom_type_zone")}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-        />
-        {errors.nom_type_zone && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.nom_type_zone.message}
-          </p>
+      <Controller
+        control={control}
+        name="nom_type_zone"
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Nom"
+            placeholder="Nom du type de zone"
+            error={errors.nom_type_zone}
+            required
+          />
         )}
-      </div>
+      />
 
       <div className="flex justify-end gap-2 pt-4">
         <Button type="button" variant="outline" onClick={onClose}>

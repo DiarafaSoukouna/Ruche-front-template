@@ -6,7 +6,7 @@ export interface ActeurType {
   personne_responsable: string
   contact: string
   adresse_email: string
-  categorie_acteur: number
+  categorie_acteur: number[]
 }
 export interface FormProps {
   acteur: ActeurType

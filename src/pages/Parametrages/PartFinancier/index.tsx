@@ -17,12 +17,15 @@ import { addPartFinancier } from '../../../functions/partenaire_financiers/post'
 import FormPartFinancier from './form'
 import { deletePartFinancier } from '../../../functions/partenaire_financiers/delete'
 import { toast } from 'react-toastify'
+import ConfirmModal from '../../../components/ConfirModal'
+import { getAllActeurs } from '../../../functions/acteurs/gets'
+import { ActeurType } from '../Acteurs/types'
 
 const PartFinanciers = () => {
     //   const [acteurs, setPartFinanciers] = useState([])
     // const [acteurs, set]
     const [showModal, setShowModal] = useState(false)
-    const [partFinanciers, setPartFinanciers] = useState<typePartFinancier[]>([])
+    const [partFinanciers, setPartFinanciers] = useState<ActeurType[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [isDelete, setIsDelete] = useState(false)
     const [part_financier, setPart_financier] = useState<typePartFinancier>({
@@ -52,7 +55,7 @@ const PartFinanciers = () => {
             setShowModal(false)
             toast.success(isEdit ?
                 "Parténaire financié mise à jour avec succès"
-            : "Parténaire financié ajouté avec succès"
+                : "Parténaire financié ajouté avec succès"
             )
             fetchPartFinanciers()
             clean()
@@ -64,10 +67,15 @@ const PartFinanciers = () => {
     const fetchPartFinanciers = async () => {
         setLoading(true)
         try {
-            const res = await allPartFinancier()
-            setPartFinanciers(res)
+            const res = await getAllActeurs()
+            if (res?.data) {
+                const filteredActeurs = res.data.filter((acteur:any) =>
+                    acteur.categorie_acteur && acteur.categorie_acteur.includes(3)
+                )
+                setPartFinanciers(filteredActeurs)
+            }
         } catch (error) {
-            toast.error("Erreur lors de la récuperation du parténaire finanicié")
+            toast.error("Erreur lors de la récupération du partenaire financier")
             console.error(error)
         } finally {
             setLoading(false)
@@ -102,7 +110,7 @@ const PartFinanciers = () => {
 
     const columns = [
         {
-            key: 'code_part',
+            key: 'code_acteur',
             title: 'Code',
             render: (value: String) => (
                 <div className="flex items-center">
@@ -113,8 +121,8 @@ const PartFinanciers = () => {
             ),
         },
         {
-            key: 'definition_part',
-            title: 'Definition',
+            key: 'nom_acteur',
+            title: 'Nom',
             render: (value: String) => (
                 <div className="flex items-center">
                     <div>
@@ -124,8 +132,8 @@ const PartFinanciers = () => {
             ),
         },
         {
-            key: 'sigle_part',
-            title: 'Sigle',
+            key: 'personne_responsable',
+            title: 'Responsable',
             render: (value: String) => (
                 <div className="flex items-center">
                     <div>
@@ -134,12 +142,35 @@ const PartFinanciers = () => {
                 </div>
             ),
         },
+        {
+            key: 'contact',
+            title: 'Contact',
+            render: (value: String) => (
+                <div className="flex items-center">
+                    <div>
+                        <div className="font-medium text-gray-900">{value}</div>
+                    </div>
+                </div>
+            ),
+        },
+        {
+            key: 'adresse_email',
+            title: 'Email',
+            render: (value: String) => (
+                <div className="flex items-center">
+                    <div>
+                        <div className="font-medium text-gray-900">{value}</div>
+                    </div>
+                </div>
+            ),
+        },
+
         {
             key: 'actions',
             title: 'Actions',
             render: (_: any, row: any) => (
                 <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" onClick={() => onEdit(row)}>
+                    {/* <Button variant="outline" size="sm" onClick={() => onEdit(row)}>
                         <EditIcon className="w-3 h-3" />
                     </Button>
                     <Button
@@ -147,11 +178,11 @@ const PartFinanciers = () => {
                         size="sm"
                         onClick={() => {
                             setIsDelete(true)
-                            setPart_financier(row)
+                            setActeur(row)
                         }}
                     >
                         <TrashIcon className="w-3 h-3" />
-                    </Button>
+                    </Button> */}
                 </div>
             ),
         },
@@ -165,9 +196,9 @@ const PartFinanciers = () => {
             {/* Header avec contrôles */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Parténaires Financiers</h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Partenaires financiers</h1>
                 </div>
-                <div className="flex gap-4">
+                {/* <div className="flex gap-4">
                     <Button
                         onClick={() => {
                             (setShowModal(true), setIsEdit(false))
@@ -175,14 +206,14 @@ const PartFinanciers = () => {
                         size="md"
                     >
                         <PlusIcon className="w-4 h-4 mr-2" />
-                        Nouvel Part Financier
+                        Nouveau Part Financier
                     </Button>
-                </div>
+                </div> */}
             </div>
             <Modal
                 isOpen={showModal}
                 onClose={() => close()}
-                title={isEdit ? "Modifier l'acteur" : 'Nouvel acteur'}
+                title={isEdit ? "Modifier l'acteur" : 'Nouvelle partenaire financier'}
                 size="md"
             >
                 <FormPartFinancier
@@ -193,41 +224,24 @@ const PartFinanciers = () => {
                     onClose={() => close()}
                 />
             </Modal>
-            <Modal
+            <ConfirmModal
                 isOpen={isDelete}
                 onClose={() => close()}
-                title={'Supprimer un acteur'}
+                title={'Supprimer cet partenaire'}
                 size="md"
+                confimationButon={() => deletePartFinancier(part_financier.id_partenaire!)}
             >
-                <div className="space-y-6">
-                    <p className="text-gray-700">
-                        Êtes-vous sûr(e) de vouloir supprimer cet acteur ? Cette action est
-                        irréversible.
-                    </p>
-                    <div className="flex justify-end space-x-3">
-                        <Button variant="outline" onClick={() => close()}>
-                            Annuler
-                        </Button>
-                        <Button
-                            variant="danger"
-                            onClick={() => deletePartFinancier(part_financier.id_partenaire!)}
-                        >
-                            Supprimer
-                        </Button>
-                    </div>
+            </ConfirmModal>
+
+            {loading ?
+                (<div className="text-center">
+                    <RiseLoader color='green' />
                 </div>
-            </Modal>
-
-            <Card title="Liste des partenaires financiers" className="overflow-hidden">
-                {loading ?
-                    (<div className="text-center">
-                        <RiseLoader color='blue' />
-                    </div>
-                    ) :
-                    <Table columns={columns} data={partFinanciers} itemsPerPage={5} />
-                }
-
-            </Card>
+                ) :
+                partFinanciers.length > 0 ?
+                    (<Table title="Liste des partenaires financiers" columns={columns} data={partFinanciers} itemsPerPage={5} />)
+                    : <div className='text-center'>Parténaire financier non disponible</div>
+            }
         </div>
     )
 }
