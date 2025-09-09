@@ -223,7 +223,7 @@ const Ugls = () => {
       </Modal>
       {loading ? (
         <div className="text-center">
-          <RiseLoader color="blue" />
+          <RiseLoader color="green" />
         </div>
       ) : (
         <Table title='Liste des unités de gestion' columns={columns} data={ugls} itemsPerPage={5} />

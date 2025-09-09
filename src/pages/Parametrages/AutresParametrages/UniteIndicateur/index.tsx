@@ -182,7 +182,7 @@ const UniteIndicateur = () => {
       </Modal>
       {loading && (
         <div className="text-center">
-          <RiseLoader color="blue" />
+          <RiseLoader color="green" />
         </div>
       )}
       <Modal

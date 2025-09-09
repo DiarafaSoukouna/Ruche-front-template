@@ -94,7 +94,17 @@ const Localites: React.FC = () => {
         setEditRow(localite)
 
     };
+    const getParentHierarchy = (plan:any) => {
+        const hierarchy = [];
+        let currentParent = plan.parent_ds;
 
+        while (currentParent && typeof currentParent === 'object') {
+            hierarchy.push(currentParent);
+            currentParent = currentParent.parent_ds;
+        }
+
+        return hierarchy;
+    };
 
     return (
         <>
@@ -108,7 +118,7 @@ const Localites: React.FC = () => {
                 </Button>
             </div>
             <Modal onClose={() => setLoadNiveau(false)} isOpen={loadNiveau} title="Espace de configuration des niveaux de localité" size="lg">
-                <NiveauLocalite />
+                <NiveauLocalite allNiveau={AllNiveau} />
             </Modal>
             <Tabs defaultValue={`1`}>
                 <div className="mt-2 mb-2 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -179,8 +189,8 @@ const Localites: React.FC = () => {
                                                         Libellé
                                                     </th>
                                                     {
-                                                        niveauLocalites.slice(0, Number(tabActive) - 1).map((niv) =>
-                                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                                        niveauLocalites.slice(0, Number(tabActive) - 1).sort((a, b) => b.nombre_nlc - a.nombre_nlc).map((niv) =>
+                                                            <th className="px-6 py-3 text-left text-xs font-medi    um text-gray-700 uppercase tracking-wider">
                                                                 {niv.libelle_nlc}
                                                             </th>
                                                         )
@@ -192,44 +202,43 @@ const Localites: React.FC = () => {
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
                                                 {localites.length ?
-                                                    (localites).map((localite) => (
-                                                        <tr key={localite.id_loca} className="hover:bg-gray-50 transition-colors">
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" width={50}>
-                                                                {localite.code_national_loca}
-                                                            </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                                {localite.intitule_loca}
-                                                            </td>
-                                                            {
-                                                                niveauLocalites.slice(0, Number(tabActive) - 1).map((niv) => (
-                                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                                                                        {typeof localite.parent_loca === 'object' && localite.parent_loca !== null ?
-                                                                            (localite.parent_loca as typeLocalite).intitule_loca :
-                                                                            "-"
-                                                                        }
-                                                                        {niv.id_nlc}
-                                                                    </th>
-                                                                )
-                                                                )
-                                                            }
-                                                            <td className="px-6 space-x-2 py-4 whitespace-nowrap text-sm font-medium" width={50}>
-                                                                <Button
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                    onClick={() => (setEditRow(localite), setShowForm(true))}
-                                                                >
-                                                                    <EditIcon className="w-3 h-3" />
-                                                                </Button>
-                                                                <Button
-                                                                    variant="danger"
-                                                                    size="sm"
-                                                                    onClick={() => handleDelete(localite)}
-                                                                >
-                                                                    <TrashIcon className="w-3 h-3" />
-                                                                </Button>
-                                                            </td>
-                                                        </tr>
-                                                    )
+                                                    (localites).map((localite) => {
+                                                        const parentHierarchy = getParentHierarchy(localite)
+                                                        return (
+                                                            <tr key={localite.id_loca} className="hover:bg-gray-50 transition-colors">
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" width={50}>
+                                                                    {localite.code_national_loca}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                                    {localite.intitule_loca}
+                                                                </td>
+                                                                {
+                                                                    niveauLocalites.slice(0, Number(tabActive) - 1).map((niv, index) => (
+                                                                        <th key={niv.id_nlc} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                                             {parentHierarchy[index] ? parentHierarchy[index].intitule_loca : "-"}
+                                                                        </th>
+                                                                    )
+                                                                    )
+                                                                }
+                                                                <td className="px-6 space-x-2 py-4 whitespace-nowrap text-sm font-medium" width={50}>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        onClick={() => (setEditRow(localite), setShowForm(true))}
+                                                                    >
+                                                                        <EditIcon className="w-3 h-3" />
+                                                                    </Button>
+                                                                    <Button
+                                                                        variant="danger"
+                                                                        size="sm"
+                                                                        onClick={() => handleDelete(localite)}
+                                                                    >
+                                                                        <TrashIcon className="w-3 h-3" />
+                                                                    </Button>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
                                                     ) :
                                                     (
                                                         <td colSpan={8} className="text-center" >
