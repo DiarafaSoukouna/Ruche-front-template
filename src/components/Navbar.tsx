@@ -17,14 +17,9 @@ import {
   LogOutIcon,
   KeyIcon,
   Settings2Icon,
-<<<<<<<<< Temporary merge branch 1
-} from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-=========
   BriefcaseIcon,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
->>>>>>>>> Temporary merge branch 2
 
 interface NavigationChild {
   name: string;
@@ -78,28 +73,15 @@ const Navbar: React.FC = () => {
       name: "Paramétrage",
       icon: CogIcon,
       children: [
-<<<<<<<<< Temporary merge branch 1
         // { name: "Produits", href: "/products", icon: ShoppingBagIcon },
-        { name: 'Localités', href: '/localites', icon: MapPinIcon },
-        { name: 'Unités de gestion', href: '/unite_gestion', icon: LayoutGrid },
-        { name: 'Acteurs', href: '/acteurs', icon: User },
-        { name: 'Utilisateurs', href: '/utilisateurs', icon: UsersIcon },
-=========
-        { name: "Produits", href: "/products", icon: ShoppingBagIcon },
         { name: "Localités", href: "/localites", icon: MapPinIcon },
         { name: "Unités de gestion", href: "/unite_gestion", icon: LayoutGrid },
         { name: "Acteurs", href: "/acteurs", icon: User },
         { name: "Utilisateurs", href: "/utilisateurs", icon: UsersIcon },
         { name: "Fonctions", href: "/fonctions", icon: BriefcaseIcon },
->>>>>>>>> Temporary merge branch 2
         {
-          name: 'Niveau Structure',
-          href: '/niveau-structure-config',
-          icon: LayoutGrid,
-        },
-        {
-          name: 'Partenaire Financier',
-          href: '/part_financier',
+          name: "Partenaire Financier",
+          href: "/part_financier",
           icon: HandshakeIcon,
         },
         { name: "Zone de Collecte", href: "/zone-collecte", icon: MapPinIcon },
@@ -111,10 +93,6 @@ const Navbar: React.FC = () => {
           href: "/autres-parametrages",
           icon: Settings2Icon,
         },
-        { name: 'Zone de Collecte', href: '/zone-collecte', icon: MapPinIcon },
-
-        { name: 'Plans de Site', href: '/plan_sites', icon: Building2 },
-        { name: 'Conventions', href: '/conventions', icon: FileSignature },
       ],
       href: true,
     },
