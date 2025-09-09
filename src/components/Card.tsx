@@ -13,10 +13,10 @@ const Card: React.FC<CardProps> = ({
 }) => {
   return (
     <div
-      className={`bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 ${className}`}
+      className={`bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 bg-primary ${className}`}
     >
       {title && (
-        <div className="px-6 py-3 border-b border-gray-100 flex items-center justify-between">
+        <div className="px-6 py-2 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
           {headerAction}
         </div>
