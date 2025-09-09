@@ -26,12 +26,14 @@ export default function PersonnelPage() {
   };
 
   return (
-    <div className="p-6">
+    <div>
       <PersonnelList onAdd={handleAdd} onEdit={handleEdit} />
       <Modal
         isOpen={showForm}
         onClose={handleCloseForm}
-        title={editingPersonnel ? "Modifier le personnel" : "Ajouter un personnel"}
+        title={
+          editingPersonnel ? "Modifier l'utilisateur" : "Ajouter un utilisateur"
+        }
         size="xl"
       >
         <PersonnelForm personnel={editingPersonnel} onClose={handleCloseForm} />

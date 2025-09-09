@@ -78,19 +78,19 @@ export default function PersonnelForm({
           email: personnel.email || "",
           id_personnel_perso: personnel.id_personnel_perso || "",
           titre_personnel:
-            typeof personnel.titre_personnel === "number"
-              ? personnel.titre_personnel
-              : undefined,
+            typeof personnel.titre_personnel === "object"
+              ? personnel.titre_personnel?.id_titre
+              : personnel.titre_personnel,
           prenom_perso: personnel.prenom_perso || "",
           nom_perso: personnel.nom_perso || "",
           contact_perso: personnel.contact_perso || "",
           fonction_perso:
-            typeof personnel.fonction_perso === "number"
-              ? personnel.fonction_perso
+            typeof personnel.fonction_perso === "object"
+              ? personnel.fonction_perso?.id_fonction
               : undefined,
           service_perso:
-            typeof personnel.service_perso === "number"
-              ? personnel.service_perso
+            typeof personnel.service_perso === "object"
+              ? personnel.service_perso?.id_ds
               : undefined,
           niveau_perso: personnel.niveau_perso || 1,
           rapport_mensuel_perso: personnel.rapport_mensuel_perso || false,
@@ -103,8 +103,8 @@ export default function PersonnelForm({
               ? personnel.region_perso
               : undefined,
           structure_perso:
-            typeof personnel.structure_perso === "number"
-              ? personnel.structure_perso
+            typeof personnel.structure_perso === "object"
+              ? personnel.structure_perso?.id_acteur
               : undefined,
           ugl_perso:
             typeof personnel.ugl_perso === "number"
@@ -134,13 +134,37 @@ export default function PersonnelForm({
     mutation.mutate(data);
   };
 
-  const onError = (errors: Record<string, { message?: string }>) => {
-    console.log("Validation errors:", errors);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Controller
+          control={control}
+          name="nom_perso"
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Nom"
+              placeholder="Nom de famille"
+              error={errors.nom_perso}
+              required
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="prenom_perso"
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Prénom(s)"
+              placeholder="Prénom(s)"
+              error={errors.prenom_perso}
+              required
+            />
+          )}
+        />
+
         <Controller
           control={control}
           name="id_personnel_perso"
@@ -200,80 +224,6 @@ export default function PersonnelForm({
           )}
         />
 
-        <Controller
-          name="fonction_perso"
-          control={control}
-          render={({ field }) => (
-            <SelectInput
-              {...field}
-              label="Fonction"
-              required
-              options={fonctions.map((fonction) => ({
-                value: fonction.id_fonction!,
-                label: fonction.nom_fonction,
-              }))}
-              value={
-                field.value
-                  ? fonctions
-                      .map((fonction) => ({
-                        value: fonction.id_fonction!,
-                        label: fonction.nom_fonction,
-                      }))
-                      .find((option) => option.value === field.value)
-                  : null
-              }
-              onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
-              }}
-              isClearable
-              placeholder="Sélectionner une fonction..."
-              error={errors.fonction_perso}
-            />
-          )}
-        />
-
-        <Controller
-          name="service_perso"
-          control={control}
-          render={({ field }) => (
-            <HierarchicalServiceSelect
-              value={field.value}
-              onChange={field.onChange}
-              label="Service/Direction"
-              placeholder="Sélectionner un service..."
-              error={errors.service_perso}
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="nom_perso"
-          render={({ field }) => (
-            <Input
-              {...field}
-              label="Nom"
-              placeholder="Nom de famille"
-              error={errors.nom_perso}
-              required
-            />
-          )}
-        />
-
-        <Controller
-          control={control}
-          name="prenom_perso"
-          render={({ field }) => (
-            <Input
-              {...field}
-              label="Prénom(s)"
-              placeholder="Prénom(s)"
-              error={errors.prenom_perso}
-              required
-            />
-          )}
-        />
-
         <div>
           <label className="block text-sm font-medium mb-1">
             Contact <span className="text-red-500">*</span>
@@ -329,6 +279,52 @@ export default function PersonnelForm({
               isClearable
               placeholder="Sélectionner une structure..."
               error={errors.structure_perso}
+            />
+          )}
+        />
+
+        <Controller
+          name="service_perso"
+          control={control}
+          render={({ field }) => (
+            <HierarchicalServiceSelect
+              value={field.value}
+              onChange={field.onChange}
+              label="Service/Direction"
+              placeholder="Sélectionner un service..."
+              error={errors.service_perso}
+            />
+          )}
+        />
+
+        <Controller
+          name="fonction_perso"
+          control={control}
+          render={({ field }) => (
+            <SelectInput
+              {...field}
+              label="Fonction"
+              required
+              options={fonctions.map((fonction) => ({
+                value: fonction.id_fonction!,
+                label: fonction.nom_fonction,
+              }))}
+              value={
+                field.value
+                  ? fonctions
+                      .map((fonction) => ({
+                        value: fonction.id_fonction!,
+                        label: fonction.nom_fonction,
+                      }))
+                      .find((option) => option.value === field.value)
+                  : null
+              }
+              onChange={(selectedOption) => {
+                field.onChange(selectedOption ? selectedOption.value : null);
+              }}
+              isClearable
+              placeholder="Sélectionner une fonction..."
+              error={errors.fonction_perso}
             />
           )}
         />

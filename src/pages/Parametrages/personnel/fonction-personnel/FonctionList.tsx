@@ -1,11 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, TrashIcon } from "lucide-react";
 import { toast } from "react-toastify";
-import Table from "../../../components/Table";
-import Button from "../../../components/Button";
-import { fonctionService } from "../../../services/fonctionService";
-import type { Fonction } from "../../../types/entities";
-import Card from "../../../components/Card";
+import Table from "../../../../components/Table";
+import Button from "../../../../components/Button";
+import { fonctionService } from "../../../../services/fonctionService";
+import type { Fonction } from "../../../../types/entities";
 
 interface FonctionListProps {
   onEdit: (fonction: Fonction) => void;
@@ -16,7 +15,7 @@ export default function FonctionList({ onEdit, onAdd }: FonctionListProps) {
   const queryClient = useQueryClient();
 
   // Fetch fonctions data
-  const { data: fonctions = [], isLoading } = useQuery<Fonction[]>({
+  const { data: fonctions = [] } = useQuery<Fonction[]>({
     queryKey: ["fonctions"],
     queryFn: fonctionService.getAll,
   });
@@ -57,7 +56,7 @@ export default function FonctionList({ onEdit, onAdd }: FonctionListProps) {
       ),
     },
     {
-      key: "id_fonction" as keyof Fonction,
+      key: "actions" as keyof Fonction,
       title: "Actions",
       render: (_: Fonction[keyof Fonction], fonction: Fonction) => (
         <div className="flex gap-2">
@@ -70,13 +69,12 @@ export default function FonctionList({ onEdit, onAdd }: FonctionListProps) {
             <Edit className="h-4 w-4" />
           </Button>
           <Button
-            variant="outline"
+            variant="danger"
             size="sm"
             onClick={() => handleDelete(fonction.id_fonction!)}
-            className="p-1 border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500"
             disabled={deleteMutation.isPending}
           >
-            <Trash2 className="h-4 w-4" />
+            <TrashIcon className="h-4 w-4" />
           </Button>
         </div>
       ),
@@ -84,28 +82,25 @@ export default function FonctionList({ onEdit, onAdd }: FonctionListProps) {
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Fonctions</h2>
-        <Button onClick={onAdd} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Ajouter une fonction
-        </Button>
+    <div className="space-y-8">
+      {/* Header avec contrôles */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Fonctions</h1>
+        </div>
+        <div className="flex gap-4">
+          <Button onClick={onAdd} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Ajouter une fonction
+          </Button>
+        </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="text-gray-500">Chargement...</div>
-        </div>
-      ) : (
-        <Card title="Liste des acteurs" className="overflow-hidden">
-          <Table<Fonction & { id?: string | number }>
-            columns={columns}
-            data={fonctions.map((f) => ({ ...f, id: f.id_fonction }))}
-            className="min-h-[400px]"
-          />
-        </Card>
-      )}
+      <Table<Fonction & { id?: string | number }>
+        title="Liste des fonctions"
+        columns={columns}
+        data={fonctions.map((f) => ({ ...f, id: f.id_fonction }))}
+      />
     </div>
   );
 }

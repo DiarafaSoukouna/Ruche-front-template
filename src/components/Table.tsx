@@ -1,84 +1,84 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo } from "react";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
   ChevronDownIcon,
-} from 'lucide-react'
-import Button from './Button'
-import Input from './Input'
-import Card from './Card'
+} from "lucide-react";
+import Button from "./Button";
+import Input from "./Input";
+import Card from "./Card";
 
 interface Column<T> {
-  key: keyof T
-  title: string
-  render?: (value: T[keyof T], row: T) => React.ReactNode
+  key: keyof T;
+  title: string;
+  render?: (value: T[keyof T], row: T) => React.ReactNode;
 }
 
 interface TableProps<T> {
-  columns: Column<T>[]
-  data: T[]
-  itemsPerPage?: number
-  className?: string
-  title?: string
-  onRowClick?: (row: T) => void
+  columns: Column<T>[];
+  data: T[];
+  itemsPerPage?: number;
+  className?: string;
+  title?: string;
+  onRowClick?: (row: T) => void;
 }
 
-type SortOrder = 'asc' | 'desc' | null
+type SortOrder = "asc" | "desc" | null;
 
 function Table<T extends { id?: string | number }>({
   columns,
   data,
   itemsPerPage = 10,
-  className = '',
-  title = '',
+  className = "",
+  title = "",
   onRowClick,
 }: TableProps<T>) {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof T
-    order: SortOrder
-  } | null>(null)
+    key: keyof T;
+    order: SortOrder;
+  } | null>(null);
 
   const filteredData = useMemo(() => {
-    if (!searchTerm) return data
+    if (!searchTerm) return data;
     return data.filter((row) =>
       columns.some((col) => {
-        const value = row[col.key]
-        return String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        const value = row[col.key];
+        return String(value).toLowerCase().includes(searchTerm.toLowerCase());
       })
-    )
-  }, [data, searchTerm, columns])
+    );
+  }, [data, searchTerm, columns]);
 
   const sortedData = useMemo(() => {
-    if (!sortConfig) return filteredData
-    const { key, order } = sortConfig
+    if (!sortConfig) return filteredData;
+    const { key, order } = sortConfig;
     return [...filteredData].sort((a, b) => {
-      const aVal = a[key]
-      const bVal = b[key]
+      const aVal = a[key];
+      const bVal = b[key];
 
-      if (aVal == null) return 1
-      if (bVal == null) return -1
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
 
-      if (typeof aVal === 'number' && typeof bVal === 'number') {
-        return order === 'asc' ? aVal - bVal : bVal - aVal
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return order === "asc" ? aVal - bVal : bVal - aVal;
       }
 
-      return order === 'asc'
+      return order === "asc"
         ? String(aVal).localeCompare(String(bVal))
-        : String(bVal).localeCompare(String(aVal))
-    })
-  }, [filteredData, sortConfig])
+        : String(bVal).localeCompare(String(aVal));
+    });
+  }, [filteredData, sortConfig]);
 
-  const totalPages = Math.ceil(sortedData.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const currentData = sortedData.slice(startIndex, endIndex)
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = sortedData.slice(startIndex, endIndex);
 
   const goToPage = (page: number) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)))
-  }
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
 
   const handleSort = (key: keyof T) => {
     if (sortConfig?.key === key) {
@@ -86,25 +86,25 @@ function Table<T extends { id?: string | number }>({
       setSortConfig({
         key,
         order:
-          sortConfig.order === 'asc'
-            ? 'desc'
-            : sortConfig.order === 'desc'
-              ? null
-              : 'asc',
-      })
+          sortConfig.order === "asc"
+            ? "desc"
+            : sortConfig.order === "desc"
+            ? null
+            : "asc",
+      });
     } else {
-      setSortConfig({ key, order: 'asc' })
+      setSortConfig({ key, order: "asc" });
     }
-  }
+  };
 
   const getSortIcon = (key: keyof T) => {
-    if (!sortConfig || sortConfig.key !== key || !sortConfig.order) return null
-    return sortConfig.order === 'asc' ? (
+    if (!sortConfig || sortConfig.key !== key || !sortConfig.order) return null;
+    return sortConfig.order === "asc" ? (
       <ChevronUpIcon className="w-3 h-3 inline ml-1" />
     ) : (
       <ChevronDownIcon className="w-3 h-3 inline ml-1" />
-    )
-  }
+    );
+  };
 
   return (
     <div
@@ -114,17 +114,16 @@ function Table<T extends { id?: string | number }>({
       <Card>
         <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h6 className="text-2xl font-600 text-gray-900">{title}</h6>
+            <h4 className="text-2xl font-semibold text-foreground">{title}</h4>
           </div>
           <div>
-
             <Input
               type="text"
               placeholder="Recherche..."
               value={searchTerm}
               onChange={(e) => {
-                setSearchTerm(e.target.value)
-                setCurrentPage(1)
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
               }}
             />
           </div>
@@ -132,12 +131,12 @@ function Table<T extends { id?: string | number }>({
 
         <div className="overflow-x-auto">
           <table className="w-full table-auto">
-            <thead className="bg-gray-50 border-b border-border">
+            <thead className="bg-muted text-muted-foreground border-b border-border">
               <tr>
                 {columns.map((column) => (
                   <th
                     key={String(column.key)}
-                    className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer select-none"
+                    className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer select-none"
                     onClick={() => handleSort(column.key)}
                   >
                     {column.title} {getSortIcon(column.key)}
@@ -145,18 +144,19 @@ function Table<T extends { id?: string | number }>({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-muted text-foreground">
               {currentData.map((row, idx) => (
                 <tr
                   key={row.id || idx}
-                  className={`transition-colors duration-150 hover:bg-primary-50 ${onRowClick ? 'cursor-pointer' : ''
-                    }`}
+                  className={`transition-colors duration-150 hover:bg-primary-50 ${
+                    onRowClick ? "cursor-pointer" : ""
+                  }`}
                   onClick={() => onRowClick && onRowClick(row)}
                 >
                   {columns.map((column) => (
                     <td
                       key={String(column.key)}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                      className="px-6 py-4 whitespace-nowrap text-sm text-foreground"
                     >
                       {column.render
                         ? column.render(row[column.key], row)
@@ -171,10 +171,10 @@ function Table<T extends { id?: string | number }>({
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 flex items-center justify-between border-t border-border bg-background">
-            <div className="text-sm text-gray-600">
-              Affichage de {startIndex + 1} à{' '}
-              {Math.min(endIndex, sortedData.length)} sur {sortedData.length}{' '}
+          <div className="px-6 py-4 flex items-center justify-between border-t border-border bg-background text-foreground">
+            <div className="text-sm text-foreground">
+              Affichage de {startIndex + 1} à{" "}
+              {Math.min(endIndex, sortedData.length)} sur {sortedData.length}{" "}
               résultats
             </div>
             <div className="flex items-center space-x-2">
@@ -197,10 +197,10 @@ function Table<T extends { id?: string | number }>({
                 .map((page, index, array) => (
                   <React.Fragment key={page}>
                     {index > 0 && array[index - 1] !== page - 1 && (
-                      <span className="text-gray-400">...</span>
+                      <span className="text-foreground">...</span>
                     )}
                     <Button
-                      variant={currentPage === page ? 'primary' : 'outline'}
+                      variant={currentPage === page ? "primary" : "outline"}
                       size="sm"
                       onClick={() => goToPage(page)}
                     >
@@ -220,10 +220,9 @@ function Table<T extends { id?: string | number }>({
             </div>
           </div>
         )}
-
       </Card>
     </div>
-  )
+  );
 }
 
-export default Table
+export default Table;

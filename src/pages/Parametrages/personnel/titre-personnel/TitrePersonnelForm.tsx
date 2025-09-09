@@ -1,14 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
-import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import { TitrePersonnel } from "../../../types/entities";
-import { titrePersonnelService } from "../../../services/titrePersonnelService";
+import Button from "../../../../components/Button";
+import Input from "../../../../components/Input";
+import { TitrePersonnel } from "../../../../types/entities";
+import { titrePersonnelService } from "../../../../services/titrePersonnelService";
 import {
   titrePersonnelSchema,
   TitrePersonnelFormData,
-} from "../../../schemas/titrePersonnelSchema";
+} from "../../../../schemas/titrePersonnelSchema";
 
 interface TitrePersonnelFormProps {
   titre?: TitrePersonnel;
