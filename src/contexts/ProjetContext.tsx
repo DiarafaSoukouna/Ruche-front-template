@@ -8,6 +8,9 @@ interface contextType {
     projetList: Projet[];
     selectedProject?: Projet;
     setselectedProject: React.Dispatch<React.SetStateAction<Projet | undefined>>;
+    openForm: boolean;
+    setopenForm: React.Dispatch<React.SetStateAction<boolean>>;
+
 }
 
 // l'instanciation du context
@@ -17,6 +20,7 @@ const ProjetContext = createContext<contextType | undefined>(undefined)
 export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
     const { currentProgramme } = useRoot();
     const [projetList, setProjetList] = useState<Projet[]>([]);
+    const [openForm, setopenForm] = useState(true);
 
     const [selectedProject, setselectedProject] = useState<undefined | Projet>(undefined);
 
@@ -43,7 +47,9 @@ export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
         <ProjetContext.Provider value={{
             projetList,
             setselectedProject,
-            selectedProject
+            selectedProject,
+            openForm,
+            setopenForm
         }}>
             {children}
         </ProjetContext.Provider>

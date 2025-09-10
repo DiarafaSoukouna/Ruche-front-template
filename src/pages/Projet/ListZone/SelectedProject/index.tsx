@@ -1,7 +1,7 @@
 import { useProjet } from "../../../../contexts/ProjetContext";
 
 export default () => {
-    const { selectedProject, setselectedProject } = useProjet();
+    const { selectedProject } = useProjet();
 
     if (!selectedProject) return null;
 

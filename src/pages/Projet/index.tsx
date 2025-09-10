@@ -2,6 +2,7 @@
 import { ProjetProvider } from "../../contexts/ProjetContext";
 import HeadZone from "./HeadZone";
 import ListZone from "./ListZone";
+import ProjectForm from "./ProjectForm";
 
 export default () => {
   return (
@@ -11,6 +12,8 @@ export default () => {
         <HeadZone />
 
         <ListZone />
+
+        <ProjectForm />
 
       </div>
     </ProjetProvider>
