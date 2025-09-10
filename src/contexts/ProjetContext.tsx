@@ -10,7 +10,6 @@ interface contextType {
     setselectedProject: React.Dispatch<React.SetStateAction<Projet | undefined>>;
     openForm: boolean;
     setopenForm: React.Dispatch<React.SetStateAction<boolean>>;
-
 }
 
 // l'instanciation du context
