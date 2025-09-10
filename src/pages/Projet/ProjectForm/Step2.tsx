@@ -2,6 +2,8 @@ import { FC, useEffect, useState } from "react";
 import { Controller, Control, FieldErrors } from "react-hook-form";
 import Select from "react-select";
 import { ProjectCreateData } from "../../../schemas/projetSchema";
+import { Acteur } from "../../../types/entities";
+import { getAllActeurs } from "../../../functions/acteurs/gets";
 
 interface FormProps {
     control: Control<ProjectCreateData>;
@@ -9,17 +11,24 @@ interface FormProps {
 }
 
 const Step2: FC<FormProps> = ({ control, errors }) => {
-    const [partenaires1, setPartenaires1] = useState<{ id: number; name: string }[]>([]);
-    const [partenaires, setPartenaires] = useState<{ id: number; name: string }[]>([]);
-    const [structures, setStructures] = useState<{ id: number; name: string }[]>([]);
-    const [signataires, setSignataires] = useState<{ id: number; name: string }[]>([]);
     const [zones, setZones] = useState<{ id: number; name: string }[]>([]);
 
+    const [acteurList, setacteurList] = useState<Acteur[]>([]);
+
+
+    const loadData = async () => {
+        try {
+            const res = await getAllActeurs();
+
+            if (!res) return;
+
+            setacteurList(res.data);
+        }
+        catch { }
+    }
 
     useEffect(() => {
-        // Fetch dynamique pour remplir les selects
-        // Exemple :
-        // fetch("/api/partenaires").then(r => r.json()).then(setPartenaires)
+        loadData()
     }, []);
 
     return (
@@ -38,7 +47,7 @@ const Step2: FC<FormProps> = ({ control, errors }) => {
                 />
                 {errors.partenaire_projet && <p className="text-red-500 text-sm">{errors.partenaire_projet.message}</p>}
             </div>
-            
+
             <div>
                 <label className="block text-sm font-medium mb-1">Structures du projet *</label>
                 <Controller
@@ -48,8 +57,8 @@ const Step2: FC<FormProps> = ({ control, errors }) => {
                         <Select
                             {...field}
                             isMulti
-                            options={structures.map(s => ({ value: s.id, label: s.name }))}
-                            value={structures.filter(s => field.value.includes(s.id)).map(s => ({ value: s.id, label: s.name }))}
+                            options={acteurList.map(s => ({ value: s.id_acteur, label: s.nom_acteur }))}
+                            value={acteurList.filter(s => field.value.includes(s.id_acteur)).map(s => ({ value: s.id_acteur, label: s.nom_acteur }))}
                             onChange={selected => field.onChange(selected.map(s => s.value))}
                             classNamePrefix="react-select"
                         />
@@ -67,8 +76,8 @@ const Step2: FC<FormProps> = ({ control, errors }) => {
                         <Select
                             {...field}
                             isMulti
-                            options={signataires.map(s => ({ value: s.id, label: s.name }))}
-                            value={signataires.filter(s => field.value.includes(s.id)).map(s => ({ value: s.id, label: s.name }))}
+                            options={acteurList.map(s => ({ value: s.id_acteur, label: s.nom_acteur }))}
+                            value={acteurList.filter(s => field.value.includes(s.id_acteur)).map(s => ({ value: s.id_acteur, label: s.nom_acteur }))}
                             onChange={selected => field.onChange(selected.map(s => s.value))}
                             classNamePrefix="react-select"
                         />
@@ -86,8 +95,8 @@ const Step2: FC<FormProps> = ({ control, errors }) => {
                         <Select
                             {...field}
                             isMulti
-                            options={partenaires.map(p => ({ value: p.id, label: p.name }))}
-                            value={partenaires.filter(p => field.value.includes(p.id)).map(p => ({ value: p.id, label: p.name }))}
+                            options={acteurList.map(s => ({ value: s.id_acteur, label: s.nom_acteur }))}
+                            value={acteurList.filter(s => field.value.includes(s.id_acteur)).map(s => ({ value: s.id_acteur, label: s.nom_acteur }))}
                             onChange={selected => field.onChange(selected.map(s => s.value))}
                             classNamePrefix="react-select"
                         />
@@ -105,8 +114,8 @@ const Step2: FC<FormProps> = ({ control, errors }) => {
                         <Select
                             {...field}
                             isMulti
-                            options={zones.map(z => ({ value: z.id, label: z.name }))}
-                            value={zones.filter(z => field.value.includes(z.id)).map(z => ({ value: z.id, label: z.name }))}
+                            options={acteurList.map(s => ({ value: s.id_acteur, label: s.nom_acteur }))}
+                            value={acteurList.filter(s => field.value.includes(s.id_acteur)).map(s => ({ value: s.id_acteur, label: s.nom_acteur }))}
                             onChange={selected => field.onChange(selected.map(s => s.value))}
                             classNamePrefix="react-select"
                         />
