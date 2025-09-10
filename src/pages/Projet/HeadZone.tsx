@@ -5,10 +5,7 @@ const HeadZone = () => {
     return (
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-                <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
-                <p className="text-gray-600 mt-2">
-                    Analyse détaillée des performances et KPIs
-                </p>
+                <h1 className="text-3xl font-bold text-gray-900">Gestion des projets</h1>
             </div>
 
             <div className="flex items-center gap-3">
