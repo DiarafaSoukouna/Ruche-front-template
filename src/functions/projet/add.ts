@@ -1,7 +1,7 @@
 import { api } from '../../lib/api';
 import { Projet } from '../../types/projet';
 
-export default async (value: Projet) => {
+export default async (value: any) => {
   try {
     const { data } = await api.post('projet/', value);
 
