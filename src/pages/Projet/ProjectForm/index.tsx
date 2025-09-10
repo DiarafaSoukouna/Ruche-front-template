@@ -1,5 +1,5 @@
 // components/ProjectForm.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "../../../components/Button";
@@ -17,8 +17,7 @@ const ProjectForm = () => {
     const { openForm, setopenForm, selectedProject } = useProjet();
     const [step, setStep] = useState(1);
 
-    // Valeurs par défaut
-    const defaultValues: ProjectCreateData = {
+    const defaultValues = useMemo<ProjectCreateData>(() => ({
         code_projet: selectedProject?.code_projet || "",
         sigle_projet: selectedProject?.sigle_projet || "",
         intitule_projet: selectedProject?.intitule_projet || "",
@@ -32,28 +31,20 @@ const ProjectForm = () => {
         signataires_projet: selectedProject?.signataires_projet || [],
         partenaires_execution_projet: selectedProject?.partenaires_execution_projet || [],
         zone_projet: selectedProject?.zone_projet || [],
-    };
+    }), [selectedProject, currentProgramme]);
 
-    const {
-        register,
-        handleSubmit,
-        control,
-        reset,
-        formState: { errors },
-    } = useForm<ProjectCreateData>({
+    const { register, handleSubmit, control, reset, formState: { errors } } = useForm<ProjectCreateData>({
         resolver: zodResolver(projectCreateSchema),
         defaultValues,
     });
 
     const onSubmit = async (data: ProjectCreateData) => {
+        console.log("Submit reçu :", data); // <-- test
         try {
             if (selectedProject) {
                 await editProjet(selectedProject.id_projet, data);
-                console.log("Projet modifié :", data);
             } else {
-                // Création
                 await addProjet(data);
-                console.log("Projet créé :", data);
             }
             setopenForm(false);
         } catch (err) {
@@ -61,21 +52,23 @@ const ProjectForm = () => {
         }
     };
 
-    // Reset le formulaire si selectedProject change
+    // Reset quand le projet change
     useEffect(() => {
         reset(defaultValues);
-    }, [selectedProject]);
+    }, [defaultValues, reset]);
 
 
     return (
         <Modal isOpen={openForm} onClose={() => setopenForm(false)} size="lg">
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit, (errors) => {
+                console.log("❌ Erreurs détectées :", errors);
+            })}>
                 <input type="hidden" {...register("programme_projet")} />
 
                 <h3 className="font-bold text-lg">Ajouter un projet</h3>
 
                 {step === 1 && <Step1 register={register} errors={errors} />}
-                
+
                 {step === 2 && <Step2
                     control={control}
                     errors={errors}

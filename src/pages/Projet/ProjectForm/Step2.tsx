@@ -9,6 +9,7 @@ interface FormProps {
 }
 
 const Step2: FC<FormProps> = ({ control, errors }) => {
+    const [partenaires1, setPartenaires1] = useState<{ id: number; name: string }[]>([]);
     const [partenaires, setPartenaires] = useState<{ id: number; name: string }[]>([]);
     const [structures, setStructures] = useState<{ id: number; name: string }[]>([]);
     const [signataires, setSignataires] = useState<{ id: number; name: string }[]>([]);
@@ -23,6 +24,21 @@ const Step2: FC<FormProps> = ({ control, errors }) => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label className="block text-sm font-medium mb-1">Partenaire du projet *</label>
+                <Controller
+                    name="partenaire_projet"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            {...field}
+                            isMulti={false}
+                        />
+                    )}
+                />
+                {errors.partenaire_projet && <p className="text-red-500 text-sm">{errors.partenaire_projet.message}</p>}
+            </div>
+            
             <div>
                 <label className="block text-sm font-medium mb-1">Structures du projet *</label>
                 <Controller
