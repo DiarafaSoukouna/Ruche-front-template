@@ -25,6 +25,8 @@ import ChangePassword from "./pages/ChangePassword";
 import Ugls from "./pages/Parametrages/Ugl";
 import ConventionPage from "./pages/Parametrages/convention/ConventionPage";
 import NiveauStructureConfigPage from "./pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage";
+import { RootProvider } from "./contexts/RootContext";
+import { NavbarProvider } from "./contexts/NavbarContext";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -46,7 +48,12 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {isAuthenticated && <Navbar />}
+      {isAuthenticated && (
+        <NavbarProvider
+          children={<Navbar />}
+        />
+      )}
+
       <main className={isAuthenticated ? "px-4 sm:px-6 lg:px-8 py-8" : ""}>
         <Routes>
           <Route
@@ -142,21 +149,23 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </Router>
+      <RootProvider>
+        <Router>
+          <AppContent />
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </Router>
+      </RootProvider>
     </AuthProvider>
   );
 };
