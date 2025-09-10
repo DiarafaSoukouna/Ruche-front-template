@@ -82,7 +82,7 @@ const ProjectForm = () => {
                 />}
 
 
-                <div className="flex gap-2 justify-end">
+                <div className="flex gap-2 justify-end *:w-full">
                     {step > 1 && (
                         <Button type="button" variant="danger" onClick={() => setStep(step - 1)}>
                             Précédent
