@@ -16,7 +16,8 @@ import {
   LayoutGrid,
   FileSignature,
   KeyIcon,
-  LogOutIcon, Box
+  LogOutIcon, Box,
+  File
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import ChangeProjectModal from "./ChangeProjectModal";
@@ -90,6 +91,7 @@ const Navbar: React.FC = () => {
       href: true,
     },
     { name: "Analytics", href: "/analytics", icon: ChartBarIcon },
+    { name: "Projets", href: "/projets", icon: File },
   ];
 
   const isActive = (href?: string | boolean) =>

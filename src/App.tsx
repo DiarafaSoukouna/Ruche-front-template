@@ -27,6 +27,7 @@ import ConventionPage from "./pages/Parametrages/convention/ConventionPage";
 import NiveauStructureConfigPage from "./pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage";
 import { RootProvider } from "./contexts/RootContext";
 import { NavbarProvider } from "./contexts/NavbarContext";
+import Projet from "./pages/Projet";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -71,6 +72,10 @@ const AppContent: React.FC = () => {
           <Route
             path="/analytics"
             element={isAuthenticated ? <Analytics /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/projets"
+            element={isAuthenticated ? <Projet /> : <Navigate to="/login" />}
           />
           <Route
             path="/products"
