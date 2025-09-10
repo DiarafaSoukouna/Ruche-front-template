@@ -6,6 +6,8 @@ import { useRoot } from "./RootContext";
 // le typage
 interface contextType {
     projetList: Projet[];
+    selectedProject?: Projet;
+    setselectedProject: React.Dispatch<React.SetStateAction<Projet | undefined>>;
 }
 
 // l'instanciation du context
@@ -15,6 +17,8 @@ const ProjetContext = createContext<contextType | undefined>(undefined)
 export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
     const { currentProgramme } = useRoot();
     const [projetList, setProjetList] = useState<Projet[]>([]);
+
+    const [selectedProject, setselectedProject] = useState<undefined | Projet>(undefined);
 
     const loadProjet = async () => {
         try {
@@ -26,7 +30,7 @@ export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
 
             // const filtered = res.filter(({ programme_projet }) => programme_projet === currentProgramme?.id_programme);
             setProjetList(filtered);
-            
+
             console.log('la liste des projets filtrés', filtered);
         } catch (error) { }
     }
@@ -38,6 +42,8 @@ export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
     return (
         <ProjetContext.Provider value={{
             projetList,
+            setselectedProject,
+            selectedProject
         }}>
             {children}
         </ProjetContext.Provider>

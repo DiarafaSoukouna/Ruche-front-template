@@ -7,7 +7,7 @@ export default () => {
   return (
     <ProjetProvider>
       <div className="space-y-8">
-        
+
         <HeadZone />
 
         <ListZone />
