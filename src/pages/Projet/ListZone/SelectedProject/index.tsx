@@ -7,7 +7,6 @@ export default () => {
 
     return (
         <div>
-            {/* Contenu du drawer */}
             <div className="p-4">
                 <h2 className="text-lg font-bold mb-4">
                     Détails du projet #{selectedProject.code_projet}
@@ -22,7 +21,6 @@ export default () => {
                 <p>
                     <span className="font-semibold">Durée:</span> {selectedProject.duree_projet} ans
                 </p>
-                {/* Tu peux ajouter d'autres champs ici */}
             </div>
         </div>
     )

@@ -19,7 +19,7 @@ const ProjetContext = createContext<contextType | undefined>(undefined)
 export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
     const { currentProgramme } = useRoot();
     const [projetList, setProjetList] = useState<Projet[]>([]);
-    const [openForm, setopenForm] = useState(true);
+    const [openForm, setopenForm] = useState(false);
 
     const [selectedProject, setselectedProject] = useState<undefined | Projet>(undefined);
 
