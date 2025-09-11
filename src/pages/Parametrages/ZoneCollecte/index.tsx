@@ -239,7 +239,7 @@ const Acteurs = () => {
       </Modal>
       {loading && (
         <div className="text-center">
-          <RiseLoader color="blue" />
+          <RiseLoader color="green" />
         </div>
       )}
       <Modal
@@ -274,9 +274,12 @@ const Acteurs = () => {
       >
         <TypeZone />
       </Modal>
-      <Card className="overflow-hidden" title="Liste des zones de collecte">
-        <Table columns={columns} data={allZoneCollecte} itemsPerPage={5} />
-      </Card>
+      <Table
+        columns={columns}
+        data={allZoneCollecte}
+        itemsPerPage={5}
+        title="Liste des zones de collecte"
+      />
     </div>
   )
 }

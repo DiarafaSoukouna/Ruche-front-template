@@ -298,7 +298,7 @@ const Acteurs = () => {
       </Modal>
       {loading && (
         <div className="text-center">
-          <RiseLoader color="blue" />
+          <RiseLoader color="green" />
         </div>
       )}
       <Modal
@@ -334,9 +334,12 @@ const Acteurs = () => {
         <CategorieActeur />
       </Modal>
 
-      <Card title="Liste des acteurs" className="overflow-hidden">
-        <Table columns={columns} data={allActeurs} itemsPerPage={5} />
-      </Card>
+      <Table
+        columns={columns}
+        data={allActeurs}
+        itemsPerPage={5}
+        title="Liste des acteurs"
+      />
     </div>
   )
 }

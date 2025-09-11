@@ -9,7 +9,10 @@ import { typeNiveauStructure } from "../../../../functions/niveauStructures/type
 import { allNiveauStructure } from "../../../../functions/niveauStructures/gets";
 import { deleteNiveauStructure } from "../../../../functions/niveauStructures/delete";
 import { addNiveauStructure } from "../../../../functions/niveauStructures/post";
-const NiveauLocalite = () => {
+interface NivLocProps {
+    allNiveau: () => void
+}
+const NiveauLocalite:React.FC<NivLocProps> = ({allNiveau}) => {
     const [niveauStructures, setNiveauStructures] = useState([]);
     const [loading, setLoading] = useState(false);
     const [formInputs, setFormInputs] = useState<typeNiveauStructure[]>([]);
@@ -30,6 +33,7 @@ const NiveauLocalite = () => {
     const del = async (id: number) => {
         try {
             await deleteNiveauStructure(id);
+            allNiveau();
             all();
         } catch (error) {
             console.error(error);
@@ -52,6 +56,7 @@ const NiveauLocalite = () => {
             await Promise.all(formInputs.map(input => addNiveauStructure(input)));
             toast.success("Niveau localité ajouté avec succès")
             console.log('formInouts', formInputs);
+            allNiveau();
             setFormInputs([]);
             all();
         } catch (error) {

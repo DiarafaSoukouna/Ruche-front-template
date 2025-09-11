@@ -95,7 +95,7 @@ const FormUgl: React.FC<FormProps> = ({ ugl, isEdit, all, onClose }) => {
             error={errors.abrege_ugl}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-12">
           <TextArea
             label="Nom"
             placeholder="Entrez le libélle"
@@ -117,7 +117,7 @@ const FormUgl: React.FC<FormProps> = ({ ugl, isEdit, all, onClose }) => {
             required
           />
         </div>
-        <div className="col-span-6">
+        {/* <div className="col-span-6">
           <Controller
             name="chef_lieu_ugl"
             control={control}
@@ -140,7 +140,7 @@ const FormUgl: React.FC<FormProps> = ({ ugl, isEdit, all, onClose }) => {
               />
             )}
           />
-        </div>
+        </div> */}
         <div className="col-span-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Localites concernées

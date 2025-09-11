@@ -125,7 +125,7 @@ const Navbar: React.FC = () => {
                 </span>
               </div>
               <span className="text-xl font-bold text-primary">
-                Systeme informatisé de suivi évaluation
+                Système informatisé de suivi-évaluation
               </span>
             </div>
           </div>
