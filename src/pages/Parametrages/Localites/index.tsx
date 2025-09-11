@@ -182,20 +182,20 @@ const Localites: React.FC = () => {
                                         <table className="min-w-full divide-y divide-gray-200">
                                             <thead className="bg-gray-100">
                                                 <tr>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                                    <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                                         Code
                                                     </th>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                                    <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                                         Libellé
                                                     </th>
                                                     {
                                                         niveauLocalites.slice(0, Number(tabActive) - 1).sort((a, b) => b.nombre_nlc - a.nombre_nlc).map((niv) =>
-                                                            <th className="px-6 py-3 text-left text-xs font-medi    um text-gray-700 uppercase tracking-wider">
+                                                            <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medi    um text-gray-700 uppercase tracking-wider">
                                                                 {niv.libelle_nlc}
                                                             </th>
                                                         )
                                                     }
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                                    <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                                         Actions
                                                     </th>
                                                 </tr>
@@ -206,21 +206,21 @@ const Localites: React.FC = () => {
                                                         const parentHierarchy = getParentHierarchy(localite)
                                                         return (
                                                             <tr key={localite.id_loca} className="hover:bg-gray-50 transition-colors">
-                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" width={50}>
+                                                                <td className="px-3 py-2 border border-gray-300 whitespace-nowrap text-sm text-gray-500" width={50}>
                                                                     {localite.code_national_loca}
                                                                 </td>
-                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                                <td className="px-3 py-2 border border-gray-300 whitespace-nowrap text-sm font-medium text-gray-900">
                                                                     {localite.intitule_loca}
                                                                 </td>
                                                                 {
                                                                     niveauLocalites.slice(0, Number(tabActive) - 1).map((niv, index) => (
-                                                                        <th key={niv.id_nlc} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                                        <th key={niv.id_nlc} className="px-3 py-2 border border-gray-300 whitespace-nowrap text-sm text-gray-500">
                                                                              {parentHierarchy[index] ? parentHierarchy[index].intitule_loca : "-"}
                                                                         </th>
                                                                     )
                                                                     )
                                                                 }
-                                                                <td className="px-6 space-x-2 py-4 whitespace-nowrap text-sm font-medium" width={50}>
+                                                                <td className="px-3 space-x-2 py-2 border border-gray-300 whitespace-nowrap text-sm font-medium" width={50}>
                                                                     <Button
                                                                         variant="outline"
                                                                         size="sm"

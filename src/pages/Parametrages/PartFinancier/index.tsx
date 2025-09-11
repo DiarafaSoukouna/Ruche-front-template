@@ -69,8 +69,8 @@ const PartFinanciers = () => {
         try {
             const res = await getAllActeurs()
             if (res?.data) {
-                const filteredActeurs = res.data.filter((acteur:any) =>
-                    acteur.categorie_acteur && acteur.categorie_acteur.includes(3)
+                const filteredActeurs = res.data.filter((acteur: any) =>
+                    acteur.categorie_acteur && acteur.categorie_acteur.includes(8)
                 )
                 setPartFinanciers(filteredActeurs)
             }
@@ -198,40 +198,8 @@ const PartFinanciers = () => {
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Partenaires financiers</h1>
                 </div>
-                {/* <div className="flex gap-4">
-                    <Button
-                        onClick={() => {
-                            (setShowModal(true), setIsEdit(false))
-                        }}
-                        size="md"
-                    >
-                        <PlusIcon className="w-4 h-4 mr-2" />
-                        Nouveau Part Financier
-                    </Button>
-                </div> */}
+
             </div>
-            <Modal
-                isOpen={showModal}
-                onClose={() => close()}
-                title={isEdit ? "Modifier l'acteur" : 'Nouvelle partenaire financier'}
-                size="md"
-            >
-                <FormPartFinancier
-                    part_financier={part_financier}
-                    setPartFinancier={setPart_financier}
-                    isEdit={isEdit}
-                    handleSubmit={handleSubmit}
-                    onClose={() => close()}
-                />
-            </Modal>
-            <ConfirmModal
-                isOpen={isDelete}
-                onClose={() => close()}
-                title={'Supprimer cet partenaire'}
-                size="md"
-                confimationButon={() => deletePartFinancier(part_financier.id_partenaire!)}
-            >
-            </ConfirmModal>
 
             {loading ?
                 (<div className="text-center">

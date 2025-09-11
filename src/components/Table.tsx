@@ -136,7 +136,7 @@ function Table<T extends { id?: string | number }>({
                 {columns.map((column) => (
                   <th
                     key={String(column.key)}
-                    className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer select-none"
+                    className="border border-gray-300 px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer select-none"
                     onClick={() => handleSort(column.key)}
                   >
                     {column.title} {getSortIcon(column.key)}
@@ -156,7 +156,7 @@ function Table<T extends { id?: string | number }>({
                   {columns.map((column) => (
                     <td
                       key={String(column.key)}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-foreground"
+                      className="border border-gray-300 px-3 py-2 whitespace-nowrap text-sm text-foreground"
                     >
                       {column.render
                         ? column.render(row[column.key], row)

@@ -10,56 +10,65 @@ import { allUgl } from '../../../functions/ugl/gets'
 import { deleteUgl } from '../../../functions/ugl/delete'
 import { typeUgl } from '../../../functions/ugl/types'
 import { toast } from 'react-toastify'
+import { typeReferentiel } from '../../../functions/referentiels/types'
+import FormReferentiel from './form'
+import { allReferentiel } from '../../../functions/referentiels/gets'
 
-const Ugls = () => {
-  //   const [acteurs, setUgls] = useState([])
+const Referentiels = () => {
+  //   const [acteurs, setReferentiels] = useState([])
   // const [acteurs, set]
   const [showModal, setShowModal] = useState(false)
-  const [ugls, setUgls] = useState<typeUgl[]>([])
+  const [referentiels, setReferentiels] = useState<typeReferentiel[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [isDelete, setIsDelete] = useState(false)
-  const [ugl, setUgl] = useState<typeUgl>({
-    id_ugl: 0,
-    code_ugl: '',
-    abrege_ugl: '',
-    chef_lieu_ugl: 0,
-    couleur_ugl: '',
-    region_concerne_ugl: [],
-    nom_ugl: '',
+  const [referentiel, setReferentiel] = useState<typeReferentiel>({
+    id_ref_ind_ref: 0,
+    code_ref_ind: '',
+    intitule_ref_ind: '',
+    echelle: '',
+    unite_cmr: '',
+    typologie: '',
+    fonction_agregat_cmr: '',
+    seuil_maximum: '',
+    seuil_minimum: '',
+    responsable_collecte_cmr: 0,
   })
   const clean = () => {
-    setUgl({
-      id_ugl: 0,
-      code_ugl: '',
-      abrege_ugl: '',
-      chef_lieu_ugl: 0,
-      couleur_ugl: '',
-      region_concerne_ugl: [],
-      nom_ugl: '',
+    setReferentiel({
+      id_ref_ind_ref: 0,
+      code_ref_ind: '',
+      intitule_ref_ind: '',
+      echelle: '',
+      unite_cmr: '',
+      typologie: '',
+      fonction_agregat_cmr: '',
+      seuil_maximum: '',
+      seuil_minimum: '',
+      responsable_collecte_cmr: 0,
     })
   }
-  const fetchUgls = async () => {
+  const fetchReferentiels = async () => {
     setLoading(true)
     try {
-      const res = await allUgl()
-      setUgls(res)
+      const res = await allReferentiel()
+      setReferentiels(res)
     } catch (error) {
-      toast.error("Erreur lors de la recuperation de l'unité de gestion")
+      toast.error("Erreur lors de la recuperation de l'indicateur referentiel")
       console.error(error)
     } finally {
       setLoading(false)
     }
   }
 
-  const deleteActeur = async (id: number) => {
+  const deleteReferentiel = async (id: number) => {
     try {
-      await deleteUgl(id)
+      await deleteReferentiel(id)
       setIsDelete(false)
-      toast.success('Unité de gestion supprimé avec succès')
-      fetchUgls()
+      toast.success('Indicateur supprimé avec succès')
+      fetchReferentiels()
     } catch (error) {
       console.error(error)
-      toast.error("Erreur lors de la suppression de l'unité de gestion")
+      toast.error("Erreur lors de la suppression de l'indicateur referentiel")
     }
   }
 
@@ -71,15 +80,15 @@ const Ugls = () => {
   }
   const [isEdit, setIsEdit] = useState(false)
 
-  const onEdit = (ugl: any) => {
-    setUgl(ugl)
+  const onEdit = (referentiel: any) => {
+    setReferentiel(referentiel)
     setShowModal(true)
     setIsEdit(true)
   }
 
   const columns = [
     {
-      key: 'code_ugl',
+      key: 'code_ref_ind',
       title: 'Code',
       render: (value: String) => (
         <div className="flex items-center">
@@ -91,8 +100,8 @@ const Ugls = () => {
     },
 
     {
-      key: 'abrege_ugl',
-      title: 'Abréviation',
+      key: 'intitule_ref_ind',
+      title: 'Intitulé',
       render: (value: String) => (
         <div className="flex items-center">
           <div>
@@ -102,8 +111,8 @@ const Ugls = () => {
       ),
     },
     {
-      key: 'nom_ugl',
-      title: 'Libellé',
+      key: 'unite_cmr',
+      title: 'Unité',
       render: (value: String) => (
         <div className="flex items-center">
           <div>
@@ -112,29 +121,40 @@ const Ugls = () => {
         </div>
       ),
     },
+    // {
+    //   key: 'chef_lieu_ugl',
+    //   title: "Zone d'intervation",
+    //   render: (value: String, row: any) => (
+    //     <div className="flex items-center">
+    //       <div>
+    //         <div className="font-medium text-gray-900">
+    //           {row.chef_lieu_ugl?.intitule_loca || 'N/A'}
+    //         </div>
+    //       </div>
+    //     </div>
+    //   ),
+    // },
     {
-      key: 'chef_lieu_ugl',
-      title: "Zone d'intervation",
-      render: (value: String, row: any) => (
+      key: 'fonction_agregat_cmr',
+      title: 'Agrégat',
+      render: (value: String) => (
         <div className="flex items-center">
           <div>
             <div className="font-medium text-gray-900">
-              {row.chef_lieu_ugl?.intitule_loca || 'N/A'}
+              {value}
             </div>
           </div>
         </div>
       ),
     },
     {
-      key: 'region_concerne_ugl',
-      title: 'Régions concernées',
-      render: (value: String, row: any) => (
+      key: 'responsable_collecte_cmr',
+      title: 'Responsables',
+      render: (value: String) => (
         <div className="flex items-center">
           <div>
             <div className="font-medium text-gray-900">
-              {row.region_concerne_ugl.map(
-                (reg: any) => reg.intitule_loca + '/ '
-              )}
+              {value}
             </div>
           </div>
         </div>
@@ -153,7 +173,7 @@ const Ugls = () => {
             size="sm"
             onClick={() => {
               setIsDelete(true)
-              setUgl(row)
+              setReferentiel(row)
             }}
           >
             <TrashIcon className="w-3 h-3" />
@@ -163,7 +183,7 @@ const Ugls = () => {
     },
   ]
   useEffect(() => {
-    fetchUgls()
+    fetchReferentiels()
   }, [])
 
   return (
@@ -172,7 +192,7 @@ const Ugls = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Unités de gestion
+            Dictionnaire d'indicateurs
           </h1>
         </div>
         <div className="flex gap-4">
@@ -183,7 +203,7 @@ const Ugls = () => {
             size="md"
           >
             <PlusIcon className="w-4 h-4 mr-2" />
-            Nouvelle Unité de gestion
+            Nouveau Indicateur
           </Button>
         </div>
       </div>
@@ -193,9 +213,9 @@ const Ugls = () => {
         title={isEdit ? "Modifier l'acteur" : 'Nouvel acteur'}
         size="lg"
       >
-        <FormPartFinancier
-          ugl={ugl}
-          all={() => fetchUgls}
+        <FormReferentiel
+          referentiel={referentiel}
+          all={() => fetchReferentiels}
           isEdit={isEdit}
           onClose={() => close()}
         />
@@ -215,7 +235,7 @@ const Ugls = () => {
             <Button variant="outline" onClick={() => close()}>
               Annuler
             </Button>
-            <Button variant="danger" onClick={() => deleteActeur(ugl.id_ugl!)}>
+            <Button variant="danger" onClick={() => deleteReferentiel(referentiel.id_ref_ind_ref!)}>
               Supprimer
             </Button>
           </div>
@@ -225,14 +245,15 @@ const Ugls = () => {
         <div className="text-center">
           <RiseLoader color="green" />
         </div>
-      ) : 
-      ugls.length > 0 ? 
-      (
-        <Table title='Liste des unités de gestion' columns={columns} data={ugls} itemsPerPage={5} />
-      ): 
-        <div className='text-center'>Unité de gestion non disponible</div>
+      ) :
+        referentiels.length > 0 ?
+          (
+            'ok'
+            // <Table title='Liste des unités de gestion' columns={columns} data={referentiels} itemsPerPage={5} />
+          ) :
+          <div className='text-center'>Indicateur non disponible</div>
       }
     </div>
   )
 }
-export default Ugls
+export default Referentiels

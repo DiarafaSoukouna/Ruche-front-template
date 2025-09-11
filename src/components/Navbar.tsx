@@ -18,6 +18,8 @@ import {
   KeyIcon,
   Settings2Icon,
   BriefcaseIcon,
+  GalleryHorizontal,
+  GalleryThumbnails,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -86,9 +88,14 @@ const Navbar: React.FC = () => {
         },
         { name: "Zone de Collecte", href: "/zone-collecte", icon: MapPinIcon },
 
-        { name: "Plan stratégique", href: "/programmes", icon: Building2 },
+        { name: "Plan stratégique", href: "/programmes", icon:  GalleryThumbnails },
         { name: "Plans de Site", href: "/plan_sites", icon: Building2 },
         { name: "Conventions", href: "/conventions", icon: FileSignature },
+        {
+          name: "Dictionnaire d'indicateurs",
+          href: "/referentiels",
+          icon: BriefcaseIcon,
+        },
         {
           name: "Autres paramétrages",
           href: "/autres-parametrages",

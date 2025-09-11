@@ -28,6 +28,7 @@ import ZoneCollecte from './pages/Parametrages/ZoneCollecte/index'
 import PlanSitePage from './pages/Parametrages/planSite'
 import FonctionPage from "./pages/Parametrages/personnel/fonction-personnel/FonctionPage";
 import Programmes from './pages/Parametrages/Programme'
+import Referentiels from './pages/Parametrages/Refenrentiels'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -85,6 +86,10 @@ const AppContent: React.FC = () => {
           <Route
             path="/acteurs"
             element={isAuthenticated ? <Acteurs /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/referentiels"
+            element={isAuthenticated ? <Referentiels /> : <Navigate to="/login" />}
           />
           <Route
             path="/fonctions"
