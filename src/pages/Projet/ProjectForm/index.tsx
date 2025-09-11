@@ -27,10 +27,10 @@ const ProjectForm = () => {
         //@ts-ignore
         partenaire_projet: selectedProject?.partenaire_projet || 0,
         programme_projet: selectedProject?.programme_projet || currentProgramme?.id_programme || 0,
-        structure_projet: selectedProject?.structure_projet || [],
-        signataires_projet: selectedProject?.signataires_projet || [],
-        partenaires_execution_projet: selectedProject?.partenaires_execution_projet || [],
-        zone_projet: selectedProject?.zone_projet || [],
+        structure_projet: selectedProject?.structure_projet.map(({ id_acteur }) => id_acteur) || [],
+        signataires_projet: selectedProject?.signataires_projet.map(({ id_acteur }) => id_acteur) || [],
+        partenaires_execution_projet: selectedProject?.partenaires_execution_projet.map(({ id_acteur }) => id_acteur) || [],
+        zone_projet: selectedProject?.zone_projet.map(({ id_loca }) => id_loca as number) || [],
     }), [selectedProject, currentProgramme]);
 
     const { register, handleSubmit, control, reset, formState: { errors } } = useForm<ProjectCreateData>({
