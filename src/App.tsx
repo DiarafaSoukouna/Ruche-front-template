@@ -17,7 +17,6 @@ import Products from './pages/Products'
 import Analytics from './pages/Analytics'
 import Acteurs from './pages/Parametrages/Acteurs/index'
 import PersonnelPage from './pages/Parametrages/personnel/PersonnelPage'
-import TypeZonePage from './pages/Parametrages/type-zone/TypeZonePage'
 import Localites from './pages/Parametrages/Localites'
 import PartFinanciers from './pages/Parametrages/PartFinancier'
 import ChangePassword from './pages/ChangePassword'
@@ -32,6 +31,10 @@ import CadreAnalytique from './pages/CadreAnalytique'
 import { RootProvider } from './contexts/RootContext'
 import { NavbarProvider } from './contexts/NavbarContext'
 import Projet from './pages/Projet'
+
+import DictionnaireIndicateurPage from './pages/Parametrages/dictionnaire-indicateur/DictionnaireIndicateurPage'
+import IndicateurCmrPage from './pages/Parametrages/indicateur-cmr/IndicateurCmrPage'
+import IndicateurCadreResultatPage from './pages/Parametrages/indicateur-cadre-resultat/IndicateurCadreResultatPage'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -129,12 +132,7 @@ const AppContent: React.FC = () => {
               isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />
             }
           />
-          <Route
-            path="/type-zones"
-            element={
-              isAuthenticated ? <TypeZonePage /> : <Navigate to="/login" />
-            }
-          />
+
           <Route
             path="/conventions"
             element={
@@ -146,6 +144,32 @@ const AppContent: React.FC = () => {
             element={
               isAuthenticated ? (
                 <AutresParametrages />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/dictionnaire-indicateurs"
+            element={
+              isAuthenticated ? (
+                <DictionnaireIndicateurPage />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/indicateurs-cmr"
+            element={
+              isAuthenticated ? <IndicateurCmrPage /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/cadre-resultats"
+            element={
+              isAuthenticated ? (
+                <IndicateurCadreResultatPage />
               ) : (
                 <Navigate to="/login" />
               )

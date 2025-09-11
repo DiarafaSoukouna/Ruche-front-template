@@ -18,6 +18,7 @@ import {
   KeyIcon,
   Settings2Icon,
   BriefcaseIcon,
+  ListTodoIcon,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -69,6 +70,7 @@ const Navbar: React.FC = () => {
 
   const navigationItems: NavigationItem[] = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+
     {
       name: 'Paramétrage',
       icon: CogIcon,
@@ -97,11 +99,25 @@ const Navbar: React.FC = () => {
       ],
       href: true,
     },
-    { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
     {
       name: 'Cadre de résultats',
       icon: FileSignature,
       children: [
+        {
+          name: 'Dictionnaire des indicateurs',
+          href: '/dictionnaire-indicateurs',
+          icon: ListTodoIcon,
+        },
+        {
+          name: 'Indicateurs du CMR',
+          href: '/indicateurs-cmr',
+          icon: ChartBarIcon,
+        },
+        {
+          name: 'Cadre de résultats',
+          href: '/cadre-resultats',
+          icon: LayoutGrid,
+        },
         {
           name: 'Cadre analytique',
           href: '/cadre_analytique',

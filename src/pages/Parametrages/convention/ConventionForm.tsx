@@ -39,6 +39,8 @@ export default function ConventionForm({
     formState: { errors },
   } = useForm<ConventionFormData>({
     resolver: zodResolver(conventionFormSchema),
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     defaultValues: convention
       ? {
           code_convention: convention.code_convention,

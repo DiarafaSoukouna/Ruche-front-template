@@ -1,14 +1,14 @@
 import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import { typeZoneService } from "../../../services/typeZoneService";
+import Button from "../../../../components/Button";
+import Input from "../../../../components/Input";
+import { typeZoneService } from "../../../../services/typeZoneService";
 import {
   typeZoneSchema,
   type TypeZoneFormData,
-} from "../../../schemas/typeZoneSchema";
-import type { TypeZone } from "../../../types/entities";
+} from "../../../../schemas/typeZoneSchema";
+import type { TypeZone } from "../../../../types/entities";
 
 interface TypeZoneFormProps {
   typeZone?: TypeZone;

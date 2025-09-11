@@ -1,8 +1,8 @@
 import { useState } from "react";
 import TypeZoneList from "./TypeZoneList";
 import TypeZoneForm from "./TypeZoneForm";
-import type { TypeZone } from "../../../types/entities";
-import Modal from "../../../components/Modal";
+import type { TypeZone } from "../../../../types/entities";
+import Modal from "../../../../components/Modal";
 
 export default function TypeZonePage() {
   const [showForm, setShowForm] = useState(false);

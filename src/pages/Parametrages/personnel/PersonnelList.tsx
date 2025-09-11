@@ -4,7 +4,7 @@ import { Edit, TrashIcon, Plus, Check, X, Settings } from "lucide-react";
 import Button from "../../../components/Button";
 import Table from "../../../components/Table";
 import Modal from "../../../components/Modal";
-import type { Personnel, Region, UGL } from "../../../types/entities";
+import type { Personnel } from "../../../types/entities";
 import { personnelService } from "../../../services/personnelService";
 import { apiClient } from "../../../lib/api";
 import TitrePersonnelPage from "./titre-personnel/TitrePersonnelPage";
@@ -23,23 +23,6 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
     queryKey: ["personnel"],
     queryFn: async (): Promise<Personnel[]> => {
       const response = await apiClient.request("/personnel/");
-      return Array.isArray(response) ? response : [];
-    },
-  });
-
-  // Fetch related data for lookups
-  const { data: regions = [] } = useQuery<Region[]>({
-    queryKey: ["/localite/"],
-    queryFn: async (): Promise<Region[]> => {
-      const response = await apiClient.request("/localite/");
-      return Array.isArray(response) ? response : [];
-    },
-  });
-
-  const { data: ugls = [] } = useQuery<UGL[]>({
-    queryKey: ["/ugl/"],
-    queryFn: async (): Promise<UGL[]> => {
-      const response = await apiClient.request("/ugl/");
       return Array.isArray(response) ? response : [];
     },
   });
@@ -90,17 +73,11 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
 
   const columns = [
     {
-      key: "n_personnel" as keyof Personnel,
-      title: "ID",
-    },
-    {
       key: "titre_personnel" as keyof Personnel,
       title: "Titre",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.titre_personnel) return "-";
-        return typeof personnel.titre_personnel === "object"
-          ? personnel.titre_personnel.libelle_titre
-          : `ID: ${personnel.titre_personnel}`;
+        return personnel.titre_personnel.libelle_titre;
       },
     },
     {
@@ -124,9 +101,7 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       title: "Fonction",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.fonction_perso) return "-";
-        return typeof personnel.fonction_perso === "object"
-          ? `${personnel.fonction_perso.nom_fonction}`
-          : `ID: ${personnel.fonction_perso}`;
+        return personnel.fonction_perso.nom_fonction;
       },
     },
     {
@@ -134,9 +109,7 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       title: "Service/Direction",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.service_perso) return "-";
-        return typeof personnel.service_perso === "object"
-          ? `${personnel.service_perso.intutile_ds}`
-          : `${personnel.service_perso}`;
+        return personnel.service_perso.intutile_ds;
       },
     },
     {
@@ -144,24 +117,7 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       title: "Structure",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.structure_perso) return "-";
-        return typeof personnel.structure_perso === "object"
-          ? `${personnel.structure_perso.nom_acteur} (${personnel.structure_perso.code_acteur})`
-          : `ID: ${personnel.structure_perso}`;
-      },
-    },
-    {
-      key: "ugl_perso" as keyof Personnel,
-      title: "UGL",
-      render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
-        if (!personnel.ugl_perso) return "-";
-        const uglId =
-          typeof personnel.ugl_perso === "string"
-            ? parseInt(personnel.ugl_perso)
-            : personnel.ugl_perso;
-        const ugl = ugls.find((u) => u.id_ugl === uglId);
-        return ugl
-          ? `${ugl.nom_ugl} (${ugl.code_ugl})`
-          : `ID: ${personnel.ugl_perso}`;
+        return `${personnel.structure_perso.nom_acteur} (${personnel.structure_perso.code_acteur})`;
       },
     },
     {
@@ -169,12 +125,7 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
       title: "Région",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
         if (!personnel.region_perso) return "-";
-        const region = regions.find(
-          (r) => r.id_loca === personnel.region_perso
-        );
-        return region
-          ? `${region.intitule_loca} (${region.code_loca})`
-          : `ID: ${personnel.region_perso}`;
+        return `${personnel.region_perso.intitule_loca} (${personnel.region_perso.code_loca})`;
       },
     },
     {

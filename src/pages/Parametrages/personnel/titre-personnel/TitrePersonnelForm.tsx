@@ -28,6 +28,8 @@ export default function TitrePersonnelForm({
     formState: { errors },
   } = useForm<TitrePersonnelFormData>({
     resolver: zodResolver(titrePersonnelSchema),
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     defaultValues: {
       libelle_titre: titre?.libelle_titre || "",
       description_titre: titre?.description_titre || "",

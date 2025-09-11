@@ -143,7 +143,7 @@ const FormUgl: React.FC<FormProps> = ({ ugl, isEdit, all, onClose }) => {
         </div> */}
         <div className="col-span-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Regions concernées
+            Localites concernées
           </label>
           <Controller
             name="region_concerne_ugl"
