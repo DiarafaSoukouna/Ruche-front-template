@@ -42,6 +42,7 @@ const ProjectForm = () => {
         try {
             if (selectedProject) {
                 await editProjet(selectedProject.id_projet, data);
+                location.reload();
             } else {
                 const res = await addProjet(data);
                 res && setProjetList((prev) => [...prev, res])
