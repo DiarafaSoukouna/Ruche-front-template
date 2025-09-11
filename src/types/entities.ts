@@ -8,21 +8,21 @@ export interface TitrePersonnel extends Record<string, unknown> {
 export interface Personnel extends Record<string, unknown> {
   n_personnel?: number;
   id_personnel_perso?: string;
-  titre_personnel?: number | TitrePersonnel | null;
+  titre_personnel?: TitrePersonnel | null;
   nom_perso?: string;
   prenom_perso?: string;
   email?: string;
   contact_perso?: string;
-  fonction_perso?: number | Fonction | null;
-  service_perso?: number | PlanSite | null;
+  fonction_perso?: Fonction | null;
+  service_perso?: PlanSite | null;
   niveau_perso?: number;
   rapport_mensuel_perso?: boolean;
   rapport_trimestriel_perso?: boolean;
   rapport_semestriel_perso?: boolean;
   rapport_annuel_perso?: boolean;
   statut?: number;
-  region_perso?: number | null;
-  structure_perso?: string | Acteur | null;
+  region_perso?: Localite | null;
+  structure_perso?: Acteur | null;
   ugl_perso?: string | null;
   projet_active_perso?: string[];
   pass?: string;
@@ -38,9 +38,9 @@ export interface PlanSite extends Record<string, unknown> {
 }
 
 export interface TypeZone extends Record<string, unknown> {
-  id_type_zone?: number;
+  id_type_zone: number;
   code_type_zone: string;
-  nom_type_zone?: string;
+  nom_type_zone: string;
 }
 export interface Acteur extends Record<string, unknown> {
   id_acteur: number;
@@ -64,7 +64,7 @@ export interface Convention extends Record<string, unknown> {
   partenaire_conv: Partial<Acteur> | null;
 }
 
-export interface Region extends Record<string, unknown> {
+export interface Localite extends Record<string, unknown> {
   id_loca: number;
   code_loca: string;
   intitule_loca: string;
@@ -113,11 +113,96 @@ export type PersonnelFormData = Omit<Personnel, "n_personnel">;
 export type PlanSiteFormData = Omit<PlanSite, "id_ds">;
 export type TypeZoneFormData = Omit<TypeZone, "id_type_zone">;
 export type ActeurFormData = Omit<Acteur, "id_acteur">;
-export type RegionFormData = Omit<Region, "id_loca">;
+export type LocaliteFormData = Omit<Localite, "id_loca">;
 export type StructureFormData = Omit<Structure, "id_acteur">;
 export type UGLFormData = Omit<UGL, "id_ugl">;
 export type FonctionFormData = Omit<Fonction, "id_fonction">;
 export type NiveauStructureConfigFormData = Omit<
   NiveauStructureConfig,
   "id_nsc"
+>;
+
+// ============================================
+// RESULTS FRAMEWORKS & INDICATORS ENTITIES
+// ============================================
+
+// Unité d'indicateur
+export interface UniteIndicateur extends Record<string, unknown> {
+  id_unite: number;
+  unite_ui: string;
+  definition_ui: string;
+}
+
+// Cadre logique (cadre_secteur)
+export interface CadreSecteur extends Record<string, unknown> {
+  id_cl: number;
+  code_cl: string;
+  intitule_cl: string;
+  abrege_cl: string;
+  niveau_cl: number;
+  parent_cl?: number | null;
+  id_programme?: number | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Indicateur de cadre de résultat
+export interface IndicateurCadreResultat extends Record<string, unknown> {
+  id_indicateur_cr_iop: number;
+  niveau_iop: number;
+  code_indicateur_cr_iop: string;
+  code_cr_iop: string;
+  intitule_indicateur_cr_iop: string;
+  periodicite_iop: string;
+  source_iop: string;
+  responsable_iop: string;
+  description_iop: string;
+  structure_iop?: string;
+  projet_iop?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Indicateur stratégique (indicateur_cmr)
+export interface IndicateurCmr extends Record<string, unknown> {
+  id_ref_ind_cmr: number;
+  code_ref_ind: string;
+  resultat_cmr: string;
+  intitule_ref_ind: string;
+  reference_cmr: string;
+  annee_reference: number;
+  responsable_collecte_cmr: string;
+  cible_cmr: string;
+  unite_cmr?: UniteIndicateur | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Dictionnaire des indicateurs
+export interface DictionnaireIndicateur extends Record<string, unknown> {
+  id_ref_ind_ref: number;
+  code_ref_ind: string;
+  intitule_ref_ind: string;
+  unite_cmr?: UniteIndicateur | null;
+  fonction_agregat_cmr?: string;
+  echelle?: TypeZone | null;
+  typologie?: string;
+  seuil_minimum?: number;
+  seuil_maximum?: number;
+  responsable_collecte_cmr?: Acteur;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Form Data Types
+export type UniteIndicateurFormData = Omit<UniteIndicateur, "id_unite">;
+export type CadreSecteurFormData = Omit<CadreSecteur, "id_cl">;
+export type IndicateurCadreResultatFormData = Omit<
+  IndicateurCadreResultat,
+  "id_indicateur_cr_iop"
+>;
+export type IndicateurCmrFormData = Omit<IndicateurCmr, "id_ref_ind_cmr">;
+export type DictionnaireIndicateurFormData = Omit<
+  DictionnaireIndicateur,
+  "id_ref_ind_ref"
 >;

@@ -37,10 +37,6 @@ export default function TitrePersonnelList({
 
   const columns = [
     {
-      key: "id_titre" as keyof TitrePersonnel,
-      title: "ID",
-    },
-    {
       key: "libelle_titre" as keyof TitrePersonnel,
       title: "Libellé",
       render: (

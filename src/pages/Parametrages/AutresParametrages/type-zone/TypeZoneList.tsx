@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Edit, TrashIcon } from "lucide-react";
 import { toast } from "react-toastify";
-import Table from "../../../components/Table";
-import Button from "../../../components/Button";
-import { typeZoneService } from "../../../services/typeZoneService";
-import { apiClient } from "../../../lib/api";
-import type { TypeZone } from "../../../types/entities";
+import Table from "../../../../components/Table";
+import Button from "../../../../components/Button";
+import { typeZoneService } from "../../../../services/typeZoneService";
+import { apiClient } from "../../../../lib/api";
+import type { TypeZone } from "../../../../types/entities";
 
 interface TypeZoneListProps {
   onEdit: (typeZone: TypeZone) => void;
@@ -84,7 +84,7 @@ export default function TypeZoneList({ onEdit, onAdd }: TypeZoneListProps) {
       {/* Header avec contrôles */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Acteurs</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Types de zones</h1>
         </div>
         <div className="flex gap-4">
           <Button onClick={onAdd} className="flex items-center gap-2">
@@ -98,7 +98,6 @@ export default function TypeZoneList({ onEdit, onAdd }: TypeZoneListProps) {
         title="Liste des types de zone"
         columns={columns}
         data={typeZones.map((t) => ({ ...t, id: t.id_type_zone }))}
-        className="min-h-[400px]"
       />
     </div>
   );

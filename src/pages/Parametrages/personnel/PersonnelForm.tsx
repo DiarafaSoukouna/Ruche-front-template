@@ -6,17 +6,21 @@ import "react-phone-number-input/style.css";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import SelectInput from "../../../components/SelectInput";
-import HierarchicalServiceSelect from "../../../components/HierarchicalServiceSelect";
 import { personnelService } from "../../../services/personnelService";
 import { fonctionService } from "../../../services/fonctionService";
 import { titrePersonnelService } from "../../../services/titrePersonnelService";
+import { planSiteService } from "../../../services/planSiteService";
 import { apiClient } from "../../../lib/api";
 import {
   personnelCreateSchema,
   type PersonnelCreateData,
 } from "../../../schemas/personnelSchema";
-import type { Personnel, TitrePersonnel } from "../../../types/entities";
-import type { Region, Structure, UGL, Fonction } from "../../../types/entities";
+import type {
+  Personnel,
+  TitrePersonnel,
+  PlanSite,
+} from "../../../types/entities";
+import type { Localite, Structure, Fonction } from "../../../types/entities";
 
 interface PersonnelFormProps {
   personnel?: Personnel;
@@ -31,9 +35,9 @@ export default function PersonnelForm({
   const isEdit = !!personnel;
 
   // Récupération des données pour les selects
-  const { data: regions = [] } = useQuery<Region[]>({
+  const { data: regions = [] } = useQuery<Localite[]>({
     queryKey: ["/localite/"],
-    queryFn: async (): Promise<Region[]> => {
+    queryFn: async (): Promise<Localite[]> => {
       const response = await apiClient.request("/localite/");
       return Array.isArray(response) ? response : [];
     },
@@ -47,17 +51,14 @@ export default function PersonnelForm({
     },
   });
 
-  const { data: ugls = [] } = useQuery<UGL[]>({
-    queryKey: ["/ugl/"],
-    queryFn: async (): Promise<UGL[]> => {
-      const response = await apiClient.request("/ugl/");
-      return Array.isArray(response) ? response : [];
-    },
-  });
-
   const { data: fonctions = [] } = useQuery<Fonction[]>({
     queryKey: ["fonctions"],
     queryFn: fonctionService.getAll,
+  });
+
+  const { data: planSites = [] } = useQuery<PlanSite[]>({
+    queryKey: ["planSites"],
+    queryFn: planSiteService.getAll,
   });
 
   const { data: titres = [] } = useQuery<TitrePersonnel[]>({
@@ -77,42 +78,20 @@ export default function PersonnelForm({
       ? {
           email: personnel.email || "",
           id_personnel_perso: personnel.id_personnel_perso || "",
-          titre_personnel:
-            typeof personnel.titre_personnel === "object"
-              ? personnel.titre_personnel?.id_titre
-              : personnel.titre_personnel,
+          titre_personnel: personnel.titre_personnel?.id_titre || undefined,
           prenom_perso: personnel.prenom_perso || "",
           nom_perso: personnel.nom_perso || "",
           contact_perso: personnel.contact_perso || "",
-          fonction_perso:
-            typeof personnel.fonction_perso === "object"
-              ? personnel.fonction_perso?.id_fonction
-              : undefined,
-          service_perso:
-            typeof personnel.service_perso === "object"
-              ? personnel.service_perso?.id_ds
-              : undefined,
+          fonction_perso: personnel.fonction_perso?.id_fonction || undefined,
+          service_perso: personnel.service_perso?.id_ds || undefined,
           niveau_perso: personnel.niveau_perso || 1,
           rapport_mensuel_perso: personnel.rapport_mensuel_perso || false,
           rapport_trimestriel_perso:
             personnel.rapport_trimestriel_perso || false,
           rapport_semestriel_perso: personnel.rapport_semestriel_perso || false,
           rapport_annuel_perso: personnel.rapport_annuel_perso || false,
-          region_perso:
-            typeof personnel.region_perso === "number"
-              ? personnel.region_perso
-              : undefined,
-          structure_perso:
-            typeof personnel.structure_perso === "object"
-              ? personnel.structure_perso?.id_acteur
-              : undefined,
-          ugl_perso:
-            typeof personnel.ugl_perso === "number"
-              ? personnel.ugl_perso
-              : undefined,
-          projet_active_perso: Array.isArray(personnel.projet_active_perso)
-            ? personnel.projet_active_perso.join(", ")
-            : personnel.projet_active_perso || "",
+          region_perso: personnel.region_perso?.id_loca || undefined,
+          structure_perso: personnel.structure_perso?.id_acteur || undefined,
         }
       : {
           niveau_perso: 1,
@@ -287,12 +266,30 @@ export default function PersonnelForm({
           name="service_perso"
           control={control}
           render={({ field }) => (
-            <HierarchicalServiceSelect
-              value={field.value}
-              onChange={field.onChange}
+            <SelectInput
+              {...field}
               label="Service/Direction"
+              options={planSites.map((planSite) => ({
+                value: planSite.id_ds!,
+                label: `${planSite.intutile_ds} (${planSite.code_ds})`,
+              }))}
+              value={
+                field.value
+                  ? planSites
+                      .map((planSite) => ({
+                        value: planSite.id_ds!,
+                        label: `${planSite.intutile_ds} (${planSite.code_ds})`,
+                      }))
+                      .find((option) => option.value === field.value)
+                  : null
+              }
+              onChange={(selectedOption) => {
+                field.onChange(selectedOption ? selectedOption.value : null);
+              }}
+              isClearable
               placeholder="Sélectionner un service..."
               error={errors.service_perso}
+              isSearchable
             />
           )}
         />
@@ -325,38 +322,6 @@ export default function PersonnelForm({
               isClearable
               placeholder="Sélectionner une fonction..."
               error={errors.fonction_perso}
-            />
-          )}
-        />
-
-        <Controller
-          name="ugl_perso"
-          control={control}
-          render={({ field }) => (
-            <SelectInput
-              {...field}
-              label="Unité de gestion locale"
-              required
-              options={ugls.map((ugl) => ({
-                value: ugl.id_ugl,
-                label: `${ugl.nom_ugl} (${ugl.code_ugl})`,
-              }))}
-              value={
-                field.value
-                  ? ugls
-                      .map((ugl) => ({
-                        value: ugl.id_ugl,
-                        label: `${ugl.nom_ugl} (${ugl.code_ugl})`,
-                      }))
-                      .find((option) => option.value === field.value)
-                  : null
-              }
-              onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
-              }}
-              isClearable
-              placeholder="Sélectionner une UGL..."
-              error={errors.ugl_perso}
             />
           )}
         />

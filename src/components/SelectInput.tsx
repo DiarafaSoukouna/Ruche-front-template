@@ -1,6 +1,13 @@
 import React from "react";
 import { FieldError } from "react-hook-form";
-import Select, { Props as SelectProps } from "react-select";
+import Select, {
+  ControlProps,
+  CSSObjectWithLabel,
+  GroupBase,
+  OptionProps,
+  Props as SelectProps,
+  StylesConfig,
+} from "react-select";
 
 interface Option {
   value: string | number;
@@ -20,8 +27,11 @@ const SelectInput: React.FC<SelectInputProps> = React.forwardRef<
   SelectInputProps
 >(({ options, placeholder, error, label, required, ...rest }, ref) => {
   // Styles pour react-select utilisant ton thème CSS
-  const customStyles = {
-    control: (provided: any, state: any) => ({
+  const customStyles: StylesConfig<Option, false> = {
+    control: (
+      provided: CSSObjectWithLabel,
+      state: ControlProps<Option, false, GroupBase<Option>>
+    ) => ({
       ...provided,
       backgroundColor: "hsl(var(--input))",
       color: "hsl(var(--foreground))",
@@ -35,13 +45,16 @@ const SelectInput: React.FC<SelectInputProps> = React.forwardRef<
       borderRadius: "var(--radius)",
       padding: "2px",
     }),
-    menu: (provided: any) => ({
+    menu: (provided: CSSObjectWithLabel) => ({
       ...provided,
       backgroundColor: "hsl(var(--background))",
       color: "hsl(var(--foreground))",
       borderRadius: "var(--radius)",
     }),
-    option: (provided: any, state: any) => ({
+    option: (
+      provided: CSSObjectWithLabel,
+      state: OptionProps<Option, false, GroupBase<Option>>
+    ) => ({
       ...provided,
       backgroundColor: state.isSelected
         ? "hsl(var(--primary))"
@@ -53,19 +66,19 @@ const SelectInput: React.FC<SelectInputProps> = React.forwardRef<
         : "hsl(var(--foreground))",
       cursor: "pointer",
     }),
-    singleValue: (provided: any) => ({
+    singleValue: (provided: CSSObjectWithLabel) => ({
       ...provided,
       color: "hsl(var(--foreground))",
     }),
-    placeholder: (provided: any) => ({
+    placeholder: (provided: CSSObjectWithLabel) => ({
       ...provided,
       color: "hsl(var(--muted-foreground))",
     }),
-    indicatorSeparator: (provided: any) => ({
+    indicatorSeparator: (provided: CSSObjectWithLabel) => ({
       ...provided,
       backgroundColor: "hsl(var(--border))",
     }),
-    dropdownIndicator: (provided: any) => ({
+    dropdownIndicator: (provided: CSSObjectWithLabel) => ({
       ...provided,
       color: "hsl(var(--foreground))",
       "&:hover": { color: "hsl(var(--primary))" },
@@ -95,4 +108,5 @@ const SelectInput: React.FC<SelectInputProps> = React.forwardRef<
   );
 });
 
+SelectInput.displayName = "SelectInput";
 export default SelectInput;

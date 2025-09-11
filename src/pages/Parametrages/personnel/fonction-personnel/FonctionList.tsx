@@ -39,10 +39,6 @@ export default function FonctionList({ onEdit, onAdd }: FonctionListProps) {
 
   const columns = [
     {
-      key: "id_fonction" as keyof Fonction,
-      title: "ID",
-    },
-    {
       key: "nom_fonction" as keyof Fonction,
       title: "Nom de la fonction",
     },
