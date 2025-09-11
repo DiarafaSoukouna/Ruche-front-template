@@ -35,6 +35,7 @@ import Projet from './pages/Projet'
 import DictionnaireIndicateurPage from './pages/Parametrages/dictionnaire-indicateur/DictionnaireIndicateurPage'
 import IndicateurCmrPage from './pages/Parametrages/indicateur-cmr/IndicateurCmrPage'
 import IndicateurCadreResultatPage from './pages/Parametrages/indicateur-cadre-resultat/IndicateurCadreResultatPage'
+import Referentiels from './pages/Parametrages/Refenrentiels'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -97,6 +98,10 @@ const AppContent: React.FC = () => {
           <Route
             path="/acteurs"
             element={isAuthenticated ? <Acteurs /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/referentiels"
+            element={isAuthenticated ? <Referentiels /> : <Navigate to="/login" />}
           />
           <Route
             path="/fonctions"
