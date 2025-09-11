@@ -233,6 +233,7 @@ const PartFinanciers = () => {
             >
             </ConfirmModal>
 
+<<<<<<< HEAD
             {loading ?
                 (<div className="text-center">
                     <RiseLoader color='green' />
@@ -242,6 +243,20 @@ const PartFinanciers = () => {
                     (<Table title="Liste des partenaires financiers" columns={columns} data={partFinanciers} itemsPerPage={5} />)
                     : <div className='text-center'>Parténaire financier non disponible</div>
             }
+=======
+            <Card title="Liste des partenaires financiers" className="overflow-hidden">
+                {loading ?
+                    (<div className="text-center">
+                        <RiseLoader color='blue' />
+                    </div>
+                    ) :
+                    partFinanciers.length > 0 ?
+                    (<Table columns={columns} data={partFinanciers} itemsPerPage={5} />)
+                    : <div className='text-center'>Parténaire financier non disponible</div>
+                }
+
+            </Card>
+>>>>>>> a5f5566 (Plan site corriger)
         </div>
     )
 }

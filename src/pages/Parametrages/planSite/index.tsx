@@ -30,9 +30,15 @@ const PlanSitePage: React.FC = () => {
         try {
             const res = await allNiveauStructure();
             setNiveauStructures(res)
+<<<<<<< HEAD
             setAddBoutonLabel(res[0]?.libelle_nsc || '');
             setCurrentId(res[0]?.id_nsc || '');
             setTabActive(res[0]?.nombre_nsc || 0);
+=======
+            setAddBoutonLabel(res[2]?.libelle_nsc || '');
+            setCurrentId(res[2]?.id_nsc || '');
+            setTabActive(res[2]?.nombre_nsc || 0);
+>>>>>>> a5f5566 (Plan site corriger)
             setLoadingNiv(false)
             console.log(res);
         } catch (error) {
@@ -108,7 +114,11 @@ const PlanSitePage: React.FC = () => {
         <>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
+<<<<<<< HEAD
                     <h1 className="text-3xl font-bold text-gray-900">Gestion des Plan sites  </h1>
+=======
+                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Plan sites {tabActive} </h1>
+>>>>>>> a5f5566 (Plan site corriger)
                 </div>
                 <Button variant="outline" onClick={() => setLoadNiveau(true)}>
                     <MapPinIcon className="w-4 h-4 mr-2" />
@@ -200,6 +210,7 @@ const PlanSitePage: React.FC = () => {
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
                                                 {planSites.length ?
+<<<<<<< HEAD
                                                     (planSites).map((plan) => {
                                                         const parentHierarchy = getParentHierarchy(plan)
                                                         return (
@@ -235,6 +246,46 @@ const PlanSitePage: React.FC = () => {
                                                             </tr>
                                                         )
                                                     }
+=======
+                                                    (planSites).map((plan) => (
+                                                        <tr key={plan.id_ds} className="hover:bg-gray-50 transition-colors">
+                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" width={50}>
+                                                                {plan.code_relai_ds}
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                                {plan.intutile_ds}
+                                                            </td>
+                                                            {
+                                                                niveauStructures.slice(0, Number(tabActive) - 1).map((niv) => (
+                                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                                                        {typeof plan.parent_ds === 'object' && plan.parent_ds !== null ?
+                                                                            (plan.parent_ds as typePlanSite).intutile_ds :
+                                                                            "-"
+                                                                        }
+                                                                        {niv.id_nsc}
+                                                                    </th>
+                                                                )
+                                                                )
+                                                            }
+                                                            <td className="px-6 space-x-2 py-4 whitespace-nowrap text-sm font-medium" width={50}>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    onClick={() => (setEditRow(plan), setShowForm(true))}
+                                                                >
+                                                                    <EditIcon className="w-3 h-3" />
+                                                                </Button>
+                                                                <Button
+                                                                    variant="danger"
+                                                                    size="sm"
+                                                                    onClick={() => handleDelete(plan)}
+                                                                >
+                                                                    <TrashIcon className="w-3 h-3" />
+                                                                </Button>
+                                                            </td>
+                                                        </tr>
+                                                    )
+>>>>>>> a5f5566 (Plan site corriger)
                                                     ) :
                                                     (
                                                         <td colSpan={8} className="text-center" >
