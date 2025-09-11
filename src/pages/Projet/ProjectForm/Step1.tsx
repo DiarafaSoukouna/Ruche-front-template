@@ -5,11 +5,12 @@ import { ProjectCreateData } from "../../../schemas/projetSchema";
 interface StepProps {
     register: UseFormRegister<ProjectCreateData>;
     errors: FieldErrors<ProjectCreateData>;
+    step: number
 }
 
-const Step1: FC<StepProps> = ({ register, errors }) => {
+const Step1: FC<StepProps> = ({ register, errors, step }) => {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${step != 1 && 'hidden'}`}>
             <div>
                 <label className="block text-sm font-medium mb-1">Code *</label>
                 <input {...register("code_projet")} className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />

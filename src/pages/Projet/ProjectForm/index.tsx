@@ -14,7 +14,7 @@ import Step2 from "./Step2";
 
 const ProjectForm = () => {
     const { currentProgramme } = useRoot();
-    const { openForm, setopenForm, selectedProject } = useProjet();
+    const { openForm, setopenForm, selectedProject, setProjetList } = useProjet();
     const [step, setStep] = useState(1);
 
     const defaultValues = useMemo<ProjectCreateData>(() => ({
@@ -39,12 +39,12 @@ const ProjectForm = () => {
     });
 
     const onSubmit = async (data: ProjectCreateData) => {
-        console.log("Submit reçu :", data); // <-- test
         try {
             if (selectedProject) {
                 await editProjet(selectedProject.id_projet, data);
             } else {
-                await addProjet(data);
+                const res = await addProjet(data);
+                res && setProjetList((prev) => [...prev, res])
             }
             setopenForm(false);
         } catch (err) {
@@ -60,19 +60,14 @@ const ProjectForm = () => {
 
     return (
         <Modal isOpen={openForm} onClose={() => setopenForm(false)} size="lg">
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit, (errors) => {
-                console.log("❌ Erreurs détectées :", errors);
-            })}>
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <input type="hidden" {...register("programme_projet")} />
 
                 <h3 className="font-bold text-lg">Ajouter un projet</h3>
 
-                {step === 1 && <Step1 register={register} errors={errors} />}
+                <Step1 step={step} register={register} errors={errors} />
 
-                {step === 2 && <Step2
-                    control={control}
-                    errors={errors}
-                />}
+                <Step2 control={control} errors={errors} step={step} />
 
 
                 <div className="flex gap-2 justify-end *:w-full">

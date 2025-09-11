@@ -6,6 +6,7 @@ import { useRoot } from "./RootContext";
 // le typage
 interface contextType {
     projetList: Projet[];
+    setProjetList: React.Dispatch<React.SetStateAction<Projet[]>>;
     selectedProject?: Projet;
     setselectedProject: React.Dispatch<React.SetStateAction<Projet | undefined>>;
     openForm: boolean;
@@ -48,7 +49,8 @@ export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
             setselectedProject,
             selectedProject,
             openForm,
-            setopenForm
+            setopenForm,
+            setProjetList
         }}>
             {children}
         </ProjetContext.Provider>
