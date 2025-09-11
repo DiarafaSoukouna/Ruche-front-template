@@ -29,6 +29,9 @@ import PlanSitePage from './pages/Parametrages/planSite'
 import FonctionPage from './pages/Parametrages/personnel/fonction-personnel/FonctionPage'
 import Programmes from './pages/Parametrages/Programme'
 import CadreAnalytique from './pages/CadreAnalytique'
+import { RootProvider } from './contexts/RootContext'
+import { NavbarProvider } from './contexts/NavbarContext'
+import Projet from './pages/Projet'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -50,7 +53,8 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {isAuthenticated && <Navbar />}
+      {isAuthenticated && <NavbarProvider children={<Navbar />} />}
+
       <main className={isAuthenticated ? 'px-4 sm:px-6 lg:px-8 py-8' : ''}>
         <Routes>
           <Route
@@ -68,6 +72,10 @@ const AppContent: React.FC = () => {
           <Route
             path="/analytics"
             element={isAuthenticated ? <Analytics /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/projets"
+            element={isAuthenticated ? <Projet /> : <Navigate to="/login" />}
           />
           <Route
             path="/products"
@@ -170,21 +178,23 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </Router>
+      <RootProvider>
+        <Router>
+          <AppContent />
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </Router>
+      </RootProvider>
     </AuthProvider>
   )
 }
