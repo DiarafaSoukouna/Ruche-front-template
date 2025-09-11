@@ -4,29 +4,6 @@ import {
   Routes,
   Route,
   Navigate,
-<<<<<<< HEAD
-} from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { AuthProvider } from "./contexts/AuthContext";
-import LoadingScreen from "./components/LoadingScreen";
-import Navbar from "./components/Navbar";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Users from "./pages/Users";
-import Products from "./pages/Products";
-import Analytics from "./pages/Analytics";
-import Acteurs from "./pages/Parametrages/Acteurs/index";
-import PersonnelPage from "./pages/Parametrages/personnel/PersonnelPage";
-import PlanSitePage from "./pages/Parametrages/plan-site/PlanSitePage";
-import TypeZonePage from "./pages/Parametrages/type-zone/TypeZonePage";
-import Localites from "./pages/Parametrages/Localites";
-import PartFinanciers from "./pages/Parametrages/PartFinancier";
-import ChangePassword from "./pages/ChangePassword";
-import Ugls from "./pages/Parametrages/Ugl";
-import ConventionPage from "./pages/Parametrages/convention/ConventionPage";
-import NiveauStructureConfigPage from "./pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage";
-=======
 } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -52,7 +29,27 @@ import PlanSitePage from './pages/Parametrages/planSite'
 import FonctionPage from './pages/Parametrages/personnel/fonction-personnel/FonctionPage'
 import Programmes from './pages/Parametrages/Programme'
 import CadreAnalytique from './pages/CadreAnalytique'
->>>>>>> 97413b312306c95989c4c790be8b2cfe5643bb70
+} from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AuthProvider } from "./contexts/AuthContext";
+import LoadingScreen from "./components/LoadingScreen";
+import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Users from "./pages/Users";
+import Products from "./pages/Products";
+import Analytics from "./pages/Analytics";
+import Acteurs from "./pages/Parametrages/Acteurs/index";
+import PersonnelPage from "./pages/Parametrages/personnel/PersonnelPage";
+import PlanSitePage from "./pages/Parametrages/plan-site/PlanSitePage";
+import TypeZonePage from "./pages/Parametrages/type-zone/TypeZonePage";
+import Localites from "./pages/Parametrages/Localites";
+import PartFinanciers from "./pages/Parametrages/PartFinancier";
+import ChangePassword from "./pages/ChangePassword";
+import Ugls from "./pages/Parametrages/Ugl";
+import ConventionPage from "./pages/Parametrages/convention/ConventionPage";
+import NiveauStructureConfigPage from "./pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -61,7 +58,7 @@ const AppContent: React.FC = () => {
 
   useEffect(() => {
     // Simulate initial loading
-    const timer = setTimeout(() => {
+    const timer = setTimeout(() => { 
       setLoading(false)
     }, 2000)
 
