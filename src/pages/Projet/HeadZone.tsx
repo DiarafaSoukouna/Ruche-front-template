@@ -27,7 +27,11 @@ const HeadZone = () => {
                 {selectedProject
                     ? (
                         <>
-                            <Button>
+                            <Button
+                                onClick={()=>{
+                                    setopenForm(true)
+                                }}
+                            >
                                 <Edit2 className="w-4 h-4 mr-2" />
                                 Modifier des informations
                             </Button>
