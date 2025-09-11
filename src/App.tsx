@@ -4,31 +4,27 @@ import {
   Routes,
   Route,
   Navigate,
-} from 'react-router-dom'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import { AuthProvider } from './contexts/AuthContext'
-import LoadingScreen from './components/LoadingScreen'
-import Navbar from './components/Navbar'
-import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import Users from './pages/Users'
-import Products from './pages/Products'
-import Analytics from './pages/Analytics'
-import Acteurs from './pages/Parametrages/Acteurs/index'
-import PersonnelPage from './pages/Parametrages/personnel/PersonnelPage'
-import TypeZonePage from './pages/Parametrages/type-zone/TypeZonePage'
-import Localites from './pages/Parametrages/Localites'
-import PartFinanciers from './pages/Parametrages/PartFinancier'
-import ChangePassword from './pages/ChangePassword'
-import Ugls from './pages/Parametrages/Ugl'
-import ConventionPage from './pages/Parametrages/convention/ConventionPage'
-import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
-import ZoneCollecte from './pages/Parametrages/ZoneCollecte/index'
-import PlanSitePage from './pages/Parametrages/planSite'
-import FonctionPage from "./pages/Parametrages/personnel/fonction-personnel/FonctionPage";
-import Programmes from './pages/Parametrages/Programme'
-import Referentiels from './pages/Parametrages/Refenrentiels'
+} from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AuthProvider } from "./contexts/AuthContext";
+import LoadingScreen from "./components/LoadingScreen";
+import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Users from "./pages/Users";
+import Products from "./pages/Products";
+import Analytics from "./pages/Analytics";
+import Acteurs from "./pages/Parametrages/Acteurs/index";
+import PersonnelPage from "./pages/Parametrages/personnel/PersonnelPage";
+import PlanSitePage from "./pages/Parametrages/plan-site/PlanSitePage";
+import TypeZonePage from "./pages/Parametrages/type-zone/TypeZonePage";
+import Localites from "./pages/Parametrages/Localites";
+import PartFinanciers from "./pages/Parametrages/PartFinancier";
+import ChangePassword from "./pages/ChangePassword";
+import Ugls from "./pages/Parametrages/Ugl";
+import ConventionPage from "./pages/Parametrages/convention/ConventionPage";
+import NiveauStructureConfigPage from "./pages/Parametrages/niveau-structure-config/NiveauStructureConfigPage";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -51,7 +47,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {isAuthenticated && <Navbar />}
-      <main className={isAuthenticated ? 'px-4 sm:px-6 lg:px-8 py-8' : ''}>
+      <main className={isAuthenticated ? "px-4 sm:px-6 lg:px-8 py-8" : ""}>
         <Routes>
           <Route
             path="/login"
@@ -68,6 +64,10 @@ const AppContent: React.FC = () => {
           <Route
             path="/analytics"
             element={isAuthenticated ? <Analytics /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/projets"
+            element={isAuthenticated ? <Projet /> : <Navigate to="/login" />}
           />
           <Route
             path="/products"
@@ -168,21 +168,23 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </Router>
+      <RootProvider>
+        <Router>
+          <AppContent />
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </Router>
+      </RootProvider>
     </AuthProvider>
   )
 }

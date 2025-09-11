@@ -24,7 +24,7 @@ export interface Personnel extends Record<string, unknown> {
   region_perso?: number | null;
   structure_perso?: string | Acteur | null;
   ugl_perso?: string | null;
-  projet_active_perso?: string[];
+  projet_active_perso?: ProjetActivePerso[];
   pass?: string;
 }
 
@@ -92,12 +92,6 @@ export interface UGL extends Record<string, unknown> {
   couleur_ugl: string;
   chef_lieu_ugl: number;
   region_concerne_ugl: number[];
-}
-
-export interface Fonction extends Record<string, unknown> {
-  id_fonction?: number;
-  nom_fonction: string;
-  description_fonction: string;
 }
 
 export interface NiveauStructureConfig extends Record<string, unknown> {
