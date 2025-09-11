@@ -94,6 +94,12 @@ export interface UGL extends Record<string, unknown> {
   region_concerne_ugl: number[];
 }
 
+export interface Fonction extends Record<string, unknown> {
+  id_fonction?: number;
+  nom_fonction: string;
+  description_fonction: string;
+}
+
 export interface NiveauStructureConfig extends Record<string, unknown> {
   id_nsc?: number;
   nombre_nsc: number;

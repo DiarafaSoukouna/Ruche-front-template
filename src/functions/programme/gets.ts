@@ -1,12 +1,11 @@
-import { api } from '../../lib/api'
-import { Programme } from '../../types/programme';
+import { instance } from '../../axios'
 
-export default async () => {
+export const allProgram = async () => {
   try {
-    const { data } = await api.get('programme/')
-
-    return data as Programme[];
-  } catch (error) {
-    console.error(error)
+    const res = await instance.get('programme_nbc/')
+    return res.data
+  } catch (error){
+    console.log(error)
+    return error
   }
 }
