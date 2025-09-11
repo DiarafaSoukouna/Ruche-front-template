@@ -86,6 +86,7 @@ const Navbar: React.FC = () => {
         },
         { name: 'Zone de Collecte', href: '/zone-collecte', icon: MapPinIcon },
 
+        { name: 'Plan stratégique', href: '/programmes', icon: Building2 },
         { name: 'Plans de Site', href: '/plan_sites', icon: Building2 },
         { name: 'Conventions', href: '/conventions', icon: FileSignature },
         {
@@ -97,6 +98,17 @@ const Navbar: React.FC = () => {
       href: true,
     },
     { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
+    {
+      name: 'Cadre de résultats',
+      icon: FileSignature,
+      children: [
+        {
+          name: 'Cadre analytique',
+          href: '/cadre_analytique',
+          icon: FileSignature,
+        },
+      ],
+    },
   ]
 
   const isActive = (href?: string | boolean) =>

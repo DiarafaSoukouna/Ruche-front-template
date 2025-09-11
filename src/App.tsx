@@ -27,6 +27,8 @@ import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
 import ZoneCollecte from './pages/Parametrages/ZoneCollecte/index'
 import PlanSitePage from './pages/Parametrages/planSite'
 import FonctionPage from './pages/Parametrages/personnel/fonction-personnel/FonctionPage'
+import Programmes from './pages/Parametrages/Programme'
+import CadreAnalytique from './pages/CadreAnalytique'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -98,6 +100,12 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
+            path="/programmes"
+            element={
+              isAuthenticated ? <Programmes /> : <Navigate to="/login" />
+            }
+          />
+          <Route
             path="/part_financier"
             element={
               isAuthenticated ? <PartFinanciers /> : <Navigate to="/login" />
@@ -145,6 +153,12 @@ const AppContent: React.FC = () => {
             path="/zone-collecte"
             element={
               isAuthenticated ? <ZoneCollecte /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/cadre_analytique"
+            element={
+              isAuthenticated ? <CadreAnalytique /> : <Navigate to="/login" />
             }
           />
         </Routes>

@@ -76,6 +76,17 @@ const PlanSitePage: React.FC = () => {
         await OneNiveau(id)
 
     };
+    const getParentHierarchy = (plan:any) => {
+        const hierarchy = [];
+        let currentParent = plan.parent_ds;
+
+        while (currentParent && typeof currentParent === 'object') {
+            hierarchy.push(currentParent);
+            currentParent = currentParent.parent_ds;
+        }
+
+        return hierarchy;
+    };
     useEffect(() => {
         AllNiveau();
         if (niveauStructures.length) {
@@ -97,7 +108,7 @@ const PlanSitePage: React.FC = () => {
         <>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Plan sites {tabActive} </h1>
+                    <h1 className="text-3xl font-bold text-gray-900">Gestion des Plan sites  </h1>
                 </div>
                 <Button variant="outline" onClick={() => setLoadNiveau(true)}>
                     <MapPinIcon className="w-4 h-4 mr-2" />
@@ -105,7 +116,7 @@ const PlanSitePage: React.FC = () => {
                 </Button>
             </div>
             <Modal onClose={() => setLoadNiveau(false)} isOpen={loadNiveau} title="Espace de configuration des niveaux de structure" size="lg">
-                <NiveauLocalite />
+                <NiveauLocalite allNiveau={AllNiveau} />
             </Modal>
             <Tabs defaultValue={`1`}>
                 <div className="mt-2 mb-2 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -176,7 +187,7 @@ const PlanSitePage: React.FC = () => {
                                                         Libellé
                                                     </th>
                                                     {
-                                                        niveauStructures.slice(0, Number(tabActive) - 1).map((niv) =>
+                                                        niveauStructures.slice(0, Number(tabActive) - 1).sort((a,b)=>b.nombre_nsc - a.nombre_nsc).map((niv) =>
                                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                                                 {niv.libelle_nsc}
                                                             </th>
@@ -189,44 +200,41 @@ const PlanSitePage: React.FC = () => {
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
                                                 {planSites.length ?
-                                                    (planSites).map((plan) => (
-                                                        <tr key={plan.id_ds} className="hover:bg-gray-50 transition-colors">
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" width={50}>
-                                                                {plan.code_relai_ds}
-                                                            </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                                {plan.intutile_ds}
-                                                            </td>
-                                                            {
-                                                                niveauStructures.slice(0, Number(tabActive) - 1).map((niv) => (
-                                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                                                                        {typeof plan.parent_ds === 'object' && plan.parent_ds !== null ?
-                                                                            (plan.parent_ds as typePlanSite).intutile_ds :
-                                                                            "-"
-                                                                        }
-                                                                        {niv.id_nsc}
-                                                                    </th>
-                                                                )
-                                                                )
-                                                            }
-                                                            <td className="px-6 space-x-2 py-4 whitespace-nowrap text-sm font-medium" width={50}>
-                                                                <Button
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                    onClick={() => (setEditRow(plan), setShowForm(true))}
-                                                                >
-                                                                    <EditIcon className="w-3 h-3" />
-                                                                </Button>
-                                                                <Button
-                                                                    variant="danger"
-                                                                    size="sm"
-                                                                    onClick={() => handleDelete(plan)}
-                                                                >
-                                                                    <TrashIcon className="w-3 h-3" />
-                                                                </Button>
-                                                            </td>
-                                                        </tr>
-                                                    )
+                                                    (planSites).map((plan) => {
+                                                        const parentHierarchy = getParentHierarchy(plan)
+                                                        return (
+
+                                                            <tr key={plan.id_ds} className="hover:bg-gray-50 transition-colors">
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" width={50}>
+                                                                    {plan.code_relai_ds}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                                    {plan.intutile_ds}
+                                                                </td>
+                                                                {niveauStructures.slice(0, Number(tabActive) - 1).map((niv, index) => (
+                                                                    <td key={niv.id_nsc} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                                        {parentHierarchy[index] ? parentHierarchy[index].intutile_ds : "-"}
+                                                                    </td>
+                                                                ))}
+                                                                <td className="px-6 space-x-2 py-4 whitespace-nowrap text-sm font-medium" width={50}>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        onClick={() => (setEditRow(plan), setShowForm(true))}
+                                                                    >
+                                                                        <EditIcon className="w-3 h-3" />
+                                                                    </Button>
+                                                                    <Button
+                                                                        variant="danger"
+                                                                        size="sm"
+                                                                        onClick={() => handleDelete(plan)}
+                                                                    >
+                                                                        <TrashIcon className="w-3 h-3" />
+                                                                    </Button>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
                                                     ) :
                                                     (
                                                         <td colSpan={8} className="text-center" >

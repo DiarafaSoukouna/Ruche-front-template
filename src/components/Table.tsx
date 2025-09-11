@@ -114,7 +114,7 @@ function Table<T extends { id?: string | number }>({
       <Card>
         <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h6 className="text-2xl font-600 text-gray-900">{title}</h6>
+            <h4 className="text-2xl font-semibold text-foreground">{title}</h4>
           </div>
           <div>
             <Input
