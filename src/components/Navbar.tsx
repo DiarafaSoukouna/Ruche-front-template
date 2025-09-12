@@ -19,8 +19,12 @@ import {
   Settings2Icon,
   BriefcaseIcon,
   ListTodoIcon,
+  Box,
+  File,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import ChangeProjectModal from './ChangeProjectModal'
+import { useNavbar } from '../contexts/NavbarContext'
 
 interface NavigationChild {
   name: string
@@ -36,6 +40,8 @@ interface NavigationItem {
 }
 
 const Navbar: React.FC = () => {
+  const { setShowChangeProjectModal } = useNavbar();
+
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
   const location = useLocation()
@@ -125,6 +131,7 @@ const Navbar: React.FC = () => {
         },
       ],
     },
+    { name: "Projets", href: "/projets", icon: File },
   ]
 
   const isActive = (href?: string | boolean) =>
@@ -176,8 +183,8 @@ const Navbar: React.FC = () => {
                     <p className="text-sm font-medium text-primary-foreground">
                       {user
                         ? getUserInitials(
-                            `${user.prenom_perso} ${user.nom_perso}`
-                          )
+                          `${user.prenom_perso} ${user.nom_perso}`
+                        )
                         : 'AD'}
                     </p>
                   </div>
@@ -203,6 +210,17 @@ const Navbar: React.FC = () => {
                         <KeyIcon className="w-4 h-4 mr-3" />
                         Changer de mot de passe
                       </Link>
+
+                      <button
+                        onClick={() => {
+                          setShowChangeProjectModal(true);
+                        }}
+                        className="flex text-left items-center w-full px-4 py-2 text-sm text-gray-600  hover:bg-blue-50 hover:text-blue-700  transition-colors"
+                      >
+                        <Box className="w-4 h-4 mr-3" />
+                        Changer de programme
+                      </button>
+                      <ChangeProjectModal />
 
                       <button
                         onClick={() => {
@@ -232,22 +250,20 @@ const Navbar: React.FC = () => {
                 <button
                   onMouseEnter={() => setDropdownOpen(item.name)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-1 transition-all duration-200
-                  ${
-                    item.children
+                  ${item.children
                       .map((child) => isActive(child.href))
                       .includes(true)
                       ? 'bg-primary text-primary-foreground shadow-md'
                       : dropdownOpen === item.name
-                      ? 'bg-primary-50 text-primary'
-                      : 'text-foreground hover:text-primary hover:bg-primary-50'
-                  }`}
+                        ? 'bg-primary-50 text-primary'
+                        : 'text-foreground hover:text-primary hover:bg-primary-50'
+                    }`}
                 >
                   <item.icon className="w-4 h-4" />
                   <span>{item.name}</span>
                   <ChevronDownIcon
-                    className={`w-4 h-4 transition-transform ${
-                      dropdownOpen === item.name ? 'rotate-180' : ''
-                    }`}
+                    className={`w-4 h-4 transition-transform ${dropdownOpen === item.name ? 'rotate-180' : ''
+                      }`}
                   />
                 </button>
 
@@ -262,11 +278,10 @@ const Navbar: React.FC = () => {
                           key={child.name}
                           to={child.href}
                           onClick={() => setDropdownOpen(null)}
-                          className={`flex items-center px-4 py-2 text-sm transition-colors ${
-                            isActive(child.href)
+                          className={`flex items-center px-4 py-2 text-sm transition-colors ${isActive(child.href)
                               ? 'bg-primary-50 text-primary border-r-2 border-primary'
                               : 'text-foreground hover:bg-primary-50 hover:text-primary'
-                          }`}
+                            }`}
                         >
                           <child.icon className="w-4 h-4 mr-3" />
                           {child.name}
@@ -279,11 +294,10 @@ const Navbar: React.FC = () => {
             ) : (
               <Link
                 to={item.href as string}
-                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 ${
-                  isActive(item.href)
+                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 ${isActive(item.href)
                     ? 'bg-primary text-primary-foreground shadow-md'
                     : 'text-foreground hover:text-primary hover:bg-primary-50'
-                }`}
+                  }`}
                 onClick={() => setDropdownOpen(null)}
               >
                 <item.icon className="w-4 h-4" />

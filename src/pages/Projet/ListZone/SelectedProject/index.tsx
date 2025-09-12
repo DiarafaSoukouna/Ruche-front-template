@@ -59,8 +59,8 @@ export default () => {
 
 
     return (
-        <div className="flex gap-2">
-            <Card className="hover:scale-105 transform transition-transform duration-300 rounded-2xl shadow-md">
+        <div className="flex gap-4">
+            <Card className="hover:scale-105 transform transition-transform duration-300 rounded-2xl shadow-md max-w-xs">
                 <div className="gap-2 flex flex-col">
                     <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-500 text-white font-bold text-lg">
@@ -106,7 +106,7 @@ export default () => {
                                 <button
                                     key={value.key}
                                     className={`px-3 py-2 rounded-full text-xs font-semibold ${selectedTab.key === value.key
-                                        ? "bg-blue-500 text-white"
+                                        ? "bg-primary text-white"
                                         : "bg-gray-200 text-gray-700"
                                         }`}
                                     onClick={() => setselectedTab(value)}
