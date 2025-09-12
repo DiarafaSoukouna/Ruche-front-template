@@ -73,7 +73,7 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
                 code_loca: data.code_loca as string,
                 parent_loca: data.parent_loca as string,
                 niveau_loca: currentId,
-                id_loca: editRow?.id_loca,
+                id_loca: editRow?.id_loca!,
             };
         } else {
             payload = {
@@ -81,7 +81,7 @@ const FormLocalite: React.FC<Props> = ({ editRow, onClose, niveauLocalites, nive
                 code_national_loca: data.code_national_loca as string,
                 code_loca: data.code_loca as string,
                 niveau_loca: currentId,
-                id_loca: editRow?.id_loca,
+                id_loca: editRow?.id_loca!,
             };
         }
 

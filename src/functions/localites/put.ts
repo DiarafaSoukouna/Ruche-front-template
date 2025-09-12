@@ -6,6 +6,6 @@ export const updateLocalite = async (data:typeLocalite) =>{
     const res = await instance.put('localite/' +data.id_loca+ '/', data)
     return res.data
     } catch (error) {
-        return error
+        throw error
     }
 }

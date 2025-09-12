@@ -195,7 +195,7 @@ const Ugls = () => {
       >
         <FormPartFinancier
           ugl={ugl}
-          all={() => fetchUgls}
+          all={fetchUgls}
           isEdit={isEdit}
           onClose={() => close()}
         />

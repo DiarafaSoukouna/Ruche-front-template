@@ -7,6 +7,6 @@ export const addNiveauLocalite = async (data: typeNiveauLocalite[]) => {
         const res = await instance.post("niveau_localite_config/", data)
         return res
     } catch (error) {
-        return error
+        throw error
     }
 }
