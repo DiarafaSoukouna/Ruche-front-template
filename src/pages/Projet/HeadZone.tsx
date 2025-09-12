@@ -3,7 +3,7 @@ import { ArrowLeft, Edit2, PlusIcon, Trash2 } from 'lucide-react';
 import { useProjet } from '../../contexts/ProjetContext';
 
 const HeadZone = () => {
-    const { setselectedProject, selectedProject, setopenForm } = useProjet();
+    const { setselectedProject, selectedProject, setopenForm, setopenDeleteModal } = useProjet();
 
     return (
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -28,7 +28,7 @@ const HeadZone = () => {
                     ? (
                         <>
                             <Button
-                                onClick={()=>{
+                                onClick={() => {
                                     setopenForm(true)
                                 }}
                             >
@@ -36,7 +36,10 @@ const HeadZone = () => {
                                 Modifier des informations
                             </Button>
 
-                            <Button variant='danger' >
+                            <Button
+                                variant='danger'
+                                onClick={() => setopenDeleteModal(true)}
+                            >
                                 Supprimer
                                 <Trash2 className="w-4 h-4 mr-2" />
                             </Button>

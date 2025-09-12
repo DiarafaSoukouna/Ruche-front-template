@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Projet } from "../types/projet";
-import { getAllProjet } from "../functions/projet";
+import { deleteProjet, getAllProjet } from "../functions/projet";
 import { useRoot } from "./RootContext";
+import { toast } from "react-toastify";
 
 // le typage
 interface contextType {
@@ -11,6 +12,9 @@ interface contextType {
     setselectedProject: React.Dispatch<React.SetStateAction<Projet | undefined>>;
     openForm: boolean;
     setopenForm: React.Dispatch<React.SetStateAction<boolean>>;
+    openDeleteModal: boolean;
+    setopenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
+    handleDelete: () => void
 }
 
 // l'instanciation du context
@@ -19,8 +23,10 @@ const ProjetContext = createContext<contextType | undefined>(undefined)
 // le provider
 export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
     const { currentProgramme } = useRoot();
+
     const [projetList, setProjetList] = useState<Projet[]>([]);
     const [openForm, setopenForm] = useState(false);
+    const [openDeleteModal, setopenDeleteModal] = useState(true);
 
     const [selectedProject, setselectedProject] = useState<undefined | Projet>(undefined);
 
@@ -39,6 +45,28 @@ export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error) { }
     }
 
+    const handleDelete = async () => {
+        try {
+            if (!selectedProject?.id_projet) return;
+
+            const res = await deleteProjet(selectedProject?.id_projet);
+
+            if (!res) {
+                toast.error("Une erreur est survenue lors de la suppression");
+                return;
+            }
+
+            setProjetList(
+                (prev) => prev.filter(({ id_projet }) => (id_projet != selectedProject.id_projet))
+            );
+            toast.success("L'elément à été supprimé avec succès");
+            setselectedProject(undefined);
+            setopenDeleteModal(false);
+        } catch (error) {
+            toast.error("Une erreur est survenue lors de la suppression");
+        }
+    }
+
     useEffect(() => {
         loadProjet();
     }, [currentProgramme]);
@@ -50,7 +78,10 @@ export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
             selectedProject,
             openForm,
             setopenForm,
-            setProjetList
+            setProjetList,
+            openDeleteModal,
+            setopenDeleteModal,
+            handleDelete
         }}>
             {children}
         </ProjetContext.Provider>
