@@ -24,27 +24,35 @@ const ProjectForm = () => {
         duree_projet: selectedProject?.duree_projet || 0,
         date_signature_projet: selectedProject?.date_signature_projet || "",
         date_demarrage_projet: selectedProject?.date_demarrage_projet || "",
-        //@ts-ignore
-        partenaire_projet: selectedProject?.partenaire_projet || 0,
-        programme_projet: selectedProject?.programme_projet || currentProgramme?.id_programme || 0,
+        partenaire_projet: selectedProject?.partenaire_projet?.id_acteur || 0,
         structure_projet: selectedProject?.structure_projet.map(({ id_acteur }) => id_acteur) || [],
         signataires_projet: selectedProject?.signataires_projet.map(({ id_acteur }) => id_acteur) || [],
         partenaires_execution_projet: selectedProject?.partenaires_execution_projet.map(({ id_acteur }) => id_acteur) || [],
         zone_projet: selectedProject?.zone_projet.map(({ id_loca }) => id_loca as number) || [],
     }), [selectedProject, currentProgramme]);
 
-    const { register, handleSubmit, control, reset, formState: { errors } } = useForm<ProjectCreateData>({
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        reset,
+        formState: { errors }
+    } = useForm<ProjectCreateData>({
         resolver: zodResolver(projectCreateSchema),
         defaultValues,
     });
 
-    const onSubmit = async (data: ProjectCreateData) => {
+    const onSubmit = async (data: ProjectCreateData) => {        
         try {
-            if (selectedProject) {
-                await editProjet(selectedProject.id_projet, data);
+            if (!!selectedProject) {
+                const res = await editProjet(selectedProject.id_projet, {...data, partenaire_projet:currentProgramme?.id_programme});
+                res && setProjetList(prev =>
+                    prev.map(p => p.id_projet === res.id_projet ? res : p)
+                );
             } else {
                 const res = await addProjet(data);
-                res && setProjetList((prev) => [...prev, res])
+                res && setProjetList(prev => [...prev, res]);
             }
             setopenForm(false);
         } catch (err) {
@@ -60,8 +68,10 @@ const ProjectForm = () => {
 
     return (
         <Modal isOpen={openForm} onClose={() => setopenForm(false)} size="lg">
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-                <input type="hidden" {...register("programme_projet")} />
+            <form
+                className="flex flex-col gap-4"
+                onSubmit={handleSubmit(onSubmit)}
+            >                
 
                 <h3 className="font-bold text-lg">Ajouter un projet</h3>
 
