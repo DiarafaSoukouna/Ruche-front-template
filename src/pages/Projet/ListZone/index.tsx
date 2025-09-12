@@ -3,7 +3,10 @@ import ProjectCard from '../../../components/ProjectCard';
 import SelectedProject from './SelectedProject';
 
 export default () => {
-    const { projetList, selectedProject } = useProjet();
+    const {
+        projetList,
+        selectedProject,        
+    } = useProjet();
 
     if (!!selectedProject) {
         return (<SelectedProject />);

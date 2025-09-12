@@ -25,7 +25,6 @@ const ProjectForm = () => {
         date_signature_projet: selectedProject?.date_signature_projet || "",
         date_demarrage_projet: selectedProject?.date_demarrage_projet || "",
         partenaire_projet: selectedProject?.partenaire_projet?.id_acteur || 0,
-        programme_projet: selectedProject?.programme_projet || currentProgramme?.id_programme || 0,
         structure_projet: selectedProject?.structure_projet.map(({ id_acteur }) => id_acteur) || [],
         signataires_projet: selectedProject?.signataires_projet.map(({ id_acteur }) => id_acteur) || [],
         partenaires_execution_projet: selectedProject?.partenaires_execution_projet.map(({ id_acteur }) => id_acteur) || [],
@@ -44,10 +43,10 @@ const ProjectForm = () => {
         defaultValues,
     });
 
-    const onSubmit = async (data: ProjectCreateData) => {
+    const onSubmit = async (data: ProjectCreateData) => {        
         try {
             if (!!selectedProject) {
-                const res = await editProjet(selectedProject.id_projet, data);
+                const res = await editProjet(selectedProject.id_projet, {...data, partenaire_projet:currentProgramme?.id_programme});
                 res && setProjetList(prev =>
                     prev.map(p => p.id_projet === res.id_projet ? res : p)
                 );
@@ -69,8 +68,10 @@ const ProjectForm = () => {
 
     return (
         <Modal isOpen={openForm} onClose={() => setopenForm(false)} size="lg">
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-                <input type="hidden" {...register("programme_projet")} />
+            <form
+                className="flex flex-col gap-4"
+                onSubmit={handleSubmit(onSubmit)}
+            >                
 
                 <h3 className="font-bold text-lg">Ajouter un projet</h3>
 

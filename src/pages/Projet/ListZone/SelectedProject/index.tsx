@@ -3,6 +3,7 @@ import Card from "../../../../components/Card";
 import Table from "../../../../components/Table";
 import { useProjet } from "../../../../contexts/ProjetContext";
 import { fieldToExclude, tabList } from "./data";
+import DeleteModal from "./DeleteModal";
 
 interface Column<T> {
     key: keyof T;
@@ -124,6 +125,8 @@ export default () => {
                     </div>
                 </Card>
             </div>
+
+            <DeleteModal />
         </div>
     );
 };

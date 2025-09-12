@@ -8,8 +8,14 @@ const ProjectCard = ({ value }: { value: Projet }) => {
 
     return (
         <>
-            <Card className="hover:scale-105 transform transition-transform duration-300 rounded-2xl shadow-md">
-                <div className="gap-2 flex flex-col">
+            <Card
+                className="hover:scale-105 transform transition-transform duration-300 rounded-2xl shadow-md"
+            >
+                <div
+                    className="gap-2 flex flex-col cursor-pointer "
+                    onClick={() => setselectedProject(value)}
+                    title='Ouvrir ce projet'
+                >
                     {/* Header */}
                     <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-500 text-white font-bold text-lg">
@@ -25,15 +31,15 @@ const ProjectCard = ({ value }: { value: Projet }) => {
                     </div>
 
                     {/* Body */}
-                    <p>{value.intitule_projet}</p>
+                    <p>
+                        <span className="font-semibold">Intitulé:</span>{" "}
+                        {value.intitule_projet}
+                    </p>
 
-                    <Button
-                        size="sm"
-                        className="w-full"
-                        onClick={() => setselectedProject(value)}
-                    >
-                        Ouvrir le projet
-                    </Button>
+                    <p>
+                        <span className="font-semibold">Durée:</span>{" "}
+                        {value.duree_projet} ans
+                    </p>
                 </div>
             </Card>
 
