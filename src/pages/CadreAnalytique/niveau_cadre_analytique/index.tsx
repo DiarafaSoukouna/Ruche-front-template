@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PlusIcon, TrashIcon } from 'lucide-react'
 import Button from '../../../components/Button'
-import { allNiveauLocalite } from '../../../functions/niveauLocalites/gets'
 import Card from '../../../components/Card'
 import { RiseLoader } from 'react-spinners'
 import FormNiveau from './form'
@@ -24,18 +23,6 @@ const CadreAnalytiqueConfig: React.FC<NivSTrProps> = ({ allNiveau }) => {
   const { programmeList, currentProgramme } = useRoot()
   const [AllNiveau, setAllNiveau] = useState<any[]>([])
   const [idCadreConfig, setIdCadreConfig] = useState<number | null>(null)
-
-  const all = async () => {
-    setLoading(true)
-    try {
-      const res = await allNiveauLocalite()
-      setNiveauLocalites(res)
-      setLoading(false)
-    } catch (error) {
-      console.error(error)
-      setLoading(false)
-    }
-  }
 
   const del = async (id: number) => {
     try {
@@ -153,7 +140,6 @@ const CadreAnalytiqueConfig: React.FC<NivSTrProps> = ({ allNiveau }) => {
     }
   }
   useEffect(() => {
-    all()
     getCadreConfig()
   }, [])
 
