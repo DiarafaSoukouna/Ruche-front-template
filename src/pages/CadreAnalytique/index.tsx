@@ -22,7 +22,6 @@ import { useRoot } from '../../contexts/RootContext'
 import { getAllCadreAnalytique } from '../../functions/cadreAnalytique/gets'
 import { getCadreAnalytiqueConfigByProgramme } from '../../functions/cadreAnalytiqueConfig/gets'
 import { stringToTableau } from './others'
-import { get } from 'react-hook-form'
 
 const CadreAnalytique: React.FC = () => {
   const [niveauCadreAnalytiques, setNiveauCadreAnalytiques] = useState<any[]>(
@@ -75,18 +74,18 @@ const CadreAnalytique: React.FC = () => {
     }
   }
 
-  const OneNiveau = async (id: number) => {
-    setLoading(true)
-    try {
-      const res = await oneNiveauLocalite(id)
-      setCadreAnalytiques(res.localites || [])
-      setLoading(false)
-    } catch (error) {
-      toast.error('Erreur lors de la récupération du cadre analytique')
-      console.log('error', error)
-      setLoading(false)
-    }
-  }
+  // const OneNiveau = async (id: number) => {
+  //   setLoading(true)
+  //   try {
+  //     const res = await oneNiveauLocalite(id)
+  //     setCadreAnalytiques(res.localites || [])
+  //     setLoading(false)
+  //   } catch (error) {
+  //     toast.error('Erreur lors de la récupération du cadre analytique')
+  //     console.log('error', error)
+  //     setLoading(false)
+  //   }
+  // }
 
   const DeleteCadreAnalytique = async (id: number) => {
     setLoading(true)
