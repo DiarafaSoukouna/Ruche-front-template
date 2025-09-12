@@ -6,6 +6,6 @@ export const updateProgram = async (data:typeProgram, id:number) =>{
     const res = await instance.put('programme/'+ id + "/", data)
     return res.data
     } catch (error) {
-        return error
+        throw error
     }
 }

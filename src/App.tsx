@@ -1,60 +1,65 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
-} from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { AuthProvider } from "./contexts/AuthContext";
-import LoadingScreen from "./components/LoadingScreen";
-import Navbar from "./components/Navbar";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Users from "./pages/Users";
-import Products from "./pages/Products";
-import Analytics from "./pages/Analytics";
-import Acteurs from "./pages/Parametrages/Acteurs/index";
-import PersonnelPage from "./pages/Parametrages/personnel/PersonnelPage";
-import TypeZonePage from "./pages/Parametrages/AutresParametrages/type-zone/TypeZonePage";
-import Localites from "./pages/Parametrages/Localites";
-import PartFinanciers from "./pages/Parametrages/PartFinancier";
-import ChangePassword from "./pages/ChangePassword";
-import Ugls from "./pages/Parametrages/Ugl";
-import ConventionPage from "./pages/Parametrages/convention/ConventionPage";
-import AutresParametrages from "./pages/Parametrages/AutresParametrages/index";
-import ZoneCollecte from "./pages/Parametrages/ZoneCollecte/index";
-import PlanSitePage from "./pages/Parametrages/planSite";
-import FonctionPage from "./pages/Parametrages/personnel/fonction-personnel/FonctionPage";
-import DictionnaireIndicateurPage from "./pages/Parametrages/dictionnaire-indicateur/DictionnaireIndicateurPage";
-import IndicateurCmrPage from "./pages/Parametrages/indicateur-cmr/IndicateurCmrPage";
-import IndicateurCadreResultatPage from "./pages/Parametrages/indicateur-cadre-resultat/IndicateurCadreResultatPage";
-import CadreStrategiquePage from "./pages/Parametrages/cadre-strategique/CadreStrategiquePage";
-import Programmes from "./pages/Parametrages/Programme";
+} from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { AuthProvider } from './contexts/AuthContext'
+import LoadingScreen from './components/LoadingScreen'
+import Navbar from './components/Navbar'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import Users from './pages/Users'
+import Products from './pages/Products'
+import Analytics from './pages/Analytics'
+import Acteurs from './pages/Parametrages/Acteurs/index'
+import PersonnelPage from './pages/Parametrages/personnel/PersonnelPage'
+import Localites from './pages/Parametrages/Localites'
+import PartFinanciers from './pages/Parametrages/PartFinancier'
+import ChangePassword from './pages/ChangePassword'
+import Ugls from './pages/Parametrages/Ugl'
+import ConventionPage from './pages/Parametrages/convention/ConventionPage'
+import AutresParametrages from './pages/Parametrages/AutresParametrages/index'
+import ZoneCollecte from './pages/Parametrages/ZoneCollecte/index'
+import PlanSitePage from './pages/Parametrages/planSite'
+import FonctionPage from './pages/Parametrages/personnel/fonction-personnel/FonctionPage'
+import Programmes from './pages/Parametrages/Programme'
+import CadreAnalytique from './pages/CadreAnalytique'
+import { RootProvider } from './contexts/RootContext'
+import { NavbarProvider } from './contexts/NavbarContext'
+import Projet from './pages/Projet'
+
+import DictionnaireIndicateurPage from './pages/Parametrages/dictionnaire-indicateur/DictionnaireIndicateurPage'
+import IndicateurCmrPage from './pages/Parametrages/indicateur-cmr/IndicateurCmrPage'
+import IndicateurCadreResultatPage from './pages/Parametrages/indicateur-cadre-resultat/IndicateurCadreResultatPage'
+import CadreStrategiquePage from './pages/Parametrages/cadre-strategique/CadreStrategiquePage'
 
 const AppContent: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const isAuthenticated = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true)
+  const isAuthenticated = useState<boolean>(true)
   // const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     // Simulate initial loading
     const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+      setLoading(false)
+    }, 2000)
 
-    return () => clearTimeout(timer);
-  }, []);
+    return () => clearTimeout(timer)
+  }, [])
 
   if (loading) {
-    return <LoadingScreen />;
+    return <LoadingScreen />
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {isAuthenticated && <Navbar />}
-      <main className={isAuthenticated ? "px-4 sm:px-6 lg:px-8 py-8" : ""}>
+      {isAuthenticated && <NavbarProvider children={<Navbar />} />}
+
+      <main className={isAuthenticated ? 'px-4 sm:px-6 lg:px-8 py-8' : ''}>
         <Routes>
           <Route
             path="/login"
@@ -73,6 +78,10 @@ const AppContent: React.FC = () => {
             element={isAuthenticated ? <Analytics /> : <Navigate to="/login" />}
           />
           <Route
+            path="/projets"
+            element={isAuthenticated ? <Projet /> : <Navigate to="/login" />}
+          />
+          <Route
             path="/products"
             element={isAuthenticated ? <Products /> : <Navigate to="/login" />}
           />
@@ -83,7 +92,7 @@ const AppContent: React.FC = () => {
           <Route
             path="/"
             element={
-              <Navigate to={isAuthenticated ? "/dashboard" : "/login"} />
+              <Navigate to={isAuthenticated ? '/dashboard' : '/login'} />
             }
           />
           <Route
@@ -124,12 +133,7 @@ const AppContent: React.FC = () => {
               isAuthenticated ? <PlanSitePage /> : <Navigate to="/login" />
             }
           />
-          <Route
-            path="/type-zones"
-            element={
-              isAuthenticated ? <TypeZonePage /> : <Navigate to="/login" />
-            }
-          />
+
           <Route
             path="/conventions"
             element={
@@ -194,32 +198,40 @@ const AppContent: React.FC = () => {
               isAuthenticated ? <ZoneCollecte /> : <Navigate to="/login" />
             }
           />
+          <Route
+            path="/cadre_analytique"
+            element={
+              isAuthenticated ? <CadreAnalytique /> : <Navigate to="/login" />
+            }
+          />
         </Routes>
       </main>
     </div>
-  );
-};
+  )
+}
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </Router>
+      <RootProvider>
+        <Router>
+          <AppContent />
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </Router>
+      </RootProvider>
     </AuthProvider>
-  );
-};
+  )
+}
 
-export default App;
+export default App

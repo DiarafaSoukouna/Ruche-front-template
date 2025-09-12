@@ -24,7 +24,7 @@ export interface Personnel extends Record<string, unknown> {
   region_perso?: Localite | null;
   structure_perso?: Acteur | null;
   ugl_perso?: string | null;
-  projet_active_perso?: string[];
+  projet_active_perso?: ProjetActivePerso[];
   pass?: string;
 }
 
@@ -94,10 +94,27 @@ export interface UGL extends Record<string, unknown> {
   region_concerne_ugl: number[];
 }
 
+<<<<<<< HEAD
 export interface Fonction extends Record<string, unknown> {
   id_fonction?: number;
   nom_fonction: string;
   description_fonction: string;
+=======
+export interface ProjetActivePerso {
+  id_projet: number,
+  code_projet: string,
+  sigle_projet: string,
+  intitule_projet: string,
+  duree_projet: number,
+  date_signature_projet: string,
+  date_demarrage_projet: string,
+  partenaire_projet: number,
+  programme_projet: number,
+  structure_projet: number[],
+  signataires_projet: number[],
+  partenaires_execution_projet: number[],
+  zone_projet: number[],
+>>>>>>> a61ee45e50c292e9fb56253f11014651eda27ef0
 }
 
 export interface NiveauStructureConfig extends Record<string, unknown> {

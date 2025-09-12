@@ -6,6 +6,6 @@ export const addLocalite = async (data:typeLocalite) =>{
     const res = await instance.post('localite/', data)
     return res.data
     } catch (error) {
-        return error
+        throw error
     }
 }

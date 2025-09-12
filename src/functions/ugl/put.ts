@@ -6,6 +6,6 @@ export const updateUgl = async (data:typeUgl) =>{
     const res = await instance.put('ugl/'+ data.id_ugl + "/", data)
     return res.data
     } catch (error) {
-        return error
+        throw error
     }
 }
