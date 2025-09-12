@@ -1,5 +1,5 @@
 export interface typeLocalite {
-    id_loca?: number
+    id_loca: number
     niveau_loca: number
     parent_loca?: typeLocalite | string | undefined 
     code_loca: string

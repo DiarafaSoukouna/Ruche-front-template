@@ -1,9 +1,10 @@
 import { instance } from "../../axios"
+import { typeNiveauStructure } from "./types"
 
 export const allNiveauStructure = async () => {
     try {
         const res = await instance.get("niveau_structure_config/")
-        return res.data
+        return res.data as typeNiveauStructure
     } catch (error) {
         return error
     }

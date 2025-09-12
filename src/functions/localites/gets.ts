@@ -1,12 +1,13 @@
 import { instance } from '../../axios'
+import { typeLocalite } from './types'
 
 export const allLocalite = async () => {
   try {
     const res = await instance.get('localite/')
-    return res.data
+    return res.data as typeLocalite[]
   } catch (error) {
     console.log(error)
-    return error
+    throw error
   }
 }
 
@@ -17,7 +18,7 @@ export const oneLocalite = (id: number) => {
     return res
   } catch (error) {
     console.log(error)
-    return error
+    throw error
   }
 }
 
@@ -26,6 +27,6 @@ export const localiteByParent = async (id: number | null) => {
     const res = instance.get('localiteByParent/' + id + '/')
     return res
   } catch (error) {
-    return error
+    throw error
   }
 }

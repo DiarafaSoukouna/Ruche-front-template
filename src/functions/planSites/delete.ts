@@ -5,6 +5,6 @@ export const deletePlanStie = async (id: number) => {
         const res = await instance.delete("plan_site/" + id + "/")
         return res
     } catch (error) {
-        return error
+        throw error
     }
 }

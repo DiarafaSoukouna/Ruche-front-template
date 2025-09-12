@@ -7,6 +7,6 @@ export const addNiveauStructure = async (data: typeNiveauStructure) => {
         const res = await instance.post("niveau_structure_config/", data)
         return res
     } catch (error) {
-        return error
+        throw error
     }
 }
