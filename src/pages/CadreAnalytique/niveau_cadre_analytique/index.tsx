@@ -2,21 +2,28 @@ import { useEffect, useState } from 'react'
 import { PlusIcon, TrashIcon } from 'lucide-react'
 import Button from '../../../components/Button'
 import { allNiveauLocalite } from '../../../functions/niveauLocalites/gets'
-import { deleteNiveauLocalite } from '../../../functions/niveauLocalites/delete'
-import { addNiveauLocalite } from '../../../functions/niveauLocalites/post'
 import Card from '../../../components/Card'
 import { RiseLoader } from 'react-spinners'
-import { typeNiveauLocalite } from '../../../functions/niveauLocalites/types'
 import FormNiveau from './form'
 import { toast } from 'react-toastify'
+import { getCadreAnalytiqueConfigByProgramme } from '../../../functions/cadreAnalytiqueConfig/gets'
+import { useRoot } from '../../../contexts/RootContext'
+import { addCadreAnalytiqueConfig } from '../../../functions/cadreAnalytiqueConfig/post'
+import { stringToTableau, tableauToString } from '../others'
+import { updateCadreAnalytiqueConfig } from '../../../functions/cadreAnalytiqueConfig/put'
+import { DeleteCadreAnalytiqueConfig } from '../../../functions/cadreAnalytiqueConfig/delete'
+
 interface NivSTrProps {
   allNiveau: () => void
 }
-const NiveauLocalite: React.FC<NivSTrProps> = ({ allNiveau }) => {
+const CadreAnalytiqueConfig: React.FC<NivSTrProps> = ({ allNiveau }) => {
   const [niveauLocalites, setNiveauLocalites] = useState([])
   const [loading, setLoading] = useState(false)
-  const [formInputs, setFormInputs] = useState<typeNiveauLocalite[]>([])
+  const [formInputs, setFormInputs] = useState<any[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const { programmeList, currentProgramme } = useRoot()
+  const [AllNiveau, setAllNiveau] = useState<any[]>([])
+  const [idCadreConfig, setIdCadreConfig] = useState<number | null>(null)
 
   const all = async () => {
     setLoading(true)
@@ -32,9 +39,25 @@ const NiveauLocalite: React.FC<NivSTrProps> = ({ allNiveau }) => {
 
   const del = async (id: number) => {
     try {
-      await deleteNiveauLocalite(id)
-      allNiveau()
-      all()
+      if (AllNiveau.length === 1) {
+        await DeleteCadreAnalytiqueConfig(id)
+        allNiveau()
+      } else {
+        const newNiveaux = AllNiveau.slice(0, -1)
+        const updatedConfig = {
+          id_csa: idCadreConfig!,
+          programme: currentProgramme?.id_programme!,
+          libelle_csa: newNiveaux.map((niv) => niv.libelle).join(','),
+          type_csa: newNiveaux.map((niv) => niv.type).join(','),
+          nombre: newNiveaux.length,
+        }
+        const res = await updateCadreAnalytiqueConfig(updatedConfig)
+        if (res) {
+          toast.success('Niveau supprimé avec succès')
+          allNiveau()
+          getCadreConfig()
+        }
+      }
     } catch (error) {
       console.error(error)
     }
@@ -43,33 +66,95 @@ const NiveauLocalite: React.FC<NivSTrProps> = ({ allNiveau }) => {
     setFormInputs([
       ...formInputs,
       {
-        libelle_nlc: '',
-        nombre_nlc: niveauLocalites.length + formInputs.length + 1,
-        Code_number_nlc: 0,
+        libelle_csa: '',
+        type_csa: '',
       },
     ])
   }
-
+  const type = (index: string) => {
+    if (index === '1') {
+      return 'Produit'
+    } else if (index === '2') {
+      return 'Effet'
+    } else if (index === '3') {
+      return 'Impact'
+    }
+  }
   const submitAll = async () => {
     setSubmitting(true)
     try {
-      console.log('formInouts', formInputs)
-      await addNiveauLocalite(formInputs)
-      toast.success('Niveau localité ajouté avec succès')
-      console.log
-      allNiveau()
-      setFormInputs([])
-      all()
+      if (!idCadreConfig) {
+        const newConfig = {
+          id_csa: 0,
+          programme: currentProgramme?.id_programme!,
+          libelle_csa: formInputs.map((input) => input.libelle_csa).join(','),
+          type_csa: formInputs.map((input) => input.type_csa).join(','),
+          nombre: formInputs.length,
+        }
+        const res = await addCadreAnalytiqueConfig(newConfig)
+        if (res) {
+          toast.success('Niveau ajouté avec succès')
+          setFormInputs([])
+          allNiveau()
+          getCadreConfig()
+        }
+      } else {
+        const oldLibelles = AllNiveau.map((niv) => niv.libelle)
+        const oldTypes = AllNiveau.map((niv) => niv.type)
+        const combinedLibelles = [
+          ...oldLibelles,
+          ...formInputs.map((input) => input.libelle_csa),
+        ].join(',')
+        const combinedTypes = [
+          ...oldTypes,
+          ...formInputs.map((input) => input.type_csa),
+        ].join(',')
+        const updatedConfig = {
+          id_csa: idCadreConfig,
+          programme: currentProgramme?.id_programme!,
+          libelle_csa: combinedLibelles,
+          type_csa: combinedTypes,
+          nombre: combinedLibelles.split(',').length,
+        }
+        const res = await updateCadreAnalytiqueConfig(updatedConfig)
+        if (res) {
+          toast.success('Niveau mis à jour avec succès')
+          setFormInputs([])
+          allNiveau()
+          getCadreConfig()
+        }
+        // console.log('updatedConfig', updatedConfig)
+      }
     } catch (error) {
-      toast.error("Erreur lors de l'ajout du niveau localité")
+      toast.error("Erreur lors de l'ajout du niveau")
       console.error("Erreur lors de l'envoi des données:", error)
     } finally {
       setSubmitting(false)
     }
   }
+  const getCadreConfig = async () => {
+    try {
+      const res = await getCadreAnalytiqueConfigByProgramme(
+        currentProgramme?.id_programme!
+      )
+      if (res) {
+        const libelles = stringToTableau(res[0].libelle_csa as string)
+        const types = stringToTableau(res[0].type_csa as string)
 
+        const niveaux = libelles.map((libelle, index) => ({
+          libelle,
+          type: types[index] ?? null,
+        }))
+        setAllNiveau(niveaux)
+        setIdCadreConfig(res[0].id_csa)
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
   useEffect(() => {
     all()
+    getCadreConfig()
   }, [])
 
   return (
@@ -101,7 +186,7 @@ const NiveauLocalite: React.FC<NivSTrProps> = ({ allNiveau }) => {
                     Libellé
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Taille code
+                    Type
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Actions
@@ -109,23 +194,23 @@ const NiveauLocalite: React.FC<NivSTrProps> = ({ allNiveau }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {niveauLocalites.map((niveau: typeNiveauLocalite, index) => (
+                {AllNiveau.map((niveau: any, index) => (
                   <tr
-                    key={niveau.id_nlc}
+                    key={index}
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {niveau.nombre_nlc}
+                      {index + 1}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {niveau.libelle_nlc}
+                      {niveau.libelle}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {niveau.Code_number_nlc}
+                      {type(niveau.type)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
-                        {index === niveauLocalites.length - 1 && (
+                        {index === AllNiveau.length - 1 && (
                           <button
                             onClick={() => {
                               if (
@@ -133,7 +218,7 @@ const NiveauLocalite: React.FC<NivSTrProps> = ({ allNiveau }) => {
                                   'Êtes-vous sûr de vouloir supprimer ce niveau ?'
                                 )
                               ) {
-                                del(niveau.id_nlc!)
+                                del(idCadreConfig!)
                               }
                             }}
                             className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-100 transition-colors"
@@ -148,7 +233,7 @@ const NiveauLocalite: React.FC<NivSTrProps> = ({ allNiveau }) => {
                 ))}
                 <FormNiveau
                   formInputs={formInputs}
-                  niveauLocalitesLength={niveauLocalites.length}
+                  niveauLength={niveauLocalites.length}
                   setFormInputs={setFormInputs}
                 />
               </tbody>
@@ -164,12 +249,7 @@ const NiveauLocalite: React.FC<NivSTrProps> = ({ allNiveau }) => {
             onClick={submitAll}
             disabled={
               submitting ||
-              formInputs.some(
-                (input) =>
-                  !input.libelle_nlc ||
-                  input.nombre_nlc <= 0 ||
-                  input.Code_number_nlc <= 0
-              )
+              formInputs.some((input) => !input.libelle_csa || !input.type_csa)
             }
             className=""
           >
@@ -188,4 +268,4 @@ const NiveauLocalite: React.FC<NivSTrProps> = ({ allNiveau }) => {
   )
 }
 
-export default NiveauLocalite
+export default CadreAnalytiqueConfig
