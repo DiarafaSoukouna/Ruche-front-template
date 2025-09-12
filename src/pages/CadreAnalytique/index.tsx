@@ -218,7 +218,26 @@ const CadreAnalytique: React.FC = () => {
         </div>
 
         <TabsContent value="default">
-          <div className="p-4">Bienvenue dans le Cadre Analytique</div>
+          <div className="p-4">
+            {cadreAnalytiques.length > 0 ? (
+              cadreAnalytiques.map((cadre) => (
+                <div
+                  key={cadre.id_ca}
+                  className="p-4 mb-4 border border-gray-200 rounded-lg shadow-sm"
+                >
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    {cadre.intutile_ca}
+                  </h2>
+                  <p className="text-gray-600">Code: {cadre.code_ca}</p>
+                  <p className="text-gray-600">
+                    Coût axe: {cadre.cout_axe ?? 'N/A'}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p>Aucun cadre analytique trouvé</p>
+            )}
+          </div>
         </TabsContent>
 
         {loading ? (
