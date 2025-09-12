@@ -26,7 +26,7 @@ export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [projetList, setProjetList] = useState<Projet[]>([]);
     const [openForm, setopenForm] = useState(false);
-    const [openDeleteModal, setopenDeleteModal] = useState(true);
+    const [openDeleteModal, setopenDeleteModal] = useState(false);
 
     const [selectedProject, setselectedProject] = useState<undefined | Projet>(undefined);
 
