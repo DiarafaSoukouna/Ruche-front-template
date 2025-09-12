@@ -206,3 +206,53 @@ export type DictionnaireIndicateurFormData = Omit<
   DictionnaireIndicateur,
   "id_ref_ind_ref"
 >;
+
+// Programme Entity
+export interface Programme extends Record<string, unknown> {
+  id_programme: number;
+  code_programme: string;
+  nom_programme: string;
+  description_programme?: string;
+  date_debut?: string;
+  date_fin?: string;
+  budget?: number;
+  statut?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// CadreStrategique Entity
+export interface CadreStrategique extends Record<string, unknown> {
+  id_cs: number;
+  code_cs: string;
+  intutile_cs: string;
+  abgrege_cs: string;
+  niveau_cs: number;
+  cout_axe: number;
+  date_enregistrement: string;
+  date_modification: string;
+  etat?: number;
+  partenaire_cs?: Acteur | null;
+  parent_cs?: CadreStrategique | null;
+  projet_cs?: Programme | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// CadreStrategiqueConfig Entity
+export interface CadreStrategiqueConfig extends Record<string, unknown> {
+  id_csc: number;
+  nombre: number;
+  libelle_csc: string;
+  type_csc: 1 | 2 | 3; // 1 - Effet, 2 - Produit, 3 - Impact
+  date_enregistrement: string;
+  date_modification: string;
+  etat?: number;
+  programme?: Programme | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Form Data Types for new entities
+export type CadreStrategiqueFormData = Omit<CadreStrategique, "id_cs">;
+export type CadreStrategiqueConfigFormData = Omit<CadreStrategiqueConfig, "id_csc">;

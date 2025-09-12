@@ -27,13 +27,11 @@ import AutresParametrages from "./pages/Parametrages/AutresParametrages/index";
 import ZoneCollecte from "./pages/Parametrages/ZoneCollecte/index";
 import PlanSitePage from "./pages/Parametrages/planSite";
 import FonctionPage from "./pages/Parametrages/personnel/fonction-personnel/FonctionPage";
-<<<<<<< HEAD
 import DictionnaireIndicateurPage from "./pages/Parametrages/dictionnaire-indicateur/DictionnaireIndicateurPage";
 import IndicateurCmrPage from "./pages/Parametrages/indicateur-cmr/IndicateurCmrPage";
 import IndicateurCadreResultatPage from "./pages/Parametrages/indicateur-cadre-resultat/IndicateurCadreResultatPage";
-=======
-import Programmes from './pages/Parametrages/Programme'
->>>>>>> 0898753c6b0420b61b7c5b551e2d4b74d9adfa7a
+import CadreStrategiquePage from "./pages/Parametrages/cadre-strategique/CadreStrategiquePage";
+import Programmes from "./pages/Parametrages/Programme";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -169,6 +167,16 @@ const AppContent: React.FC = () => {
             element={
               isAuthenticated ? (
                 <IndicateurCadreResultatPage />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/cadres-strategiques"
+            element={
+              isAuthenticated ? (
+                <CadreStrategiquePage />
               ) : (
                 <Navigate to="/login" />
               )

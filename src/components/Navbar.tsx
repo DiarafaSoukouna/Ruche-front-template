@@ -77,6 +77,7 @@ const Navbar: React.FC = () => {
         { name: "Dictionnaire des indicateurs", href: "/dictionnaire-indicateurs", icon: ListTodoIcon },
         { name: "Indicateurs du CMR", href: "/indicateurs-cmr", icon: ChartBarIcon },
         { name: "Cadre de résultats", href: "/cadre-resultats", icon: LayoutGrid },
+        { name: "Cadres stratégiques", href: "/cadres-strategiques", icon: BriefcaseIcon },
       ],
       href: true,
     },
