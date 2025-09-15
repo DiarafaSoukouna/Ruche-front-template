@@ -6,6 +6,6 @@ export const updatePlanSite = async (data:typePlanSite) =>{
     const res = await instance.put('plan_site/' +data.id_ds+ '/', data)
     return res.data
     } catch (error) {
-        return error
+        throw error
     }
 }

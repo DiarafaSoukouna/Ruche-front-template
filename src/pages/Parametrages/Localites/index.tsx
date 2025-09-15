@@ -32,8 +32,8 @@ const Localites: React.FC = () => {
             if (res) {
                 setNiveauLocalites(res)
                 setAddBoutonLabel(res[0].libelle_nlc)
-                setCurrentId(res[0].id_nlc)
-                setTabActive(res[0].nombre_nlc)
+                setCurrentId(res[0].id_nlc || 0)
+                setTabActive(String(res[0].nombre_nlc))
                 setLoadingNiv(false)
             }
         } catch (error) {
@@ -96,11 +96,11 @@ const Localites: React.FC = () => {
     };
     const getParentHierarchy = (plan:any) => {
         const hierarchy = [];
-        let currentParent = plan.parent_ds;
+        let currentParent = plan.parent_loca;
 
         while (currentParent && typeof currentParent === 'object') {
             hierarchy.push(currentParent);
-            currentParent = currentParent.parent_ds;
+            currentParent = currentParent.parent_loca;
         }
 
         return hierarchy;

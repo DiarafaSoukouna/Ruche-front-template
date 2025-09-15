@@ -6,6 +6,6 @@ export const deleteNiveauLocalite = async (id:number) =>{
         const res = await instance.delete("niveau_localite_config/" + id+"/")
         return res;
     } catch (error) {
-        return error
+        throw error
     }
 }

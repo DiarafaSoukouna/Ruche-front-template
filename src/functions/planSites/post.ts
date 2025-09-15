@@ -6,6 +6,6 @@ export const addPlanSite = async (data:typePlanSite) =>{
     const res = await instance.post('plan_site/', data)
     return res.data
     } catch (error) {
-        return error
+        throw error
     }
 }

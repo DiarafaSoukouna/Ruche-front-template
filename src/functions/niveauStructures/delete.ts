@@ -6,6 +6,6 @@ export const deleteNiveauStructure = async (id:number) =>{
         const res = await instance.delete("niveau_structure_config/" + id+"/")
         return res
     } catch (error) {
-        return error
+        throw error
     }
 }

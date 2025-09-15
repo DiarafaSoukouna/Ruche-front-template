@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import Card from '../../../components/Card'
 import { PlusIcon, EditIcon, TrashIcon, ListTreeIcon } from 'lucide-react'
 import Button from '../../../components/Button'
 import Form from './form'
@@ -17,9 +16,7 @@ import Table from '../../../components/Table'
 import { RiseLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 
-const Acteurs = () => {
-  //   const [acteurs, setActeurs] = useState([])
-  // const [acteurs, set]
+const ZoneCollecte = () => {
   const [showModal, setShowModal] = useState(false)
   const [allZoneCollecte, setAllZoneCollecte] = useState<ZoneCollecteTypes[]>(
     []
@@ -283,4 +280,4 @@ const Acteurs = () => {
     </div>
   )
 }
-export default Acteurs
+export default ZoneCollecte
