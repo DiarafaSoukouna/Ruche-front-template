@@ -75,8 +75,9 @@ const Navbar: React.FC = () => {
   }, [])
 
   const navigationItems: NavigationItem[] = [
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
 
+    { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+    
     {
       name: 'Paramétrage',
       icon: CogIcon,
@@ -105,33 +106,24 @@ const Navbar: React.FC = () => {
       ],
       href: true,
     },
-    {
-      name: 'Cadre de résultats',
-      icon: FileSignature,
+   {
+      name: "Cadre de résultats",
+      icon: CogIcon,
       children: [
-        {
-          name: 'Dictionnaire des indicateurs',
-          href: '/dictionnaire-indicateurs',
-          icon: ListTodoIcon,
-        },
-        {
-          name: 'Indicateurs du CMR',
-          href: '/indicateurs-cmr',
-          icon: ChartBarIcon,
-        },
-        {
-          name: 'Cadre de résultats',
-          href: '/cadre-resultats',
-          icon: LayoutGrid,
-        },
+        { name: "Dictionnaire des indicateurs", href: "/dictionnaire-indicateurs", icon: ListTodoIcon },
+        { name: "Indicateurs du CMR", href: "/indicateurs-cmr", icon: ChartBarIcon },
+        { name: "Cadre de résultats", href: "/cadre-resultats", icon: LayoutGrid },
+        { name: "Cadres stratégiques", href: "/cadres-strategiques", icon: BriefcaseIcon },
         {
           name: 'Cadre analytique',
           href: '/cadre_analytique',
           icon: FileSignature,
         },
+        { name: "Projets", href: "/projets", icon: File },
       ],
+      href: true,
     },
-    { name: "Projets", href: "/projets", icon: File },
+   
   ]
 
   const isActive = (href?: string | boolean) =>
