@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
+
 } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -31,10 +32,13 @@ import CadreAnalytique from './pages/CadreAnalytique'
 import { RootProvider } from './contexts/RootContext'
 import { NavbarProvider } from './contexts/NavbarContext'
 import Projet from './pages/Projet'
-
+import CadreStrategiquePage from "./pages/Parametrages/cadre-strategique/CadreStrategiquePage";
 import DictionnaireIndicateurPage from './pages/Parametrages/dictionnaire-indicateur/DictionnaireIndicateurPage'
 import IndicateurCmrPage from './pages/Parametrages/indicateur-cmr/IndicateurCmrPage'
 import IndicateurCadreResultatPage from './pages/Parametrages/indicateur-cadre-resultat/IndicateurCadreResultatPage'
+
+} from "react-router-dom";
+
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -170,6 +174,16 @@ const AppContent: React.FC = () => {
             element={
               isAuthenticated ? (
                 <IndicateurCadreResultatPage />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/cadres-strategiques"
+            element={
+              isAuthenticated ? (
+                <CadreStrategiquePage />
               ) : (
                 <Navigate to="/login" />
               )
