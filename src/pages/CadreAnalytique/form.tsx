@@ -21,6 +21,7 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
   currentId,
   niveauCadreAnalytique,
   editRow,
+  dataCadreAnalytique,
   cadreByNiveau,
 }) => {
   const [formData, setFormData] = useState<CadreAnalytiqueTypes>({
@@ -146,12 +147,12 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500"
           >
-            <option value="">-- Aucun -- {niveau}</option>
-            {niveauCadreAnalytique
+            <option value="">-- Choisir --</option>
+            {dataCadreAnalytique
               .filter((n) => n.niveau_ca === niveau - 1)
               .map((niv) => (
-                <option key={niv.id_csa} value={niv.id_csa}>
-                  {niv.libelle_csa}
+                <option key={niv.id_ca} value={niv.id_ca}>
+                  {niv.intutile_ca}
                 </option>
               ))}
           </select>

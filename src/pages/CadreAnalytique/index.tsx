@@ -22,7 +22,6 @@ import { useRoot } from '../../contexts/RootContext'
 import { getAllCadreAnalytique } from '../../functions/cadreAnalytique/gets'
 import { getCadreAnalytiqueConfigByProgramme } from '../../functions/cadreAnalytiqueConfig/gets'
 import { stringToTableau } from './others'
-import { get } from 'react-hook-form'
 
 const CadreAnalytique: React.FC = () => {
   const [niveauCadreAnalytiques, setNiveauCadreAnalytiques] = useState<any[]>(
@@ -75,18 +74,18 @@ const CadreAnalytique: React.FC = () => {
     }
   }
 
-  const OneNiveau = async (id: number) => {
-    setLoading(true)
-    try {
-      const res = await oneNiveauLocalite(id)
-      setCadreAnalytiques(res.localites || [])
-      setLoading(false)
-    } catch (error) {
-      toast.error('Erreur lors de la récupération du cadre analytique')
-      console.log('error', error)
-      setLoading(false)
-    }
-  }
+  // const OneNiveau = async (id: number) => {
+  //   setLoading(true)
+  //   try {
+  //     const res = await oneNiveauLocalite(id)
+  //     setCadreAnalytiques(res.localites || [])
+  //     setLoading(false)
+  //   } catch (error) {
+  //     toast.error('Erreur lors de la récupération du cadre analytique')
+  //     console.log('error', error)
+  //     setLoading(false)
+  //   }
+  // }
 
   const DeleteCadreAnalytique = async (id: number) => {
     setLoading(true)
@@ -218,7 +217,26 @@ const CadreAnalytique: React.FC = () => {
         </div>
 
         <TabsContent value="default">
-          <div className="p-4">Bienvenue dans le Cadre Analytique</div>
+          <div className="p-4">
+            {cadreAnalytiques.length > 0 ? (
+              cadreAnalytiques.map((cadre) => (
+                <div
+                  key={cadre.id_ca}
+                  className="p-4 mb-4 border border-gray-200 rounded-lg shadow-sm"
+                >
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    {cadre.intutile_ca}
+                  </h2>
+                  <p className="text-gray-600">Code: {cadre.code_ca}</p>
+                  <p className="text-gray-600">
+                    Coût axe: {cadre.cout_axe ?? 'N/A'}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p>Aucun cadre analytique trouvé</p>
+            )}
+          </div>
         </TabsContent>
 
         {loading ? (
