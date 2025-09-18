@@ -119,11 +119,11 @@ const Navbar: React.FC = () => {
           href: '/indicateurs-cmr',
           icon: ChartBarIcon,
         },
-        // {
-        //   name: 'Cadre de résultats',
-        //   href: '/cadre-resultats',
-        //   icon: LayoutGrid,
-        // },
+        {
+          name: 'Cadre stratégique',
+          href: '/cadre_strategique',
+          icon: LayoutGrid,
+        },
         {
           name: 'Cadre analytique',
           href: '/cadre_analytique',

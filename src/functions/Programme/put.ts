@@ -1,11 +1,11 @@
-import { instance } from "../../axios"
-import { typeProgram } from "./types"
+import { instance } from '../../axios'
+import { ProgrammeTypes } from '../../types/programme'
 
-export const updateProgram = async (data:typeProgram, id:number) =>{
-    try {
-    const res = await instance.put('programme/'+ id + "/", data)
+export const updateProgram = async (data: ProgrammeTypes, id: number) => {
+  try {
+    const res = await instance.put('programme/' + id + '/', data)
     return res.data
-    } catch (error) {
-        throw error
-    }
+  } catch (error) {
+    throw error
+  }
 }
