@@ -31,7 +31,7 @@ import CadreAnalytique from './pages/CadreAnalytique'
 import { RootProvider } from './contexts/RootContext'
 import { NavbarProvider } from './contexts/NavbarContext'
 import Projet from './pages/Projet'
-
+import CadreStrategiquePage from './pages/Parametrages/cadre-strategique/CadreStrategiquePage'
 import DictionnaireIndicateurPage from './pages/Parametrages/dictionnaire-indicateur/DictionnaireIndicateurPage'
 import IndicateurCmrPage from './pages/Parametrages/indicateur-cmr/IndicateurCmrPage'
 import IndicateurCadreResultatPage from './pages/Parametrages/indicateur-cadre-resultat/IndicateurCadreResultatPage'
@@ -170,6 +170,16 @@ const AppContent: React.FC = () => {
             element={
               isAuthenticated ? (
                 <IndicateurCadreResultatPage />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/cadres-strategiques"
+            element={
+              isAuthenticated ? (
+                <CadreStrategiquePage />
               ) : (
                 <Navigate to="/login" />
               )

@@ -30,3 +30,14 @@ export const localiteByParent = async (id: number | null) => {
     throw error
   }
 }
+export const localiteOneLevel = async () => {
+  try {
+    const res = await instance.get('localite/')
+    const local = res.data.filter(
+      (loc: typeLocalite) => loc.parent_loca === null
+    )
+    return local
+  } catch (error) {
+    throw error
+  }
+}

@@ -1,19 +1,18 @@
 import { TrashIcon } from 'lucide-react'
-import { typeNiveauLocalite } from '../../../functions/niveauLocalites/types'
 
 interface Props {
-  setFormInputs: (row: typeNiveauLocalite[]) => void
-  formInputs: typeNiveauLocalite[]
-  niveauLocalitesLength: number
+  setFormInputs: (row: any[]) => void
+  formInputs: any[]
+  niveauLength: number
 }
 
 const FormNiveau: React.FC<Props> = ({
   formInputs,
-  niveauLocalitesLength,
+  niveauLength,
   setFormInputs,
 }) => {
   const removeFormRow = (index: number) => {
-    const newFormInputs: typeNiveauLocalite[] = [...formInputs]
+    const newFormInputs: any[] = [...formInputs]
     newFormInputs.splice(index, 1)
     setFormInputs(newFormInputs)
   }
@@ -36,31 +35,33 @@ const FormNiveau: React.FC<Props> = ({
       {formInputs.map((input, index) => (
         <tr key={index} className="hover:bg-gray-50 transition-colors">
           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-            {index + 1 + niveauLocalitesLength}
+            {index + 1 + niveauLength}
           </td>
           <td className="px-6 py-4 whitespace-nowrap">
             <input
               type="text"
-              placeholder="Ex: Région, Département..."
-              value={input.libelle_nlc}
+              placeholder="Libelle..."
+              value={input.libelle_csa}
               onChange={(e) =>
-                handleInputChange(index, 'libelle_nlc', e.target.value)
+                handleInputChange(index, 'libelle_csa', e.target.value)
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </td>
           <td className="px-6 py-4 whitespace-nowrap">
-            <input
-              type="number"
-              placeholder="Ex: 2, 3..."
-              value={input.Code_number_nlc}
+            <select
+              value={input.type_csa}
               onChange={(e) =>
-                handleInputChange(index, 'Code_number_nlc', e.target.value)
+                handleInputChange(index, 'type_csa', e.target.value)
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
-            />
+            >
+              <option value={1}>Produit</option>
+              <option value={2}>Effet</option>
+              <option value={3}>Impact</option>
+            </select>
           </td>
           <td className="px-6 py-4 whitespace-nowrap">
             <button
