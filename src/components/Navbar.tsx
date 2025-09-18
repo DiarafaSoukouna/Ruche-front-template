@@ -120,17 +120,19 @@ const Navbar: React.FC = () => {
           icon: ChartBarIcon,
         },
         {
-          name: 'Cadre stratégique',
-          href: '/cadre_strategique',
-          icon: LayoutGrid,
+          name: 'Cadres stratégiques',
+          href: '/cadres-strategiques',
+          icon: BriefcaseIcon,
         },
+
         {
           name: 'Cadre analytique',
-          href: '/cadre_analytique',
+          href: '/cadres-strategiques',
           icon: FileSignature,
         },
         { name: 'Projets', href: '/projets', icon: File },
       ],
+      href: true,
     },
   ]
 
