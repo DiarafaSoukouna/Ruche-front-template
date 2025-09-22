@@ -21,6 +21,7 @@ import {
   ListTodoIcon,
   Box,
   File,
+  CheckSquare,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import ChangeProjectModal from './ChangeProjectModal'
@@ -127,8 +128,13 @@ const Navbar: React.FC = () => {
 
         {
           name: 'Cadre analytique',
-          href: '/cadres-strategiques',
+          href: '/cadre_analytique',
           icon: FileSignature,
+        },
+        {
+          name: 'Actions programme',
+          href: '/action_programme',
+          icon: CheckSquare,
         },
         { name: 'Projets', href: '/projets', icon: File },
       ],

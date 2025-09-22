@@ -1,4 +1,4 @@
-import axios, { AxiosError, type AxiosRequestConfig } from "axios";
+import axios, { AxiosError, type AxiosRequestConfig } from 'axios'
 
 // Mock data for demonstration
 const mockTransactions = [
@@ -191,7 +191,7 @@ api.interceptors.response.use(
       }
     }
 
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
 )
 
