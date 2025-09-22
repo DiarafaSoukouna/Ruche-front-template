@@ -103,6 +103,7 @@ const Navbar: React.FC = () => {
           href: '/autres-parametrages',
           icon: Settings2Icon,
         },
+        { name: 'Zone de Collecte', href: '/zone-collecte', icon: MapPinIcon },
       ],
       href: true,
     },
