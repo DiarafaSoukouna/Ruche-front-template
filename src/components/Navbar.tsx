@@ -139,7 +139,9 @@ const Navbar: React.FC = () => {
           href: "/cadre_strategique",
           icon: FileSignature,
         },
+        { name: "Projets", href: "/projets", icon: File },
       ],
+      href: true,
     },
     { name: "Projets", href: "/projets", icon: File },
   ];
