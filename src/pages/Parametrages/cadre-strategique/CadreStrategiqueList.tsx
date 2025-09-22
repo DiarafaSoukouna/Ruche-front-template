@@ -83,6 +83,26 @@ export default function CadreStrategiqueList({
       ),
     },
     {
+      key: "parent_cs" as keyof CadreStrategique,
+      title: "Parent",
+      render: (_: CadreStrategique[keyof CadreStrategique], row: CadreStrategique) => (
+        <div className="text-sm">
+          {row.parent_cs ? (
+            <div>
+              <div className="font-medium text-foreground">
+                {typeof row.parent_cs === "object" ? row.parent_cs.intutile_cs : row.parent_cs}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {typeof row.parent_cs === "object" ? row.parent_cs.code_cs : row.parent_cs}
+              </div>
+            </div>
+          ) : (
+            <span className="text-muted-foreground italic">Racine</span>
+          )}
+        </div>
+      ),
+    },
+    {
       key: "partenaire_cs" as keyof CadreStrategique,
       title: "Partenaire",
       render: (_: CadreStrategique[keyof CadreStrategique], row: CadreStrategique) => (

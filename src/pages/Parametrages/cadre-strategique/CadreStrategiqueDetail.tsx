@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { 
-  Calendar, 
-  Code, 
-  DollarSign, 
-  Layers, 
-  Building, 
+import {
+  Calendar,
+  Code,
+  DollarSign,
+  Layers,
+  Building,
   FolderTree,
   Briefcase,
-  Info
+  Info,
 } from "lucide-react";
 import type { CadreStrategique } from "../../../types/entities";
 import { cadreStrategiqueService } from "../../../services/cadreStrategiqueService";
@@ -55,9 +55,7 @@ export default function CadreStrategiqueDetail({
             <h2 className="text-2xl font-bold text-foreground">
               {cadre.intutile_cs}
             </h2>
-            <p className="text-muted-foreground mt-1">
-              {cadre.abgrege_cs}
-            </p>
+            <p className="text-muted-foreground mt-1">{cadre.abgrege_cs}</p>
           </div>
           <div className="flex items-center space-x-2">
             <span
@@ -105,9 +103,9 @@ export default function CadreStrategiqueDetail({
                 Coût de l'axe
               </h4>
               <p className="text-sm text-muted-foreground font-medium">
-                {new Intl.NumberFormat('fr-FR', {
-                  style: 'currency',
-                  currency: 'XOF'
+                {new Intl.NumberFormat("fr-FR", {
+                  style: "currency",
+                  currency: "XOF",
                 }).format(cadre.cout_axe)}
               </p>
             </div>
@@ -123,7 +121,8 @@ export default function CadreStrategiqueDetail({
                   Partenaire
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  {cadre.partenaire_cs.nom_acteur} ({cadre.partenaire_cs.code_acteur})
+                  {cadre.partenaire_cs.nom_acteur} (
+                  {cadre.partenaire_cs.code_acteur})
                 </p>
               </div>
             </div>
@@ -137,7 +136,14 @@ export default function CadreStrategiqueDetail({
                   Cadre parent
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  {cadre.parent_cs.intutile_cs} ({cadre.parent_cs.code_cs})
+                  {typeof cadre.parent_cs === "object"
+                    ? cadre.parent_cs.intutile_cs
+                    : cadre.parent_cs}{" "}
+                  (
+                  {typeof cadre.parent_cs === "object"
+                    ? cadre.parent_cs.code_cs
+                    : cadre.parent_cs}
+                  )
                 </p>
               </div>
             </div>
@@ -151,7 +157,8 @@ export default function CadreStrategiqueDetail({
                   Projet/Programme
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  {cadre.projet_cs.nom_programme} ({cadre.projet_cs.code_programme})
+                  {cadre.projet_cs.nom_programme} (
+                  {cadre.projet_cs.code_programme})
                 </p>
               </div>
             </div>
@@ -168,9 +175,13 @@ export default function CadreStrategiqueDetail({
           <div className="flex items-center space-x-3">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <div>
-              <div className="text-xs text-muted-foreground">Enregistrement</div>
+              <div className="text-xs text-muted-foreground">
+                Enregistrement
+              </div>
               <div className="text-sm font-medium text-foreground">
-                {new Date(cadre.date_enregistrement).toLocaleDateString('fr-FR')}
+                {new Date(cadre.date_enregistrement).toLocaleDateString(
+                  "fr-FR"
+                )}
               </div>
             </div>
           </div>
@@ -179,7 +190,7 @@ export default function CadreStrategiqueDetail({
             <div>
               <div className="text-xs text-muted-foreground">Modification</div>
               <div className="text-sm font-medium text-foreground">
-                {new Date(cadre.date_modification).toLocaleDateString('fr-FR')}
+                {new Date(cadre.date_modification).toLocaleDateString("fr-FR")}
               </div>
             </div>
           </div>
@@ -219,9 +230,7 @@ export default function CadreStrategiqueDetail({
         <div className="flex items-start space-x-3">
           <Info className="h-5 w-5 text-muted-foreground mt-0.5" />
           <div>
-            <h4 className="text-sm font-medium text-foreground mb-2">
-              Résumé
-            </h4>
+            <h4 className="text-sm font-medium text-foreground mb-2">Résumé</h4>
             <div className="text-sm text-muted-foreground space-y-1">
               <p>
                 <strong>Intitulé:</strong> {cadre.intutile_cs}

@@ -8,21 +8,37 @@ import {
   cadreStrategiqueCreateSchema,
   type CadreStrategiqueCreateData,
 } from "../../../schemas/cadreStrategiqueSchemas";
-import type { CadreStrategique, Acteur, Programme } from "../../../types/entities";
+import type {
+  CadreStrategique,
+  Acteur,
+  Programme,
+} from "../../../types/entities";
 import { cadreStrategiqueService } from "../../../services/cadreStrategiqueService";
 import { acteurService } from "../../../services/acteurService";
 import { apiClient } from "../../../lib/api";
+import { useRoot } from "../../../contexts/RootContext";
 
 interface CadreStrategiqueFormProps {
-  cadre?: CadreStrategique;
   onClose: () => void;
+  niveau: number;
+  currentId: number;
+  niveauCadreStrategique: any[];
+  editRow: CadreStrategique | null;
+  cadreByNiveau: () => void;
+  dataCadreStrategique: CadreStrategique[];
 }
 
 export default function CadreStrategiqueForm({
-  cadre,
   onClose,
+  niveau,
+  currentId,
+  niveauCadreStrategique,
+  editRow,
+  cadreByNiveau,
+  dataCadreStrategique,
 }: CadreStrategiqueFormProps) {
   const queryClient = useQueryClient();
+  const { currentProgramme } = useRoot();
 
   // Fetch related data
   const { data: acteurs = [] } = useQuery<Acteur[]>({
@@ -38,10 +54,10 @@ export default function CadreStrategiqueForm({
     },
   });
 
-  const { data: cadresParents = [] } = useQuery<CadreStrategique[]>({
-    queryKey: ["cadresStrategiquesParents"],
-    queryFn: cadreStrategiqueService.getAll,
-  });
+  // Get parent cadres (previous level)
+  const parentCadres = dataCadreStrategique.filter(
+    (cadre) => Number(cadre.niveau_cs) === niveau - 1
+  );
 
   const {
     handleSubmit,
@@ -51,32 +67,29 @@ export default function CadreStrategiqueForm({
     resolver: zodResolver(cadreStrategiqueCreateSchema),
     mode: "onSubmit",
     reValidateMode: "onChange",
-    defaultValues: cadre
+    defaultValues: editRow
       ? {
-          code_cs: cadre.code_cs || "",
-          intutile_cs: cadre.intutile_cs || "",
-          abgrege_cs: cadre.abgrege_cs || "",
-          niveau_cs: cadre.niveau_cs || 1,
-          cout_axe: cadre.cout_axe || 0,
-          date_enregistrement: cadre.date_enregistrement || new Date().toISOString(),
-          date_modification: new Date().toISOString(),
-          etat: cadre.etat || 1,
-          partenaire_cs: cadre.partenaire_cs?.id_acteur || null,
-          parent_cs: cadre.parent_cs?.id_cs || null,
-          projet_cs: cadre.projet_cs?.id_programme || null,
+          code_cs: editRow.code_cs || "",
+          intutile_cs: editRow.intutile_cs || "",
+          abgrege_cs: editRow.abgrege_cs || "",
+          niveau_cs: Number(editRow.niveau_cs) || niveau,
+          cout_axe: editRow.cout_axe || 0,
+          partenaire_cs: editRow.partenaire_cs?.id_acteur || null,
+          parent_cs:
+            typeof editRow.parent_cs === "object"
+              ? editRow.parent_cs?.id_cs
+              : editRow.parent_cs,
+          projet_cs: currentProgramme?.id_programme || null,
         }
       : {
           code_cs: "",
           intutile_cs: "",
           abgrege_cs: "",
-          niveau_cs: 1,
+          niveau_cs: Number(niveau),
           cout_axe: 0,
-          date_enregistrement: new Date().toISOString(),
-          date_modification: new Date().toISOString(),
-          etat: 1,
           partenaire_cs: null,
           parent_cs: null,
-          projet_cs: null,
+          projet_cs: currentProgramme?.id_programme || null,
         },
   });
 
@@ -84,21 +97,23 @@ export default function CadreStrategiqueForm({
     mutationFn: cadreStrategiqueService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cadresStrategiques"] });
+      cadreByNiveau();
       onClose();
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: (data: CadreStrategiqueCreateData) =>
-      cadreStrategiqueService.update(cadre!.id_cs, data),
+      cadreStrategiqueService.update(editRow!.id_cs, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cadresStrategiques"] });
+      cadreByNiveau();
       onClose();
     },
   });
 
   const onSubmit = (data: CadreStrategiqueCreateData) => {
-    if (cadre) {
+    if (editRow) {
       updateMutation.mutate(data);
     } else {
       createMutation.mutate(data);
@@ -108,7 +123,10 @@ export default function CadreStrategiqueForm({
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit as (data: any) => void)}
+      className="space-y-6"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Controller
           name="code_cs"
@@ -118,7 +136,6 @@ export default function CadreStrategiqueForm({
               {...field}
               type="text"
               label="Code du cadre"
-              placeholder="ex: CS001, STRAT001"
               maxLength={50}
               error={errors.code_cs}
               required
@@ -134,9 +151,8 @@ export default function CadreStrategiqueForm({
               {...field}
               type="number"
               label="Niveau"
-              placeholder="Niveau hiérarchique"
-              min={1}
-              max={10}
+              value={niveau}
+              disabled
               error={errors.niveau_cs}
               required
             />
@@ -185,11 +201,14 @@ export default function CadreStrategiqueForm({
               {...field}
               type="number"
               label="Coût de l'axe (XOF)"
-              placeholder="Coût en francs CFA"
+              placeholder="Coût en Dollar"
               min={0}
               step={1000}
               error={errors.cout_axe}
               required
+              onChange={(e) => {
+                field.onChange(Number(e.target.value));
+              }}
             />
           )}
         />
@@ -225,97 +244,41 @@ export default function CadreStrategiqueForm({
           )}
         />
 
-        <Controller
-          name="parent_cs"
-          control={control}
-          render={({ field }) => (
-            <SelectInput
-              {...field}
-              label="Cadre parent"
-              options={cadresParents
-                .filter((c) => c.id_cs !== cadre?.id_cs) // Éviter l'auto-référence
-                .map((cadreParent) => ({
+        {niveau > 1 && (
+          <Controller
+            name="parent_cs"
+            control={control}
+            render={({ field }) => (
+              <SelectInput
+                {...field}
+                label={`${
+                  niveauCadreStrategique[niveau - 2]?.libelle || "Cadre parent"
+                }`}
+                options={parentCadres.map((cadreParent) => ({
                   value: cadreParent.id_cs,
                   label: `${cadreParent.intutile_cs} (${cadreParent.code_cs})`,
                 }))}
-              value={
-                field.value
-                  ? cadresParents
-                      .map((cadreParent) => ({
-                        value: cadreParent.id_cs,
-                        label: `${cadreParent.intutile_cs} (${cadreParent.code_cs})`,
-                      }))
-                      .find((option) => option.value === field.value)
-                  : null
-              }
-              onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
-              }}
-              isClearable
-              placeholder="Sélectionner un cadre parent..."
-              error={errors.parent_cs}
-            />
-          )}
-        />
-
-        <Controller
-          name="projet_cs"
-          control={control}
-          render={({ field }) => (
-            <SelectInput
-              {...field}
-              label="Projet/Programme"
-              options={programmes.map((programme) => ({
-                value: programme.id_programme,
-                label: `${programme.nom_programme} (${programme.code_programme})`,
-              }))}
-              value={
-                field.value
-                  ? programmes
-                      .map((programme) => ({
-                        value: programme.id_programme,
-                        label: `${programme.nom_programme} (${programme.code_programme})`,
-                      }))
-                      .find((option) => option.value === field.value)
-                  : null
-              }
-              onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
-              }}
-              isClearable
-              placeholder="Sélectionner un projet..."
-              error={errors.projet_cs}
-            />
-          )}
-        />
-
-        <Controller
-          name="etat"
-          control={control}
-          render={({ field }) => (
-            <SelectInput
-              {...field}
-              label="État"
-              options={[
-                { value: 1, label: "Actif" },
-                { value: 0, label: "Inactif" },
-              ]}
-              value={
-                field.value !== undefined
-                  ? {
-                      value: field.value,
-                      label: field.value === 1 ? "Actif" : "Inactif",
-                    }
-                  : { value: 1, label: "Actif" }
-              }
-              onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : 1);
-              }}
-              placeholder="Sélectionner un état..."
-              error={errors.etat}
-            />
-          )}
-        />
+                value={
+                  field.value
+                    ? parentCadres
+                        .map((cadreParent) => ({
+                          value: cadreParent.id_cs,
+                          label: `${cadreParent.intutile_cs} (${cadreParent.code_cs})`,
+                        }))
+                        .find((option) => option.value === field.value)
+                    : null
+                }
+                onChange={(selectedOption) => {
+                  field.onChange(selectedOption ? selectedOption.value : null);
+                }}
+                isClearable
+                placeholder="Sélectionner un cadre parent..."
+                error={errors.parent_cs}
+                required={niveau > 1}
+              />
+            )}
+          />
+        )}
       </div>
 
       <div className="flex justify-end space-x-3 pt-6 border-t border-border">
@@ -330,7 +293,7 @@ export default function CadreStrategiqueForm({
         <Button type="submit" disabled={isLoading}>
           {isLoading
             ? "Enregistrement..."
-            : cadre
+            : editRow
             ? "Mettre à jour"
             : "Créer"}
         </Button>

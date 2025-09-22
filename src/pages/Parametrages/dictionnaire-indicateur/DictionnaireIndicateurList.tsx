@@ -46,16 +46,16 @@ export default function DictionnaireIndicateurList({
 
   const getTypologieColor = (typologie?: string) => {
     const colors = {
-      Impact: "text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/20",
-      Effet:
+      "Valeur absolue":
+        "text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/20",
+      "Valeur relative":
         "text-orange-600 bg-orange-100 dark:text-orange-400 dark:bg-orange-900/20",
-      Produit:
+      "Typologie quantitative":
         "text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20",
-      Processus:
+      "Typologie qualitative":
         "text-purple-600 bg-purple-100 dark:text-purple-400 dark:bg-purple-900/20",
-      Contexte:
-        "text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/20",
     };
+
     return typologie
       ? colors[typologie as keyof typeof colors] ||
           "text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-900/20"
