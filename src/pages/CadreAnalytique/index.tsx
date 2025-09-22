@@ -57,9 +57,6 @@ const CadreAnalytique: React.FC = () => {
       }
     } catch (_) {
     } finally {
-      console.log("tabActive", tabActive);
-      console.log("addBoutonLabel", addBoutonLabel);
-      console.log("currentId", currentId);
       setLoadingNiv(false);
     }
   };
@@ -67,7 +64,6 @@ const CadreAnalytique: React.FC = () => {
   const getActeurs = async () => {
     const res = await acteurService.getAll();
     setActeurs(res);
-    console.log("acteurs", acteurs);
   };
 
   // const OneNiveau = async (id: number) => {
@@ -133,7 +129,6 @@ const CadreAnalytique: React.FC = () => {
     setIsDelete(true);
     setEditRow(cadre);
   };
-
 
   return (
     <>
@@ -238,10 +233,14 @@ const CadreAnalytique: React.FC = () => {
                           )
                           .map((cadre) => {
                             // Trouver le parent dans la liste des cadres analytiques
-                            const parent = cadreAnalytiques.find(c => c.id_ca === cadre.parent_ca);
+                            const parent = cadreAnalytiques.find(
+                              (c) => c.id_ca === cadre.parent_ca
+                            );
                             // Trouver le partenaire dans la liste des acteurs
-                            const partenaire = acteurs.find(a => a.id_acteur === cadre.partenaire_ca);
-                            
+                            const partenaire = acteurs.find(
+                              (a) => a.id_acteur === cadre.partenaire_ca
+                            );
+
                             return (
                               <tr
                                 key={cadre.id_ca}
@@ -252,36 +251,52 @@ const CadreAnalytique: React.FC = () => {
                                 </td>
                                 <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                   <div>
-                                    <div className="font-medium">{cadre.intutile_ca}</div>
+                                    <div className="font-medium">
+                                      {cadre.intutile_ca}
+                                    </div>
                                     {cadre.abgrege_ca && (
-                                      <div className="text-xs text-gray-500">{cadre.abgrege_ca}</div>
+                                      <div className="text-xs text-gray-500">
+                                        {cadre.abgrege_ca}
+                                      </div>
                                     )}
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 text-sm text-gray-500">
-                                  {new Intl.NumberFormat('fr-FR', {
-                                    style: 'currency',
-                                    currency: 'XOF'
+                                  {new Intl.NumberFormat("fr-FR", {
+                                    style: "currency",
+                                    currency: "XOF",
                                   }).format(cadre.cout_axe)}
                                 </td>
                                 <td className="px-6 py-4 text-sm text-gray-500">
                                   {parent ? (
                                     <div>
-                                      <div className="font-medium text-gray-900">{parent.intutile_ca}</div>
-                                      <div className="text-xs text-gray-500">{parent.code_ca}</div>
+                                      <div className="font-medium text-gray-900">
+                                        {parent.intutile_ca}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {parent.code_ca}
+                                      </div>
                                     </div>
                                   ) : (
-                                    <span className="text-gray-400 italic">Racine</span>
+                                    <span className="text-gray-400 italic">
+                                      Racine
+                                    </span>
                                   )}
                                 </td>
                                 <td className="px-6 py-4 text-sm text-gray-500">
                                   {partenaire ? (
                                     <div>
-                                      <div className="font-medium text-gray-900">{partenaire.nom_acteur}</div>
-                                      <div className="text-xs text-gray-500">{partenaire.code_acteur}</div>
+                                      <div className="font-medium text-gray-900">
+                                        {partenaire.nom_acteur}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {partenaire.code_acteur}
+                                      </div>
                                     </div>
                                   ) : (
-                                    <span className="text-gray-400">Non défini</span>
+                                    <span className="text-gray-400">
+                                      Non défini
+                                    </span>
                                   )}
                                 </td>
                                 <td className="px-6 py-4 text-sm font-medium space-x-2">

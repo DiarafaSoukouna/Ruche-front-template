@@ -240,7 +240,7 @@ const CadreStrategiquePage: React.FC = () => {
                           )
                           .map((cadre) => {
                             const parentHierarchy = getParentHierarchy(cadre);
-                            console.log("parentHierarchy", parentHierarchy);
+                            
                             return (
                               <tr
                                 key={cadre.id_cs}

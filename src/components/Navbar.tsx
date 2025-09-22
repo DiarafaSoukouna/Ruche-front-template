@@ -7,7 +7,6 @@ import {
   CogIcon,
   ChevronDownIcon,
   BellIcon,
-  Search,
   MapPinIcon,
   User,
   Building2,
@@ -19,7 +18,6 @@ import {
   Settings2Icon,
   BriefcaseIcon,
   ListTodoIcon,
-  Box,
   File,
   CheckSquare,
 } from "lucide-react";
@@ -41,7 +39,7 @@ interface NavigationItem {
 }
 
 const Navbar: React.FC = () => {
-  const { setShowChangeProjectModal } = useNavbar()
+  const { setShowChangeProjectModal } = useNavbar();
 
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -77,9 +75,6 @@ const Navbar: React.FC = () => {
 
   const navigationItems: NavigationItem[] = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
-
     {
       name: "Paramétrage",
       icon: CogIcon,
@@ -109,40 +104,39 @@ const Navbar: React.FC = () => {
       href: true,
     },
     {
-      name: 'Programmes',
+      name: "Programmes",
       icon: FileSignature,
       children: [
         {
-          name: 'Dictionnaire des indicateurs',
-          href: '/dictionnaire-indicateurs',
+          name: "Dictionnaire des indicateurs",
+          href: "/dictionnaire_indicateurs",
           icon: ListTodoIcon,
         },
         {
-          name: 'Indicateurs du CMR',
-          href: '/indicateurs-cmr',
+          name: "Indicateurs du CMR",
+          href: "/indicateurs_cmr",
           icon: ChartBarIcon,
         },
         {
-          name: 'Cadres stratégiques',
-          href: '/cadres-strategiques',
-          icon: BriefcaseIcon,
+          name: "Cadre analytique",
+          href: "/cadre_analytique",
+          icon: FileSignature,
         },
-
         {
           name: "Cadre stratégique",
           href: "/cadre_strategique",
           icon: FileSignature,
         },
         {
-          name: 'Actions programme',
-          href: '/action_programme',
+          name: "Actions programme",
+          href: "/action_programme",
           icon: CheckSquare,
         },
-        { name: 'Projets', href: '/projets', icon: File },
+        { name: "Projets", href: "/projets", icon: File },
       ],
       href: true,
     },
-  ]
+  ];
 
   const isActive = (href?: string | boolean) =>
     typeof href === "string" ? location.pathname === href : false;
@@ -164,12 +158,8 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
-          
-
           <form className="mx-auto w-full max-w-md mt-3">
-
-                      <ChangeProjectModal />
-
+            <ChangeProjectModal />
           </form>
 
           <div className="flex items-center space-x-4">
@@ -188,7 +178,7 @@ const Navbar: React.FC = () => {
                         ? getUserInitials(
                             `${user.prenom_perso} ${user.nom_perso}`
                           )
-                        : 'AD'}
+                        : "AD"}
                     </p>
                   </div>
                 </button>
@@ -259,15 +249,15 @@ const Navbar: React.FC = () => {
                       .includes(true)
                       ? "bg-primary text-primary-foreground shadow-md"
                       : dropdownOpen === item.name
-                      ? 'bg-primary-50 text-primary'
-                      : 'text-foreground hover:text-primary hover:bg-primary-50'
+                      ? "bg-primary-50 text-primary"
+                      : "text-foreground hover:text-primary hover:bg-primary-50"
                   }`}
                 >
                   <item.icon className="w-4 h-4" />
                   <span>{item.name}</span>
                   <ChevronDownIcon
                     className={`w-4 h-4 transition-transform ${
-                      dropdownOpen === item.name ? 'rotate-180' : ''
+                      dropdownOpen === item.name ? "rotate-180" : ""
                     }`}
                   />
                 </button>
@@ -285,8 +275,8 @@ const Navbar: React.FC = () => {
                           onClick={() => setDropdownOpen(null)}
                           className={`flex items-center px-4 py-2 text-sm transition-colors ${
                             isActive(child.href)
-                              ? 'bg-primary-50 text-primary border-r-2 border-primary'
-                              : 'text-foreground hover:bg-primary-50 hover:text-primary'
+                              ? "bg-primary-50 text-primary border-r-2 border-primary"
+                              : "text-foreground hover:bg-primary-50 hover:text-primary"
                           }`}
                         >
                           <child.icon className="w-4 h-4 mr-3" />
@@ -302,8 +292,8 @@ const Navbar: React.FC = () => {
                 to={item.href as string}
                 className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition-all duration-200 ${
                   isActive(item.href)
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'text-foreground hover:text-primary hover:bg-primary-50'
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-foreground hover:text-primary hover:bg-primary-50"
                 }`}
                 onClick={() => setDropdownOpen(null)}
               >

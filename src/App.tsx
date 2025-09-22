@@ -41,6 +41,7 @@ import NiveauCadreStrategiqueDetail from "./pages/Parametrages/cadre-strategique
 import NiveauCadreAnalytiqueDetail from "./pages/CadreAnalytique/niveau-cadre-analytique/NiveauCadreAnalytiqueDetail";
 import CibleCmrProjetPage from "./pages/Parametrages/cible-cmr-projet/CibleCmrProjetPage";
 import CibleCmrProjetDetail from "./pages/Parametrages/cible-cmr-projet/CibleCmrProjetDetail";
+import Actions from "./pages/Actions";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
