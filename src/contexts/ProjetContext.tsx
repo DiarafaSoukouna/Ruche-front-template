@@ -41,12 +41,12 @@ export const ProjetProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (!currentProgramme || !res) return
 
-      const filtered = res
+      // const filtered = res
 
-      // const filtered = res.filter(
-      //   ({ programme_projet }) =>
-      //     programme_projet?.id_programme === currentProgramme?.id_programme
-      // )
+      const filtered = res.filter(
+        ({ programme_projet }) =>
+          programme_projet?.id_programme === currentProgramme?.id_programme
+      )
       setProjetList(filtered)
 
       console.log('la liste des projets filtrés', filtered)
