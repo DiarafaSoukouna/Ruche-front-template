@@ -27,6 +27,7 @@ interface TabsProps {
 
 const Tabs: React.FC<TabsProps> = ({ defaultValue, children, className = '' }) => {
   const [activeTab, setActiveTab] = useState(defaultValue);
+  console.log("activeTab", activeTab);
 
   return (
     <TabsContext.Provider value={{ activeTab, setActiveTab }}>

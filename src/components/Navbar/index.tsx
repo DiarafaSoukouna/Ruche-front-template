@@ -82,11 +82,20 @@ const Navbar: React.FC = () => {
         { name: "Unités de gestion", href: "/unite_gestion", icon: LayoutGrid },
         { name: "Acteurs", href: "/acteurs", icon: User },
         { name: "Utilisateurs", href: "/utilisateurs", icon: UsersIcon },
-        { name: "Niveau Structure", href: "/niveau-structure-config", icon: LayoutGrid },
-        { name: "Plans de Site", href: "/plan-sites", icon: Building2 },
-        { name: "Types de Zone", href: "/type-zones", icon: MapPinIcon },
+        { name: "Niveau Structure", href: "/niveau_structure_config", icon: LayoutGrid },
+        { name: "Plans de Site", href: "/plan_sites", icon: Building2 },
+        { name: "Types de Zone", href: "/type_zones", icon: MapPinIcon },
         { name: "Partenaire Financier", href: "/part_financier", icon: HandshakeIcon },
         { name: "Conventions", href: "/conventions", icon: FileSignature },
+      ],
+      href: true,
+    },
+    {
+      name: "Cadre de résultats",
+      icon: Box,
+      children: [
+        { name: "Cadre Stratégique", href: "/cadre_strategique", icon: LayoutGrid },
+        { name: "Cadre Analytique", href: "/cadre_analytique", icon: ChartBarIcon },
       ],
       href: true,
     },
@@ -161,7 +170,7 @@ const Navbar: React.FC = () => {
                         </div>
 
                         <Link
-                          to="/change-password"
+                          to="/change_password"
                           onClick={() => setUserDropdownOpen(false)}
                           className="flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                         >

@@ -1,4 +1,33 @@
 // Types pour les entités de paramètres
+
+// Niveau Cadre Stratégique
+export interface NiveauCadreStrategique extends Record<string, unknown> {
+  id_nsc: number;
+  nombre_nsc: number;
+  libelle_nsc: string;
+  code_number_nsc: number;
+  type_niveau: 1 | 2 | 3 | string; // 1 - Effet, 2 - Produit, 3 - Impact
+}
+
+// Niveau Cadre Analytique
+export interface NiveauCadreAnalytique extends Record<string, unknown> {
+  id_nca: number;
+  nombre_nca: number;
+  libelle_nca: string;
+  code_number_nca: number;
+  type_niveau: 1 | 2 | 3 | string; // 1 - Effet, 2 - Produit, 3 - Impact
+}
+
+// Cible CMR Projet
+export interface CibleCmrProjet extends Record<string, unknown> {
+  id_cible_indicateur_crp: number; // readOnly
+  annee: string; // date format - Année de la cible
+  valeur_cible_indcateur_crp: number; // Valeur cible de l'indicateur CRP
+  code_indicateur_crp?: number | null; // Code de l'indicateur de résultat du projet, relation avec IndicateurCadreResultat
+  code_ug?: string | null;
+  code_projet?: string | null; // Code du projet concerné
+}
+
 export interface TitrePersonnel extends Record<string, unknown> {
   id_titre: number;
   libelle_titre: string;
@@ -94,12 +123,12 @@ export interface UGL extends Record<string, unknown> {
   region_concerne_ugl: number[];
 }
 
-<<<<<<< HEAD
 export interface Fonction extends Record<string, unknown> {
   id_fonction?: number;
   nom_fonction: string;
   description_fonction: string;
-=======
+}
+
 export interface ProjetActivePerso {
   id_projet: number,
   code_projet: string,
@@ -114,7 +143,6 @@ export interface ProjetActivePerso {
   signataires_projet: number[],
   partenaires_execution_projet: number[],
   zone_projet: number[],
->>>>>>> a61ee45e50c292e9fb56253f11014651eda27ef0
 }
 
 export interface NiveauStructureConfig extends Record<string, unknown> {
@@ -244,13 +272,13 @@ export interface CadreStrategique extends Record<string, unknown> {
   code_cs: string;
   intutile_cs: string;
   abgrege_cs: string;
-  niveau_cs: number;
+  niveau_cs: number | string;
   cout_axe: number;
   date_enregistrement: string;
   date_modification: string;
   etat?: number;
   partenaire_cs?: Acteur | null;
-  parent_cs?: CadreStrategique | null;
+  parent_cs?: CadreStrategique | number | null;
   projet_cs?: Programme | null;
   created_at?: string;
   updated_at?: string;

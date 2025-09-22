@@ -1,18 +1,37 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import Button from '../../components/Button'
+import Input from '../../components/Input'
+import SelectInput from '../../components/SelectInput'
 import { CadreAnalytiqueTypes } from '../../types/cadreAnalytique'
+import type { Acteur } from '../../types/entities'
 import { toast } from 'react-toastify'
 import { addCadreAnalytique } from '../../functions/cadreAnalytique/post'
 import { updateCadreAnalytique } from '../../functions/cadreAnalytique/put'
+
+// Schéma de validation Zod
+const cadreAnalytiqueSchema = z.object({
+  code_ca: z.string().min(1, 'Le code est obligatoire'),
+  intutile_ca: z.string().min(1, 'L\'intitulé est obligatoire'),
+  cout_axe: z.number().min(0, 'Le coût doit être positif'),
+  abgrege_ca: z.string(),
+  parent_ca: z.number().nullable().optional(),
+  partenaire_ca: z.number().nullable().optional(),
+})
+
+type FormData = z.infer<typeof cadreAnalytiqueSchema>
 
 type FormCadreAnalytiqueProps = {
   onClose: () => void
   niveau: number
   currentId: number
-  niveauCadreAnalytique: any[]
+  niveauCadreAnalytique: { libelle_nca: string }[]
   dataCadreAnalytique: CadreAnalytiqueTypes[]
   editRow: CadreAnalytiqueTypes | null
   cadreByNiveau: () => void
+  acteurs?: Acteur[]
 }
 
 const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
@@ -23,50 +42,67 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
   editRow,
   dataCadreAnalytique,
   cadreByNiveau,
+  acteurs = [],
 }) => {
-  const [formData, setFormData] = useState<CadreAnalytiqueTypes>({
-    code_ca: '',
-    cout_axe: 0,
-    parent_ca: null,
-    id_ca: currentId,
-    partenaire_ca: null,
-    projet_ca: null,
-    intutile_ca: '',
-    abgrege_ca: '',
-    niveau_ca: niveau,
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
+    resolver: zodResolver(cadreAnalytiqueSchema),
+    defaultValues: {
+      code_ca: '',
+      intutile_ca: '',
+      cout_axe: 0,
+      abgrege_ca: '',
+      parent_ca: null,
+      partenaire_ca: null,
+    },
   })
 
+  // Réinitialiser le formulaire quand editRow change
   useEffect(() => {
     if (editRow) {
-      setFormData({
+      reset({
         code_ca: editRow.code_ca || '',
         intutile_ca: editRow.intutile_ca || '',
         cout_axe: editRow.cout_axe || 0,
-        id_ca: editRow.id_ca || currentId,
-        partenaire_ca: null,
-        parent_ca: editRow.parent_ca || null,
-        projet_ca: null,
         abgrege_ca: editRow.abgrege_ca || '',
-        niveau_ca: niveau,
+        parent_ca: editRow.parent_ca || null,
+        partenaire_ca: editRow.partenaire_ca || null,
+      })
+    } else {
+      reset({
+        code_ca: '',
+        intutile_ca: '',
+        cout_axe: 0,
+        abgrege_ca: '',
+        parent_ca: null,
+        partenaire_ca: null,
       })
     }
-  }, [editRow])
+  }, [editRow, reset])
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: FormData) => {
     try {
+      const formData: CadreAnalytiqueTypes = {
+        code_ca: data.code_ca,
+        intutile_ca: data.intutile_ca,
+        cout_axe: data.cout_axe,
+        abgrege_ca: data.abgrege_ca || '',
+        parent_ca: data.parent_ca || null,
+        partenaire_ca: data.partenaire_ca || null,
+        id_ca: editRow?.id_ca || currentId,
+        niveau_ca: niveau,
+        projet_ca: null,
+      }
+
       if (editRow) {
         await updateCadreAnalytique(formData)
         toast.success('Cadre analytique mis à jour avec succès')
       } else {
-        await addCadreAnalytique({ ...formData })
+        await addCadreAnalytique(formData)
         toast.success('Cadre analytique ajouté avec succès')
       }
       onClose()
@@ -77,94 +113,140 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
     }
   }
 
+  // Options pour le select parent
+  const parentOptions = dataCadreAnalytique
+    .filter((n) => n.niveau_ca === niveau - 1)
+    .map((niv) => ({
+      value: niv.id_ca!,
+      label: niv.intutile_ca,
+    }))
+
+  // Options pour le select acteur/partenaire
+  const acteurOptions = acteurs.map((acteur) => ({
+    value: acteur.id_acteur,
+    label: `${acteur.nom_acteur} (${acteur.code_acteur})`,
+  }))
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Code */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Code</label>
-        <input
-          type="text"
-          name="code_ca"
-          value={formData.code_ca}
-          onChange={handleChange}
-          required
-          className="mt-1 block w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500"
-        />
-      </div>
+      <Controller
+        name="code_ca"
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Code"
+            placeholder="Entrez le code"
+            error={errors.code_ca}
+            required
+          />
+        )}
+      />
 
       {/* Intitulé */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Intitulé
-        </label>
-        <input
-          type="text"
-          name="intutile_ca"
-          value={formData.intutile_ca}
-          onChange={handleChange}
-          required
-          className="mt-1 block w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500"
-        />
-      </div>
+      <Controller
+        name="intutile_ca"
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Intitulé"
+            placeholder="Entrez l'intitulé"
+            error={errors.intutile_ca}
+            required
+          />
+        )}
+      />
 
       {/* Coût axe */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Coût axe
-        </label>
-        <input
-          type="number"
-          step="0.01"
-          name="cout_axe"
-          value={formData.cout_axe}
-          onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500"
-        />
-      </div>
-      {/* Abrege ca */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Abregé
-        </label>
-        <input
-          type="text"
-          name="abgrege_ca"
-          value={formData.abgrege_ca}
-          onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500"
-        />
-      </div>
+      <Controller
+        name="cout_axe"
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            type="number"
+            step="0.01"
+            label="Coût axe"
+            placeholder="Entrez le coût"
+            error={errors.cout_axe}
+            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+          />
+        )}
+      />
+
+      {/* Abrégé */}
+      <Controller
+        name="abgrege_ca"
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Abrégé"
+            placeholder="Entrez l'abrégé"
+            error={errors.abgrege_ca}
+          />
+        )}
+      />
 
       {/* Parent (si applicable) */}
-      {niveau > 1 && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            {niveauCadreAnalytique[niveau > 1 ? niveau - 2 : 0].libelle_csa}
-          </label>
-          <select
-            name="parent_ca"
-            value={formData.parent_ca || ''}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500"
-          >
-            <option value="">-- Choisir --</option>
-            {dataCadreAnalytique
-              .filter((n) => n.niveau_ca === niveau - 1)
-              .map((niv) => (
-                <option key={niv.id_ca} value={niv.id_ca}>
-                  {niv.intutile_ca}
-                </option>
-              ))}
-          </select>
-        </div>
+      {niveau > 1 && parentOptions.length > 0 && (
+        <Controller
+          name="parent_ca"
+          control={control}
+          render={({ field }) => (
+            <SelectInput
+              {...field}
+              label={niveauCadreAnalytique[niveau > 1 ? niveau - 2 : 0]?.libelle_nca || 'Parent'}
+              placeholder="-- Choisir --"
+              options={parentOptions}
+              error={errors.parent_ca}
+              value={parentOptions.find(option => option.value === field.value) || null}
+              onChange={(selectedOption) => field.onChange(selectedOption?.value || null)}
+            />
+          )}
+        />
       )}
+
+      {/* Partenaire */}
+      <Controller
+        name="partenaire_ca"
+        control={control}
+        render={({ field }) => (
+          <SelectInput
+            {...field}
+            label="Partenaire"
+            placeholder="-- Choisir un partenaire --"
+            options={acteurOptions}
+            error={errors.partenaire_ca}
+            value={acteurOptions.find(option => option.value === field.value) || null}
+            onChange={(selectedOption) => field.onChange(selectedOption?.value || null)}
+          />
+        )}
+      />
 
       {/* Actions */}
       <div className="flex justify-end gap-3 pt-4">
-        <Button variant="outline" onClick={onClose} type="button">
+        <Button 
+          variant="outline" 
+          onClick={onClose} 
+          type="button"
+          disabled={isSubmitting}
+        >
           Annuler
         </Button>
-        <Button type="submit">{editRow ? 'Mettre à jour' : 'Ajouter'}</Button>
+        <Button 
+          type="submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting 
+            ? 'Enregistrement...' 
+            : editRow 
+            ? 'Mettre à jour' 
+            : 'Ajouter'
+          }
+        </Button>
       </div>
     </form>
   )
