@@ -35,6 +35,7 @@ import CadreStrategiquePage from './pages/Parametrages/cadre-strategique/CadreSt
 import DictionnaireIndicateurPage from './pages/Parametrages/dictionnaire-indicateur/DictionnaireIndicateurPage'
 import IndicateurCmrPage from './pages/Parametrages/indicateur-cmr/IndicateurCmrPage'
 import IndicateurCadreResultatPage from './pages/Parametrages/indicateur-cadre-resultat/IndicateurCadreResultatPage'
+import Actions from './pages/Actions'
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -196,6 +197,10 @@ const AppContent: React.FC = () => {
             element={
               isAuthenticated ? <ZoneCollecte /> : <Navigate to="/login" />
             }
+          />
+          <Route
+            path="/action_programme"
+            element={isAuthenticated ? <Actions /> : <Navigate to="/login" />}
           />
           <Route
             path="/cadre_analytique"
