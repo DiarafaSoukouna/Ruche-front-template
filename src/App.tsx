@@ -254,6 +254,10 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
+            path="/action_programme"
+            element={isAuthenticated ? <Actions /> : <Navigate to="/login" />}
+          />
+          <Route
             path="/cadre_analytique"
             element={
               isAuthenticated ? <CadreAnalytique /> : <Navigate to="/login" />

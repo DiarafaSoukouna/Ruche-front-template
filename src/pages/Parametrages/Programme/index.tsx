@@ -15,8 +15,8 @@ import Modal from '../../../components/Modal'
 import { toast } from 'react-toastify'
 import ConfirmModal from '../../../components/ConfirModal'
 import { deleteProgram } from '../../../functions/Programme/delete'
-import { getAllProgrammesNbc } from '../../../functions/Programme/gets'
-import { typeProgram, typeProgramNbc } from '../../../functions/Programme/types'
+import { getAllProgrammes } from '../../../functions/Programme/gets'
+import { ProgrammeTypes } from '../../../types/programme'
 import FormProgram from './form'
 import Card from '../../../components/Card'
 
@@ -24,10 +24,10 @@ const Programmes = () => {
   //   const [acteurs, setProgrammes] = useState([])
   // const [acteurs, set]
   const [showModal, setShowModal] = useState(false)
-  const [programmes, setProgrammes] = useState<typeProgram[]>([])
+  const [programmes, setProgrammes] = useState<ProgrammeTypes[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [isDelete, setIsDelete] = useState(false)
-  const [programme, setProgramme] = useState<typeProgram>({
+  const [programme, setProgramme] = useState<ProgrammeTypes>({
     id_programme: 0,
     code_programme: '',
     sigle_programme: '',
@@ -37,12 +37,7 @@ const Programmes = () => {
     annee_debut_programme: '',
     annee_fin_programme: '',
     actif_programme: true,
-    id_nbc_programme: {
-      id_nbc: 0,
-      code_number_nbc: '',
-      nombre_nbc: 1,
-      libelle_nbc: '',
-    },
+    id_nbc_programme: 0,
   })
 
   const clean = () => {
@@ -56,18 +51,13 @@ const Programmes = () => {
       annee_debut_programme: '',
       annee_fin_programme: '',
       actif_programme: true,
-      id_nbc_programme: {
-        id_nbc: 0,
-        code_number_nbc: '',
-        nombre_nbc: 1,
-        libelle_nbc: '',
-      },
+      id_nbc_programme: 0,
     })
   }
   const fetchProgrammes = async () => {
     setLoading(true)
     try {
-      const res = await getAllProgrammesNbc()
+      const res = await getAllProgrammes()
       if (res) {
         setProgrammes(res)
       }
@@ -99,7 +89,7 @@ const Programmes = () => {
     clean()
   }
   const [isEdit, setIsEdit] = useState(false)
-  const handleDelete = (programme: typeProgram) => {
+  const handleDelete = (programme: ProgrammeTypes) => {
     setProgramme(programme), setIsDelete(true)
   }
   const onEdit = (programme: any) => {
