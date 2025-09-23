@@ -173,7 +173,7 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
-            path="/cadre_resultats"
+            path="/indicateur_cadre_resultat"
             element={
               isAuthenticated ? (
                 <IndicateurCadreResultatPage />
