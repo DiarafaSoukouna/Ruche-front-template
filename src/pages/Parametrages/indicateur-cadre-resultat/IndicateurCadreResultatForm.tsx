@@ -32,10 +32,11 @@ export default function IndicateurCadreResultatForm({
     reValidateMode: "onChange",
     defaultValues: indicateur
       ? {
-          niveau_iop: indicateur.niveau_iop || 1,
+          niveau_iop: indicateur.niveau_iop,
           code_indicateur_cr_iop: indicateur.code_indicateur_cr_iop || "",
           code_cr_iop: indicateur.code_cr_iop || "",
-          intitule_indicateur_cr_iop: indicateur.intitule_indicateur_cr_iop || "",
+          intitule_indicateur_cr_iop:
+            indicateur.intitule_indicateur_cr_iop || "",
           periodicite_iop: indicateur.periodicite_iop || "",
           source_iop: indicateur.source_iop || "",
           responsable_iop: indicateur.responsable_iop || "",
@@ -44,7 +45,7 @@ export default function IndicateurCadreResultatForm({
           projet_iop: indicateur.projet_iop || "",
         }
       : {
-          niveau_iop: 1,
+          niveau_iop: undefined,
           code_indicateur_cr_iop: "",
           code_cr_iop: "",
           intitule_indicateur_cr_iop: "",
@@ -147,22 +148,19 @@ export default function IndicateurCadreResultatForm({
             <SelectInput
               {...field}
               label="Niveau IOP"
-              options={[
-                { value: 1, label: "Niveau 1 - Objectif" },
-                { value: 2, label: "Niveau 2 - Axe stratégique" },
-                { value: 3, label: "Niveau 3 - Action majeure" },
-                { value: 4, label: "Niveau 4 - Sous-action" },
-                { value: 5, label: "Niveau 5 - Activité" },
-              ]}
+              options={
+                [
+                  //TODO implementer les niveaux
+                ]
+              }
+              //TODO implementer les niveaux
               value={
                 field.value
                   ? { value: field.value, label: `Niveau ${field.value}` }
-                  : { value: 1, label: "Niveau 1" }
+                  : { value: "", label: "" }
               }
               onChange={(selectedOption) => {
-                field.onChange(
-                  selectedOption ? selectedOption.value : 1
-                );
+                field.onChange(selectedOption ? selectedOption.value : 1);
               }}
               placeholder="Sélectionner un niveau..."
               error={errors.niveau_iop}
@@ -178,13 +176,16 @@ export default function IndicateurCadreResultatForm({
             <SelectInput
               {...field}
               label="Périodicité IOP"
-              options={[
-                { value: "Mensuel", label: "Mensuel" },
-                { value: "Trimestriel", label: "Trimestriel" },
-                { value: "Semestriel", label: "Semestriel" },
-                { value: "Annuel", label: "Annuel" },
-                { value: "Ponctuel", label: "Ponctuel" },
-              ]}
+              options={
+                [
+                  //TODO implementer les periocites
+                  // { value: "Mensuel", label: "Mensuel" },
+                  // { value: "Trimestriel", label: "Trimestriel" },
+                  // { value: "Semestriel", label: "Semestriel" },
+                  // { value: "Annuel", label: "Annuel" },
+                  // { value: "Ponctuel", label: "Ponctuel" },
+                ]
+              }
               value={
                 field.value ? { value: field.value, label: field.value } : null
               }
@@ -218,27 +219,36 @@ export default function IndicateurCadreResultatForm({
           name="responsable_iop"
           control={control}
           render={({ field }) => (
-            <SelectInput
+            <Input
               {...field}
+              type="text"
               label="Responsable IOP"
-              options={[
-                { value: "DNACPN", label: "DNACPN" },
-                { value: "CPS", label: "CPS" },
-                { value: "INSTAT", label: "INSTAT" },
-                { value: "ANPE", label: "ANPE" },
-                { value: "DGMP", label: "DGMP" },
-                { value: "Autre", label: "Autre" },
-              ]}
-              value={
-                field.value ? { value: field.value, label: field.value } : null
-              }
-              onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : "");
-              }}
-              placeholder="Sélectionner un responsable..."
+              placeholder="Responsable de l'indicateur"
+              maxLength={200}
               error={errors.responsable_iop}
               required
             />
+            // <SelectInput
+            //   {...field}
+            //   label="Responsable IOP"
+            //   options={[
+            //     { value: "DNACPN", label: "DNACPN" },
+            //     { value: "CPS", label: "CPS" },
+            //     { value: "INSTAT", label: "INSTAT" },
+            //     { value: "ANPE", label: "ANPE" },
+            //     { value: "DGMP", label: "DGMP" },
+            //     { value: "Autre", label: "Autre" },
+            //   ]}
+            //   value={
+            //     field.value ? { value: field.value, label: field.value } : null
+            //   }
+            //   onChange={(selectedOption) => {
+            //     field.onChange(selectedOption ? selectedOption.value : "");
+            //   }}
+            //   placeholder="Sélectionner un responsable..."
+            //   error={errors.responsable_iop}
+            //   required
+            // />
           )}
         />
 
@@ -271,7 +281,6 @@ export default function IndicateurCadreResultatForm({
             />
           )}
         />
-
 
         <div className="md:col-span-2">
           <Controller

@@ -20,6 +20,8 @@ import {
   ListTodoIcon,
   File,
   CheckSquare,
+  FileIcon,
+  TargetIcon,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import ChangeProjectModal from "./ChangeProjectModal";
@@ -133,6 +135,28 @@ const Navbar: React.FC = () => {
           icon: CheckSquare,
         },
         { name: "Projets", href: "/projets", icon: File },
+      ],
+      href: true,
+    },
+    {
+      name: "Projets",
+      icon: FileIcon,
+      children: [
+        {
+          name: "Indicateurs cadre resultat",
+          href: "/indicateur_cadre_resultat",
+          icon: ChartBarIcon,
+        },
+        {
+          name: "Indicateurs du CMR",
+          href: "/indicateurs_cmr",
+          icon: ChartBarIcon,
+        },
+        {
+          name: "Cibles du CMR",
+          href: "/cible_cmr_projet",
+          icon: TargetIcon,
+        },
       ],
       href: true,
     },
