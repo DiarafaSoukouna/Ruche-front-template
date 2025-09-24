@@ -1,70 +1,70 @@
-import { useForm, Controller } from "react-hook-form";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
-import PhoneInput from "react-phone-number-input";
-import "react-phone-number-input/style.css";
-import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import SelectInput from "../../../components/SelectInput";
-import { personnelService } from "../../../services/personnelService";
-import { fonctionService } from "../../../services/fonctionService";
-import { titrePersonnelService } from "../../../services/titrePersonnelService";
-import { planSiteService } from "../../../services/planSiteService";
-import { apiClient } from "../../../lib/api";
+import { useForm, Controller } from 'react-hook-form'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
+import { zodResolver } from '@hookform/resolvers/zod'
+import PhoneInput from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
+import Button from '../../../components/Button'
+import Input from '../../../components/Input'
+import SelectInput from '../../../components/SelectInput'
+import { personnelService } from '../../../services/personnelService'
+import { fonctionService } from '../../../services/fonctionService'
+import { titrePersonnelService } from '../../../services/titrePersonnelService'
+import { planSiteService } from '../../../services/planSiteService'
+import { apiClient } from '../../../lib/api'
 import {
   personnelCreateSchema,
   type PersonnelCreateData,
-} from "../../../schemas/personnelSchema";
+} from '../../../schemas/personnelSchema'
 import type {
   Personnel,
   TitrePersonnel,
   PlanSite,
-} from "../../../types/entities";
-import type { Localite, Structure, Fonction } from "../../../types/entities";
+} from '../../../types/entities'
+import type { Localite, Structure, Fonction } from '../../../types/entities'
 
 interface PersonnelFormProps {
-  personnel?: Personnel;
-  onClose: () => void;
+  personnel?: Personnel
+  onClose: () => void
 }
 
 export default function PersonnelForm({
   personnel,
   onClose,
 }: PersonnelFormProps) {
-  const queryClient = useQueryClient();
-  const isEdit = !!personnel;
+  const queryClient = useQueryClient()
+  const isEdit = !!personnel
 
   // Récupération des données pour les selects
   const { data: regions = [] } = useQuery<Localite[]>({
-    queryKey: ["/localite/"],
+    queryKey: ['/localite/'],
     queryFn: async (): Promise<Localite[]> => {
-      const response = await apiClient.request("/localite/");
-      return Array.isArray(response) ? response : [];
+      const response = await apiClient.request('/localite/')
+      return Array.isArray(response) ? response : []
     },
-  });
+  })
 
   const { data: structures = [] } = useQuery<Structure[]>({
-    queryKey: ["/acteur/"],
+    queryKey: ['/acteur/'],
     queryFn: async (): Promise<Structure[]> => {
-      const response = await apiClient.request("/acteur/");
-      return Array.isArray(response) ? response : [];
+      const response = await apiClient.request('/acteur/')
+      return Array.isArray(response) ? response : []
     },
-  });
+  })
 
   const { data: fonctions = [] } = useQuery<Fonction[]>({
-    queryKey: ["fonctions"],
+    queryKey: ['fonctions'],
     queryFn: fonctionService.getAll,
-  });
+  })
 
   const { data: planSites = [] } = useQuery<PlanSite[]>({
-    queryKey: ["planSites"],
+    queryKey: ['planSites'],
     queryFn: planSiteService.getAll,
-  });
+  })
 
   const { data: titres = [] } = useQuery<TitrePersonnel[]>({
-    queryKey: ["titresPersonnel"],
+    queryKey: ['titresPersonnel'],
     queryFn: titrePersonnelService.getAll,
-  });
+  })
 
   const {
     handleSubmit,
@@ -72,16 +72,16 @@ export default function PersonnelForm({
     formState: { errors },
   } = useForm<PersonnelCreateData>({
     resolver: zodResolver(personnelCreateSchema),
-    mode: "onSubmit",
-    reValidateMode: "onChange",
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
     defaultValues: personnel
       ? {
-          email: personnel.email || "",
-          id_personnel_perso: personnel.id_personnel_perso || "",
+          email: personnel.email || '',
+          id_personnel_perso: personnel.id_personnel_perso || '',
           titre_personnel: personnel.titre_personnel?.id_titre || undefined,
-          prenom_perso: personnel.prenom_perso || "",
-          nom_perso: personnel.nom_perso || "",
-          contact_perso: personnel.contact_perso || "",
+          prenom_perso: personnel.prenom_perso || '',
+          nom_perso: personnel.nom_perso || '',
+          contact_perso: personnel.contact_perso || '',
           fonction_perso: personnel.fonction_perso?.id_fonction || undefined,
           service_perso: personnel.service_perso?.id_ds || undefined,
           niveau_perso: personnel.niveau_perso || 1,
@@ -96,7 +96,7 @@ export default function PersonnelForm({
       : {
           niveau_perso: 1,
         },
-  });
+  })
 
   const mutation = useMutation({
     mutationFn: (data: PersonnelCreateData) =>
@@ -104,14 +104,14 @@ export default function PersonnelForm({
         ? personnelService.update(personnel.n_personnel!, data)
         : personnelService.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/personnel/"] });
-      onClose();
+      queryClient.invalidateQueries({ queryKey: ['/personnel/'] })
+      onClose()
     },
-  });
+  })
 
   const onSubmit = (data: PersonnelCreateData) => {
-    mutation.mutate(data);
-  };
+    mutation.mutate(data)
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -176,7 +176,7 @@ export default function PersonnelForm({
         <Controller
           name="titre_personnel"
           control={control}
-          rules={{ required: "Le titre est obligatoire" }}
+          rules={{ required: 'Le titre est obligatoire' }}
           render={({ field }) => (
             <SelectInput
               {...field}
@@ -217,7 +217,7 @@ export default function PersonnelForm({
                 defaultCountry="GN"
                 value={value || undefined}
                 onChange={(phoneValue) => {
-                  onChange(phoneValue || "");
+                  onChange(phoneValue || '')
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -253,7 +253,7 @@ export default function PersonnelForm({
                   : null
               }
               onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
+                field.onChange(selectedOption ? selectedOption.value : null)
               }}
               isClearable
               placeholder="Sélectionner une structure..."
@@ -284,7 +284,7 @@ export default function PersonnelForm({
                   : null
               }
               onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
+                field.onChange(selectedOption ? selectedOption.value : null)
               }}
               isClearable
               placeholder="Sélectionner un service..."
@@ -317,7 +317,7 @@ export default function PersonnelForm({
                   : null
               }
               onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
+                field.onChange(selectedOption ? selectedOption.value : null)
               }}
               isClearable
               placeholder="Sélectionner une fonction..."
@@ -336,8 +336,8 @@ export default function PersonnelForm({
               label="Niveau d'accès"
               required
               options={[
-                { value: 1, label: "Éditeur" },
-                { value: 2, label: "Visiteur" },
+                { value: 1, label: 'Éditeur' },
+                { value: 2, label: 'Visiteur' },
               ]}
               placeholder="Sélectionner un niveau d'accès"
               onChange={(option) =>
@@ -347,7 +347,7 @@ export default function PersonnelForm({
                 field.value
                   ? {
                       value: field.value,
-                      label: field.value === 1 ? "Éditeur" : "Visiteur",
+                      label: field.value === 1 ? 'Éditeur' : 'Visiteur',
                     }
                   : null
               }
@@ -379,7 +379,7 @@ export default function PersonnelForm({
                   : null
               }
               onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
+                field.onChange(selectedOption ? selectedOption.value : null)
               }}
               isClearable
               placeholder="Sélectionner une région..."
@@ -394,9 +394,9 @@ export default function PersonnelForm({
           Annuler
         </Button>
         <Button type="submit" disabled={mutation.isPending}>
-          {mutation.isPending ? "Sauvegarde..." : "Sauvegarder"}
+          {mutation.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
         </Button>
       </div>
     </form>
-  );
+  )
 }

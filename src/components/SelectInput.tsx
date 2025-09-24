@@ -1,5 +1,5 @@
-import React from "react";
-import { FieldError } from "react-hook-form";
+import React from 'react'
+import { FieldError } from 'react-hook-form'
 import Select, {
   ControlProps,
   CSSObjectWithLabel,
@@ -7,19 +7,19 @@ import Select, {
   OptionProps,
   Props as SelectProps,
   StylesConfig,
-} from "react-select";
+} from 'react-select'
 
 interface Option {
-  value: string | number;
-  label: string;
+  value: string | number
+  label: string
 }
 
-interface SelectInputProps extends Omit<SelectProps<Option, false>, "options"> {
-  options: Option[];
-  placeholder?: string;
-  error?: FieldError;
-  label?: string;
-  required?: boolean;
+interface SelectInputProps extends Omit<SelectProps<Option, false>, 'options'> {
+  options: Option[]
+  placeholder?: string
+  error?: FieldError
+  label?: string
+  required?: boolean
 }
 
 const SelectInput: React.FC<SelectInputProps> = React.forwardRef<
@@ -33,23 +33,23 @@ const SelectInput: React.FC<SelectInputProps> = React.forwardRef<
       state: ControlProps<Option, false, GroupBase<Option>>
     ) => ({
       ...provided,
-      backgroundColor: "hsl(var(--input))",
-      color: "hsl(var(--foreground))",
-      borderColor: state.isFocused ? "hsl(var(--ring))" : "hsl(var(--border))",
-      boxShadow: state.isFocused ? `0 0 0 2px hsl(var(--ring))` : "none",
-      "&:hover": {
+      backgroundColor: 'hsl(var(--input))',
+      color: 'hsl(var(--foreground))',
+      borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))',
+      boxShadow: state.isFocused ? `0 0 0 2px hsl(var(--ring))` : 'none',
+      '&:hover': {
         borderColor: state.isFocused
-          ? "hsl(var(--ring))"
-          : "hsl(var(--border))",
+          ? 'hsl(var(--ring))'
+          : 'hsl(var(--border))',
       },
-      borderRadius: "var(--radius)",
-      padding: "2px",
+      borderRadius: 'var(--radius)',
+      padding: '2px',
     }),
     menu: (provided: CSSObjectWithLabel) => ({
       ...provided,
-      backgroundColor: "hsl(var(--background))",
-      color: "hsl(var(--foreground))",
-      borderRadius: "var(--radius)",
+      backgroundColor: 'hsl(var(--background))',
+      color: 'hsl(var(--foreground))',
+      borderRadius: 'var(--radius)',
     }),
     option: (
       provided: CSSObjectWithLabel,
@@ -57,33 +57,33 @@ const SelectInput: React.FC<SelectInputProps> = React.forwardRef<
     ) => ({
       ...provided,
       backgroundColor: state.isSelected
-        ? "hsl(var(--primary))"
+        ? 'hsl(var(--primary))'
         : state.isFocused
-        ? "hsl(var(--muted))"
-        : "hsl(var(--background))",
+        ? 'hsl(var(--muted))'
+        : 'hsl(var(--background))',
       color: state.isSelected
-        ? "hsl(var(--primary-foreground))"
-        : "hsl(var(--foreground))",
-      cursor: "pointer",
+        ? 'hsl(var(--primary-foreground))'
+        : 'hsl(var(--foreground))',
+      cursor: 'pointer',
     }),
     singleValue: (provided: CSSObjectWithLabel) => ({
       ...provided,
-      color: "hsl(var(--foreground))",
+      color: 'hsl(var(--foreground))',
     }),
     placeholder: (provided: CSSObjectWithLabel) => ({
       ...provided,
-      color: "hsl(var(--muted-foreground))",
+      color: 'hsl(var(--muted-foreground))',
     }),
     indicatorSeparator: (provided: CSSObjectWithLabel) => ({
       ...provided,
-      backgroundColor: "hsl(var(--border))",
+      backgroundColor: 'hsl(var(--border))',
     }),
     dropdownIndicator: (provided: CSSObjectWithLabel) => ({
       ...provided,
-      color: "hsl(var(--foreground))",
-      "&:hover": { color: "hsl(var(--primary))" },
+      color: 'hsl(var(--foreground))',
+      '&:hover': { color: 'hsl(var(--primary))' },
     }),
-  };
+  }
 
   return (
     <div className="w-full" ref={ref}>
@@ -105,8 +105,8 @@ const SelectInput: React.FC<SelectInputProps> = React.forwardRef<
         </p>
       )}
     </div>
-  );
-});
+  )
+})
 
-SelectInput.displayName = "SelectInput";
-export default SelectInput;
+SelectInput.displayName = 'SelectInput'
+export default SelectInput
