@@ -48,6 +48,7 @@ export default function IndicateurCmrForm({
           responsable_collecte_cmr:
             indicateur.responsable_collecte_cmr || undefined,
           cible_cmr: indicateur.cible_cmr || undefined,
+          fonction_agregat_cmr: indicateur.fonction_agregat_cmr || undefined,
           unite_cmr: indicateur.unite_cmr?.id_unite || null,
         }
       : {
@@ -58,6 +59,7 @@ export default function IndicateurCmrForm({
           annee_reference: new Date().getFullYear(),
           responsable_collecte_cmr: undefined,
           cible_cmr: undefined,
+          fonction_agregat_cmr: undefined,
           unite_cmr: null,
         },
   });
@@ -222,6 +224,37 @@ export default function IndicateurCmrForm({
               maxLength={50}
               error={errors.cible_cmr}
               required
+            />
+          )}
+        />
+
+        <Controller
+          name="fonction_agregat_cmr"
+          control={control}
+          render={({ field }) => (
+            <SelectInput
+              {...field}
+              label="Fonction d'agrégation"
+              placeholder="Sélectionner une fonction"
+              required
+              options={[
+                { value: "Somme", label: "Somme" },
+                { value: "Moyenne", label: "Moyenne" },
+                { value: "Minimum", label: "Minimum" },
+                { value: "Maximum", label: "Maximum" },
+                { value: "Comptage", label: "Comptage" },
+                { value: "Médiane", label: "Médiane" },
+                { value: "Ratio", label: "Ratio" },
+                { value: "Pourcentage", label: "Pourcentage" },
+              ]}
+              value={
+                field.value ? { value: field.value, label: field.value } : null
+              }
+              onChange={(selectedOption) => {
+                field.onChange(selectedOption ? selectedOption.value : "");
+              }}
+              isClearable
+              error={errors.fonction_agregat_cmr}
             />
           )}
         />

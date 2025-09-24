@@ -31,13 +31,11 @@ export default function IndicateurCadreResultatList({
     },
   });
 
-
   const handleDelete = (id: number) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer cet indicateur ?")) {
       deleteMutation.mutate(id);
     }
   };
-
 
   const columns = [
     {
@@ -58,11 +56,7 @@ export default function IndicateurCadreResultatList({
       render: (
         _: IndicateurCadreResultat[keyof IndicateurCadreResultat],
         indicateur: IndicateurCadreResultat
-      ) => (
-        <span className="font-mono text-sm">
-          {indicateur.code_cr_iop}
-        </span>
-      ),
+      ) => <span className="font-mono text-sm">{indicateur.code_cr_iop}</span>,
     },
     {
       key: "intitule_indicateur_cr_iop" as keyof IndicateurCadreResultat,
@@ -115,11 +109,7 @@ export default function IndicateurCadreResultatList({
       render: (
         _: IndicateurCadreResultat[keyof IndicateurCadreResultat],
         indicateur: IndicateurCadreResultat
-      ) => (
-        <span className="text-sm">
-          {indicateur.responsable_iop || "-"}
-        </span>
-      ),
+      ) => <span className="text-sm">{indicateur.responsable_iop || "-"}</span>,
     },
     {
       key: "source_iop" as keyof IndicateurCadreResultat,
@@ -127,11 +117,7 @@ export default function IndicateurCadreResultatList({
       render: (
         _: IndicateurCadreResultat[keyof IndicateurCadreResultat],
         indicateur: IndicateurCadreResultat
-      ) => (
-        <span className="text-sm">
-          {indicateur.source_iop || "-"}
-        </span>
-      ),
+      ) => <span className="text-sm">{indicateur.source_iop || "-"}</span>,
     },
     {
       key: "actions" as keyof IndicateurCadreResultat,
@@ -174,12 +160,9 @@ export default function IndicateurCadreResultatList({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <BarChart3 className="h-8 w-8 text-primary" />
-          <h2 className="text-2xl text-foreground font-bold">
-            Indicateurs de cadre de résultat
-          </h2>
-        </div>
+        <h2 className="text-2xl text-foreground font-bold">
+          Indicateurs de cadre de résultat
+        </h2>
         <Button variant="primary" onClick={onAdd}>
           <Plus size={20} />
           Nouvel Indicateur

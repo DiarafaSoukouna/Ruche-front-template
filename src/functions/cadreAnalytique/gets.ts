@@ -1,15 +1,18 @@
-import { api } from '../../lib/api'
+import { apiClient } from "../../lib/api";
+import { CadreAnalytiqueType } from "../../types/cadreAnalytique";
 
-export const getAllCadreAnalytique = async () => {
+export const getAllCadreAnalytique = async (programmeId?: number) => {
   try {
-    const res = await api.get('cadre_analytique/')
-    if (res) {
-      return res.data
+    let url = "cadre_analytique/";
+    if (programmeId) {
+      url += "?programme_ca=" + programmeId;
     }
+    return await apiClient.request<CadreAnalytiqueType[]>(url);
   } catch (error) {
-    console.error(error)
+    console.error(error);
+    return [];
   }
-}
+};
 
 // export const getCadreAnalytiqueConfigByProgramme = async (id: number) => {
 //   try {

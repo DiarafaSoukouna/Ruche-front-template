@@ -16,17 +16,17 @@ const FormNiveau: React.FC<Props> = ({
     newFormInputs.splice(index, 1)
     setFormInputs(newFormInputs)
   }
-  const handleInputChange = (index: number, field: string, value: string) => {
+  const handleInputChange = (
+    index: number,
+    field: string,
+    value: string | number
+  ) => {
     const newFormInputs = [...formInputs]
-
-    if (field === 'nombre_nlc') {
-      ;(newFormInputs[index] as any)[field] = Number(value)
-    } else if (field === 'Code_number_nlc') {
+    if (field === 'taille_code_niveau_ap') {
       ;(newFormInputs[index] as any)[field] = Number(value)
     } else {
       ;(newFormInputs[index] as any)[field] = value
     }
-
     setFormInputs(newFormInputs)
     console.log('ok', newFormInputs)
   }
@@ -41,27 +41,30 @@ const FormNiveau: React.FC<Props> = ({
             <input
               type="text"
               placeholder="Libelle..."
-              value={input.libelle_csa}
+              value={input.libelle_niveau_ap}
               onChange={(e) =>
-                handleInputChange(index, 'libelle_csa', e.target.value)
+                handleInputChange(index, 'libelle_niveau_ap', e.target.value)
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </td>
           <td className="px-6 py-4 whitespace-nowrap">
-            <select
-              value={input.type_csa}
+            <input
+              type="number"
+              placeholder="Taille code..."
+              min={1}
+              value={input.taille_code_niveau_ap}
               onChange={(e) =>
-                handleInputChange(index, 'type_csa', e.target.value)
+                handleInputChange(
+                  index,
+                  'taille_code_niveau_ap',
+                  Number(e.target.value)
+                )
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
-            >
-              <option value={1}>Produit</option>
-              <option value={2}>Effet</option>
-              <option value={3}>Impact</option>
-            </select>
+            />
           </td>
           <td className="px-6 py-4 whitespace-nowrap">
             <button

@@ -1,6 +1,6 @@
 import { api } from '../../lib/api'
 
-export const DeleteCadreAnalytique = async (id: number) => {
+export const deleteCadreAnalytique = async (id: number) => {
   try {
     const res = await api.delete(`cadre_analytique/${id}/`)
     if (res) {

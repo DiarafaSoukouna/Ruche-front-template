@@ -1,12 +1,12 @@
 import { api } from '../../lib/api'
 import { typeProgram } from './types'
-import { Programme } from '../../types/programme'
+import { ProgrammeTypes } from '../../types/programme'
 
 export const getAllProgrammes = async () => {
   try {
     const { data } = await api.get('programme/')
 
-    return data as Programme[]
+    return data as ProgrammeTypes[]
   } catch (error) {
     console.error(error)
   }

@@ -151,6 +151,18 @@ export default function IndicateurCmrDetail({
               </p>
             </div>
           </div>
+
+          <div className="flex items-start space-x-3">
+            <Database className="h-5 w-5 text-muted-foreground mt-0.5" />
+            <div>
+              <h4 className="text-sm font-medium text-foreground">
+                Fonction d'agrégation
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                {indicateur.fonction_agregat_cmr || "Non définie"}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

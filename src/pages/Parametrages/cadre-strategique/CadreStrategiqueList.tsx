@@ -4,6 +4,7 @@ import Button from "../../../components/Button";
 import Table from "../../../components/Table";
 import type { CadreStrategique } from "../../../types/entities";
 import { cadreStrategiqueService } from "../../../services/cadreStrategiqueService";
+import { useRoot } from "../../../contexts/RootContext";
 
 interface CadreStrategiqueListProps {
   onEdit: (cadre: CadreStrategique) => void;
@@ -19,11 +20,12 @@ export default function CadreStrategiqueList({
   onOpenConfig,
 }: CadreStrategiqueListProps) {
   const queryClient = useQueryClient();
+  const { currentProgramme } = useRoot();
 
   // Fetch cadres strategiques data
   const { data: cadres = [] } = useQuery<CadreStrategique[]>({
     queryKey: ["cadresStrategiques"],
-    queryFn: cadreStrategiqueService.getAll,
+    queryFn: () => cadreStrategiqueService.getAll(currentProgramme?.id_programme ?? 0),
   });
 
   const deleteMutation = useMutation({
@@ -55,14 +57,13 @@ export default function CadreStrategiqueList({
     {
       key: "intutile_cs" as keyof CadreStrategique,
       title: "Intitulé",
-      render: (_: CadreStrategique[keyof CadreStrategique], row: CadreStrategique) => (
+      render: (
+        _: CadreStrategique[keyof CadreStrategique],
+        row: CadreStrategique
+      ) => (
         <div>
-          <div className="font-medium text-foreground">
-            {row.intutile_cs}
-          </div>
-          <div className="text-xs text-muted-foreground">
-            {row.abgrege_cs}
-          </div>
+          <div className="font-medium text-foreground">{row.intutile_cs}</div>
+          <div className="text-xs text-muted-foreground">{row.abgrege_cs}</div>
         </div>
       ),
     },
@@ -73,19 +74,52 @@ export default function CadreStrategiqueList({
     {
       key: "cout_axe" as keyof CadreStrategique,
       title: "Coût",
-      render: (_: CadreStrategique[keyof CadreStrategique], row: CadreStrategique) => (
+      render: (
+        _: CadreStrategique[keyof CadreStrategique],
+        row: CadreStrategique
+      ) => (
         <span className="text-sm font-medium">
-          {new Intl.NumberFormat('fr-FR', {
-            style: 'currency',
-            currency: 'XOF'
+          {new Intl.NumberFormat("fr-FR", {
+            style: "currency",
+            currency: "XOF",
           }).format(row.cout_axe)}
         </span>
       ),
     },
     {
+      key: "parent_cs" as keyof CadreStrategique,
+      title: "Parent",
+      render: (
+        _: CadreStrategique[keyof CadreStrategique],
+        row: CadreStrategique
+      ) => (
+        <div className="text-sm">
+          {row.parent_cs ? (
+            <div>
+              <div className="font-medium text-foreground">
+                {typeof row.parent_cs === "object"
+                  ? row.parent_cs.intutile_cs
+                  : row.parent_cs}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {typeof row.parent_cs === "object"
+                  ? row.parent_cs.code_cs
+                  : row.parent_cs}
+              </div>
+            </div>
+          ) : (
+            <span className="text-muted-foreground italic">Racine</span>
+          )}
+        </div>
+      ),
+    },
+    {
       key: "partenaire_cs" as keyof CadreStrategique,
       title: "Partenaire",
-      render: (_: CadreStrategique[keyof CadreStrategique], row: CadreStrategique) => (
+      render: (
+        _: CadreStrategique[keyof CadreStrategique],
+        row: CadreStrategique
+      ) => (
         <span className="text-sm">
           {row.partenaire_cs?.nom_acteur || "Non défini"}
         </span>
@@ -94,7 +128,10 @@ export default function CadreStrategiqueList({
     {
       key: "actions" as keyof CadreStrategique,
       title: "Actions",
-      render: (_: CadreStrategique[keyof CadreStrategique], row: CadreStrategique) => (
+      render: (
+        _: CadreStrategique[keyof CadreStrategique],
+        row: CadreStrategique
+      ) => (
         <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
@@ -167,13 +204,15 @@ export default function CadreStrategiqueList({
         </div>
         <div className="bg-card border border-border rounded-lg p-4">
           <div className="text-2xl font-bold text-green-600">
-            {new Set(cadres.map(c => c.niveau_cs)).size}
+            {new Set(cadres.map((c) => c.niveau_cs)).size}
           </div>
           <div className="text-sm text-muted-foreground">Niveaux</div>
         </div>
         <div className="bg-card border border-border rounded-lg p-4">
           <div className="text-2xl font-bold text-purple-600">
-            {cadres.reduce((sum, c) => sum + c.cout_axe, 0).toLocaleString('fr-FR')}
+            {cadres
+              .reduce((sum, c) => sum + c.cout_axe, 0)
+              .toLocaleString("fr-FR")}
           </div>
           <div className="text-sm text-muted-foreground">Coût total (XOF)</div>
         </div>

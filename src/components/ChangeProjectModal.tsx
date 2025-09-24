@@ -12,11 +12,6 @@ const ChangeProjectModal = memo(() => {
     } = useNavbar();
 
     return (
-        <Modal
-            isOpen={showChangeProjectModal}
-            onClose={() => setShowChangeProjectModal(false)}
-        >
-            <h3 className="text-xl font-bold mb-4" >Selectionnez le projet desiré.</h3>
 
             <select
                 className="w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50 outline-none text-dark "
@@ -30,7 +25,6 @@ const ChangeProjectModal = memo(() => {
                     >{programme.sigle_programme} | {programme.nom_programme}</option>
                 ))}
             </select>
-        </Modal>
     )
 })
 

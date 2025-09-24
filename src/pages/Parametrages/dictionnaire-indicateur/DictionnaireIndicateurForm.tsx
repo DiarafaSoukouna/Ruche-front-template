@@ -257,11 +257,16 @@ export default function DictionnaireIndicateurForm({
               placeholder="Sélectionner une typologie"
               required
               options={[
-                { value: "Impact", label: "Impact" },
-                { value: "Effet", label: "Effet" },
-                { value: "Produit", label: "Produit" },
-                { value: "Processus", label: "Processus" },
-                { value: "Contexte", label: "Contexte" },
+                { value: "Valeur absolue", label: "Valeur absolue" },
+                { value: "Valeur relative", label: "Valeur relative" },
+                {
+                  value: "Typologie quantitative",
+                  label: "Typologie quantitative",
+                },
+                {
+                  value: "Typologie qualitative",
+                  label: "Typologie qualitative",
+                },
               ]}
               value={
                 field.value ? { value: field.value, label: field.value } : null
