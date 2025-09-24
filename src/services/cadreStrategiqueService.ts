@@ -7,11 +7,12 @@ import type {
 
 export const cadreStrategiqueService = {
   // Get all cadres strategiques
-  getAll: async (): Promise<CadreStrategique[]> => {
+  getAll: async (programmeId?: number): Promise<CadreStrategique[]> => {
     try {
-      const response = await apiClient.request<CadreStrategique[]>(
-        "/cadre_strategique/"
-      );
+      const url = programmeId
+        ? `/cadre_strategique/?programme_cs=${programmeId}`
+        : "/cadre_strategique/";
+      const response = await apiClient.request<CadreStrategique[]>(url);
       return Array.isArray(response) ? response : [];
     } catch (error) {
       toast.error("Erreur lors de la récupération des cadres stratégiques");

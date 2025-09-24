@@ -1,6 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, Calendar, Target, Code, Building, FolderOpen } from "lucide-react";
+import {
+  ArrowLeft,
+  Edit,
+  Calendar,
+  Target,
+  Code,
+  Building,
+  FolderOpen,
+} from "lucide-react";
 import Button from "../../../components/Button";
 import Card from "../../../components/Card";
 import { cibleCmrProjetService } from "../../../services/cibleCmrProjetService";
@@ -13,18 +21,40 @@ export default function CibleCmrProjetDetail() {
   const navigate = useNavigate();
   const cibleId = parseInt(id || "0");
 
-  const { data: cible, isLoading, error } = useQuery({
+  const {
+    data: cible,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["cible-cmr-projet", cibleId],
     queryFn: () => cibleCmrProjetService.getById(cibleId),
-    enabled: !!cibleId,
+    enabled: !!cibleId && !isNaN(cibleId) && cibleId > 0,
   });
 
-  // Récupérer les détails de l'indicateur si disponible
-  const { data: indicateur } = useQuery({
-    queryKey: ["indicateur-cadre-resultat", cible?.code_indicateur_crp],
-    queryFn: () => indicateurCadreResultatService.getById(cible!.code_indicateur_crp!),
+  // Récupérer tous les indicateurs pour trouver celui correspondant au code
+  const { data: indicateurs = [], isLoading: isLoadingIndicateurs } = useQuery({
+    queryKey: ["indicateurs-cadre-resultat"],
+    queryFn: indicateurCadreResultatService.getAll,
     enabled: !!cible?.code_indicateur_crp,
+    staleTime: 5 * 60 * 1000, // Cache pendant 5 minutes
   });
+
+  // Trouver l'indicateur correspondant au code
+  const indicateur = indicateurs.find(
+    (ind) => ind.code_indicateur_cr_iop === cible?.code_indicateur_crp
+  );
+
+  // Validation de l'ID après les hooks
+  if (!id || isNaN(cibleId) || cibleId <= 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">ID de cible invalide</p>
+        <Button onClick={() => navigate(-1)} className="mt-4">
+          Retour
+        </Button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -37,7 +67,9 @@ export default function CibleCmrProjetDetail() {
   if (error || !cible) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600">Erreur lors du chargement de la cible CMR projet</p>
+        <p className="text-red-600">
+          Erreur lors du chargement de la cible CMR projet
+        </p>
         <Button onClick={() => navigate(-1)} className="mt-4">
           Retour
         </Button>
@@ -67,7 +99,11 @@ export default function CibleCmrProjetDetail() {
           </div>
         </div>
         <Button
-          onClick={() => navigate(`/parametrages/cible-cmr-projet/${cible.id_cible_indicateur_crp}/edit`)}
+          onClick={() =>
+            navigate(
+              `/parametrages/cible-cmr-projet/${cible.id_cible_indicateur_crp}/edit`
+            )
+          }
           className="flex items-center gap-2"
         >
           <Edit className="h-4 w-4" />
@@ -126,22 +162,41 @@ export default function CibleCmrProjetDetail() {
                 <p className="text-gray-900">
                   {cible.code_indicateur_crp || "Non défini"}
                 </p>
-                {indicateur && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    {indicateur.libelle_icr}
-                  </p>
+                {isLoadingIndicateurs && cible.code_indicateur_crp && (
+                  <div className="mt-2 p-2 bg-gray-50 rounded-md">
+                    <p className="text-sm text-gray-500">
+                      Chargement des informations de l'indicateur...
+                    </p>
+                  </div>
                 )}
+                {!isLoadingIndicateurs && indicateur && (
+                  <div className="mt-2 p-2 bg-blue-50 rounded-md">
+                    <p className="text-sm font-medium text-blue-900">
+                      {indicateur.intitule_indicateur_cr_iop as string}
+                    </p>
+                    <p className="text-xs text-blue-700">
+                      Niveau: {indicateur.niveau_iop as number}
+                    </p>
+                  </div>
+                )}
+                {!isLoadingIndicateurs &&
+                  !indicateur &&
+                  cible.code_indicateur_crp && (
+                    <div className="mt-2 p-2 bg-yellow-50 rounded-md">
+                      <p className="text-sm text-yellow-800">
+                        Indicateur non trouvé
+                      </p>
+                    </div>
+                  )}
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Building className="h-5 w-5 text-gray-400" />
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Code UG
+                  Code UGL
                 </label>
-                <p className="text-gray-900">
-                  {cible.code_ug || "Non défini"}
-                </p>
+                <p className="text-gray-900">{cible.code_ug || "Non défini"}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 md:col-span-2">

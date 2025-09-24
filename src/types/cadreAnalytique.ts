@@ -1,4 +1,4 @@
-export interface CadreAnalytiqueTypes {
+export interface CadreAnalytiqueType {
   id_ca: number;
   code_ca: string;
   intutile_ca: string;
@@ -7,5 +7,5 @@ export interface CadreAnalytiqueTypes {
   cout_axe: number;
   partenaire_ca: number | null;
   parent_ca: number | null;
-  projet_ca: number | null;
+  programme_ca: number | null;
 }

@@ -16,6 +16,7 @@ export const niveauCadreAnalytiqueService = {
       const response = await apiClient.request<NiveauCadreAnalytique[]>(
         "/niveau_cadre_analytique/"
       );
+      response.sort((a, b) => a.nombre_nca - b.nombre_nca);
       return response || [];
     } catch (error) {
       toast.error("Erreur lors de la récupération des niveaux");
@@ -112,20 +113,6 @@ export const niveauCadreAnalytiqueService = {
       return response || [];
     } catch (error) {
       toast.error("Erreur lors de la récupération des niveaux par type");
-      throw error;
-    }
-  },
-
-  // Récupérer les niveaux ordonnés par nombre
-  async getAllOrdered(): Promise<NiveauCadreAnalytique[]> {
-    try {
-      const response = await apiClient.request<NiveauCadreAnalytique[]>(
-        "/niveau_cadre_analytique/?ordering=nombre_nca"
-      );
-      response.sort((a, b) => a.nombre_nca - b.nombre_nca);
-      return response || [];
-    } catch (error) {
-      toast.error("Erreur lors de la récupération des niveaux ordonnés");
       throw error;
     }
   },

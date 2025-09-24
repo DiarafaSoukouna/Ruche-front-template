@@ -41,7 +41,7 @@ export default function NiveauCadreStrategiqueList() {
   // Fetch niveaux data
   const { data: niveaux = [] } = useQuery<NiveauCadreStrategique[]>({
     queryKey: ["niveaux-cadre-strategique"],
-    queryFn: niveauCadreStrategiqueService.getAllOrdered,
+    queryFn: niveauCadreStrategiqueService.getAll,
   });
 
   const deleteMutation = useMutation({

@@ -25,6 +25,7 @@ import type {
 import { cadreStrategiqueService } from "../../../services/cadreStrategiqueService";
 import { niveauCadreStrategiqueService } from "../../../services/niveauCadreStrategiqueService";
 import CadreStrategiqueForm from "./CadreStrategiqueForm";
+import { useRoot } from "../../../contexts/RootContext";
 
 const CadreStrategiquePage: React.FC = () => {
   const [niveauCadreStrategiques, setNiveauCadreStrategiques] = useState<
@@ -42,17 +43,14 @@ const CadreStrategiquePage: React.FC = () => {
   const [loadNiveau, setLoadNiveau] = useState<boolean>(false);
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [currentId, setCurrentId] = useState(0);
-  // const { currentProgramme } = useRoot();
+  const { currentProgramme } = useRoot();
 
   const AllNiveau = useCallback(async () => {
     setLoadingNiv(true);
     try {
-      const res = await niveauCadreStrategiqueService.getAllOrdered();
+      const res = await niveauCadreStrategiqueService.getAll();
       setNiveauCadreStrategiques(res);
-      if (res.length > 0) {
-        setAddBoutonLabel(res[0].libelle_nsc ?? "");
-        setCurrentId(res[0].id_nsc ?? 0);
-      }
+      // La sélection du premier niveau par défaut est maintenant gérée dans useEffect
     } catch (error) {
       toast.error(
         "Erreur lors de la récupération des niveaux du cadre stratégique"
@@ -84,22 +82,32 @@ const CadreStrategiquePage: React.FC = () => {
     setCurrentId(id);
   };
 
-  const getCadreStrategiques = async () => {
+  const getCadreStrategiques = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await cadreStrategiqueService.getAll();
+      const res = await cadreStrategiqueService.getAll(currentProgramme?.id_programme);
       setCadreStrategiques(res);
       setLoading(false);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_) {
       setLoading(false);
     }
-  };
+  }, [currentProgramme?.id_programme]);
 
   useEffect(() => {
     getCadreStrategiques();
     AllNiveau();
-  }, [AllNiveau]);
+  }, [AllNiveau, getCadreStrategiques]); // Exécuter seulement au montage du composant
+
+  // Effet séparé pour définir le premier niveau par défaut
+  useEffect(() => {
+    if (niveauCadreStrategiques.length > 0 && tabActive === "") {
+      const firstNiveau = niveauCadreStrategiques[0];
+      setTabActive("1"); // Premier niveau (index + 1)
+      setAddBoutonLabel(firstNiveau.libelle_nsc ?? "");
+      setCurrentId(firstNiveau.id_nsc ?? 0);
+    }
+  }, [niveauCadreStrategiques, tabActive]);
 
   const handleAddForm = (bool: boolean) => {
     setShowForm(bool);
@@ -132,10 +140,10 @@ const CadreStrategiquePage: React.FC = () => {
   return (
     <>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold text-gray-900">Cadre Stratégique</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Cadre stratégique</h1>
         <Button variant="outline" onClick={() => setLoadNiveau(true)}>
           <MapPinIcon className="w-4 h-4 mr-2" />
-          Niveaux du Cadre Stratégique
+          Niveaux du cadre stratégique
         </Button>
       </div>
 
@@ -148,7 +156,8 @@ const CadreStrategiquePage: React.FC = () => {
         <NiveauCadreStrategiquePage />
       </Modal>
 
-      <Tabs defaultValue={niveauCadreStrategiques.length > 0 ? "1" : ""}>
+      {niveauCadreStrategiques.length > 0 && (
+        <Tabs key={niveauCadreStrategiques.length} defaultValue={tabActive || "1"}>
         <div className="mt-2 mb-2 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <TabsList className="flex space-x-2">
             {niveauCadreStrategiques.length > 0
@@ -309,7 +318,20 @@ const CadreStrategiquePage: React.FC = () => {
             )
           )
         )}
-      </Tabs>
+        </Tabs>
+      )}
+
+      {niveauCadreStrategiques.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-muted-foreground mb-4">
+            Aucun niveau de cadre stratégique configuré
+          </div>
+          <Button onClick={() => setLoadNiveau(true)}>
+            <MapPinIcon className="w-4 h-4 mr-2" />
+            Configurer les niveaux
+          </Button>
+        </div>
+      )}
 
       <Modal
         onClose={() => setShowForm(false)}

@@ -23,9 +23,12 @@ export interface CibleCmrProjet extends Record<string, unknown> {
   id_cible_indicateur_crp: number; // readOnly
   annee: string; // date format - Année de la cible
   valeur_cible_indcateur_crp: number; // Valeur cible de l'indicateur CRP
-  code_indicateur_crp?: number | null; // Code de l'indicateur de résultat du projet, relation avec IndicateurCadreResultat
-  code_ug?: string | null;
+  code_indicateur_crp?: string | null; // Code de l'indicateur de résultat du projet, relation avec IndicateurCadreResultat via code_indicateur_cr_iop
+  code_ug?: string | null; // Code UGL, relation avec UGL via code_ugl
   code_projet?: string | null; // Code du projet concerné
+  // Relations populées
+  indicateur_crp?: IndicateurCadreResultat | null; // Relation vers IndicateurCadreResultat
+  ugl?: UGL | null; // Relation vers UGL
 }
 
 export interface TitrePersonnel extends Record<string, unknown> {
@@ -218,6 +221,7 @@ export interface IndicateurCmr extends Record<string, unknown> {
   annee_reference: number;
   responsable_collecte_cmr: string;
   cible_cmr: string;
+  fonction_agregat_cmr: string;
   unite_cmr?: UniteIndicateur | null;
   created_at?: string;
   updated_at?: string;
@@ -239,6 +243,35 @@ export interface DictionnaireIndicateur extends Record<string, unknown> {
   updated_at?: string;
 }
 
+// Niveau Cadre Résultat
+export interface NiveauCadreResultat extends Record<string, unknown> {
+  id_ncr: number;
+  nombre_ncr: number;
+  libelle_ncr: string;
+  code_number_ncr: number;
+  type_niveau: 1 | 2 | 3; // 1 - Effet, 2 - Produit, 3 - Impact
+}
+
+// Cadre Résultat
+export interface CadreResultat extends Record<string, unknown> {
+  id_cr: number;
+  code_cr: string;
+  intutile_cr: string;
+  abgrege_cr: string;
+  cout_axe: number;
+  date_enregistrement: string; // Géré auto par le backend
+  date_modification: string; // Géré auto par le backend
+  etat?: string | null;
+  niveau_cr?: number | null;
+  partenaire_cr?: Acteur | string | null;
+  parent_cr?: number | null;
+  projet_cr?: number | null;
+  // Relations populées
+  niveau?: NiveauCadreResultat | null;
+  partenaire?: Acteur | null;
+  parent?: CadreResultat | null;
+}
+
 // Form Data Types
 export type UniteIndicateurFormData = Omit<UniteIndicateur, "id_unite">;
 export type CadreSecteurFormData = Omit<CadreSecteur, "id_cl">;
@@ -250,6 +283,11 @@ export type IndicateurCmrFormData = Omit<IndicateurCmr, "id_ref_ind_cmr">;
 export type DictionnaireIndicateurFormData = Omit<
   DictionnaireIndicateur,
   "id_ref_ind_ref"
+>;
+export type NiveauCadreResultatFormData = Omit<NiveauCadreResultat, "id_ncr">;
+export type CadreResultatFormData = Omit<
+  CadreResultat,
+  "id_cr" | "date_enregistrement" | "date_modification"
 >;
 
 // Programme Entity

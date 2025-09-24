@@ -87,6 +87,10 @@ export const indicateurCmrSchema = z.object({
     .min(1, "Le responsable est requis")
     .max(100),
   cible_cmr: z.string().min(1, "La cible est requise").max(50),
+  fonction_agregat_cmr: z
+    .string()
+    .min(1, "La fonction d'agrégation est requise")
+    .max(100),
   unite_cmr: z.number().nullable().optional(),
 });
 
