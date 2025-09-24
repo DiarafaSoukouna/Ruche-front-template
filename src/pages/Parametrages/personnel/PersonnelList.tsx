@@ -1,158 +1,158 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { Edit, TrashIcon, Plus, Check, X, Settings } from "lucide-react";
-import Button from "../../../components/Button";
-import Table from "../../../components/Table";
-import Modal from "../../../components/Modal";
-import type { Personnel } from "../../../types/entities";
-import { personnelService } from "../../../services/personnelService";
-import { apiClient } from "../../../lib/api";
-import TitrePersonnelPage from "./titre-personnel/TitrePersonnelPage";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { Edit, TrashIcon, Plus, Check, X, Settings } from 'lucide-react'
+import Button from '../../../components/Button'
+import Table from '../../../components/Table'
+import Modal from '../../../components/Modal'
+import type { Personnel } from '../../../types/entities'
+import { personnelService } from '../../../services/personnelService'
+import { apiClient } from '../../../lib/api'
+import TitrePersonnelPage from './titre-personnel/TitrePersonnelPage'
 
 interface PersonnelListProps {
-  onEdit: (personnel: Personnel) => void;
-  onAdd: () => void;
+  onEdit: (personnel: Personnel) => void
+  onAdd: () => void
 }
 
 export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
-  const queryClient = useQueryClient();
-  const [showTitreModal, setShowTitreModal] = useState(false);
+  const queryClient = useQueryClient()
+  const [showTitreModal, setShowTitreModal] = useState(false)
 
   // Fetch personnel data
   const { data: personnels = [] } = useQuery<Personnel[]>({
-    queryKey: ["personnel"],
+    queryKey: ['personnel'],
     queryFn: async (): Promise<Personnel[]> => {
-      const response = await apiClient.request("/personnel/");
-      return Array.isArray(response) ? response : [];
+      const response = await apiClient.request('/personnel/')
+      return Array.isArray(response) ? response : []
     },
-  });
+  })
 
   const deleteMutation = useMutation({
     mutationFn: personnelService.delete,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["personnel"] });
+      queryClient.invalidateQueries({ queryKey: ['personnel'] })
     },
-  });
+  })
 
   const enableMutation = useMutation({
     mutationFn: personnelService.enable,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["personnel"] });
+      queryClient.invalidateQueries({ queryKey: ['personnel'] })
     },
-  });
+  })
 
   const disableMutation = useMutation({
     mutationFn: personnelService.disable,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["personnel"] });
+      queryClient.invalidateQueries({ queryKey: ['personnel'] })
     },
-  });
+  })
 
   const handleDelete = (id: number) => {
     if (
-      window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")
+      window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')
     ) {
-      deleteMutation.mutate(id);
+      deleteMutation.mutate(id)
     }
-  };
+  }
 
   const handleToggleStatus = (personnel: Personnel) => {
-    const isActive = personnel.statut === 1;
-    const action = isActive ? "désactiver" : "activer";
+    const isActive = personnel.statut === 1
+    const action = isActive ? 'désactiver' : 'activer'
 
     if (
       window.confirm(`Êtes-vous sûr de vouloir ${action} cet utilisateur ?`)
     ) {
       if (isActive) {
-        disableMutation.mutate(personnel.n_personnel!);
+        disableMutation.mutate(personnel.n_personnel!)
       } else {
-        enableMutation.mutate(personnel.n_personnel!);
+        enableMutation.mutate(personnel.n_personnel!)
       }
     }
-  };
+  }
 
   const columns = [
     {
-      key: "titre_personnel" as keyof Personnel,
-      title: "Titre",
+      key: 'titre_personnel' as keyof Personnel,
+      title: 'Titre',
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
-        if (!personnel.titre_personnel) return "-";
-        return personnel.titre_personnel.libelle_titre;
+        if (!personnel.titre_personnel) return '-'
+        return personnel.titre_personnel.libelle_titre
       },
     },
     {
-      key: "prenom_perso" as keyof Personnel,
-      title: "Prénom",
+      key: 'prenom_perso' as keyof Personnel,
+      title: 'Prénom',
     },
     {
-      key: "id_personnel_perso" as keyof Personnel,
-      title: "Identifiant",
+      key: 'id_personnel_perso' as keyof Personnel,
+      title: 'Identifiant',
     },
     {
-      key: "email" as keyof Personnel,
-      title: "Email",
+      key: 'email' as keyof Personnel,
+      title: 'Email',
     },
     {
-      key: "contact_perso" as keyof Personnel,
-      title: "Contact",
+      key: 'contact_perso' as keyof Personnel,
+      title: 'Contact',
     },
     {
-      key: "fonction_perso" as keyof Personnel,
-      title: "Fonction",
+      key: 'fonction_perso' as keyof Personnel,
+      title: 'Fonction',
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
-        if (!personnel.fonction_perso) return "-";
-        return personnel.fonction_perso.nom_fonction;
+        if (!personnel.fonction_perso) return '-'
+        return personnel.fonction_perso.nom_fonction
       },
     },
     {
-      key: "service_perso" as keyof Personnel,
-      title: "Service/Direction",
+      key: 'service_perso' as keyof Personnel,
+      title: 'Service/Direction',
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
-        if (!personnel.service_perso) return "-";
-        return personnel.service_perso.intutile_ds;
+        if (!personnel.service_perso) return '-'
+        return personnel.service_perso.intutile_ds
       },
     },
     {
-      key: "structure_perso" as keyof Personnel,
-      title: "Structure",
+      key: 'structure_perso' as keyof Personnel,
+      title: 'Structure',
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
-        if (!personnel.structure_perso) return "-";
-        return `${personnel.structure_perso.nom_acteur} (${personnel.structure_perso.code_acteur})`;
+        if (!personnel.structure_perso) return '-'
+        return `${personnel.structure_perso.nom_acteur} (${personnel.structure_perso.code_acteur})`
       },
     },
     {
-      key: "region_perso" as keyof Personnel,
-      title: "Région",
+      key: 'region_perso' as keyof Personnel,
+      title: 'Région',
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
-        if (!personnel.region_perso) return "-";
-        return `${personnel.region_perso.intitule_loca} (${personnel.region_perso.code_loca})`;
+        if (!personnel.region_perso) return '-'
+        return `${personnel.region_perso.intitule_loca} (${personnel.region_perso.code_loca})`
       },
     },
     {
-      key: "niveau_perso" as keyof Personnel,
+      key: 'niveau_perso' as keyof Personnel,
       title: "Niveau d'accès",
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => {
-        return personnel.niveau_perso === 1 ? "Editeur" : "Visiteur";
+        return personnel.niveau_perso === 1 ? 'Editeur' : 'Visiteur'
       },
     },
     {
-      key: "statut" as keyof Personnel,
-      title: "Statut",
+      key: 'statut' as keyof Personnel,
+      title: 'Statut',
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => (
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
             personnel.statut === 1
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
+              ? 'bg-green-100 text-green-800'
+              : 'bg-red-100 text-red-800'
           }`}
         >
-          {personnel.statut === 1 ? "Actif" : "Inactif"}
+          {personnel.statut === 1 ? 'Actif' : 'Inactif'}
         </span>
       ),
     },
     {
-      key: "actions" as keyof Personnel,
-      title: "Actions",
+      key: 'actions' as keyof Personnel,
+      title: 'Actions',
       render: (_: Personnel[keyof Personnel], personnel: Personnel) => (
         <div className="flex gap-2">
           <Button
@@ -195,7 +195,7 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
         </div>
       ),
     },
-  ];
+  ]
 
   return (
     <div className="space-y-8">
@@ -236,5 +236,5 @@ export default function PersonnelList({ onEdit, onAdd }: PersonnelListProps) {
         <TitrePersonnelPage />
       </Modal>
     </div>
-  );
+  )
 }

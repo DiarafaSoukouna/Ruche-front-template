@@ -1,90 +1,90 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, TrashIcon } from "lucide-react";
-import { toast } from "react-toastify";
-import Table from "../../../components/Table";
-import Button from "../../../components/Button";
-import { conventionService } from "../../../services/conventionService";
-import { Convention } from "../../../types/entities";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Plus, Edit, TrashIcon } from 'lucide-react'
+import { toast } from 'react-toastify'
+import Table from '../../../components/Table'
+import Button from '../../../components/Button'
+import { conventionService } from '../../../services/conventionService'
+import { Convention } from '../../../types/entities'
 
 interface ConventionListProps {
-  onEdit: (convention: Convention) => void;
-  onAdd: () => void;
+  onEdit: (convention: Convention) => void
+  onAdd: () => void
 }
 
 export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   // Fetch convention data
   const { data: conventions = [] } = useQuery<Convention[]>({
-    queryKey: ["/convention/"],
+    queryKey: ['/convention/'],
     queryFn: conventionService.getAll,
-  });
+  })
 
   const deleteMutation = useMutation({
     mutationFn: conventionService.delete,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/convention/"] });
+      queryClient.invalidateQueries({ queryKey: ['/convention/'] })
     },
     onError: () => {
-      toast.error("Erreur lors de la suppression");
+      toast.error('Erreur lors de la suppression')
     },
-  });
+  })
 
   const handleDelete = (convention: Convention) => {
     if (
-      window.confirm("Êtes-vous sûr de vouloir supprimer cette convention ?")
+      window.confirm('Êtes-vous sûr de vouloir supprimer cette convention ?')
     ) {
-      deleteMutation.mutate(convention.id_convention!);
+      deleteMutation.mutate(convention.id_convention!)
     }
-  };
+  }
 
   const columns = [
     {
-      key: "code_convention" as keyof Convention,
-      title: "Code",
+      key: 'code_convention' as keyof Convention,
+      title: 'Code',
     },
     {
-      key: "intutile_conv" as keyof Convention,
-      title: "Intitulé",
+      key: 'intutile_conv' as keyof Convention,
+      title: 'Intitulé',
     },
     {
-      key: "reference_conv" as keyof Convention,
-      title: "Référence",
+      key: 'reference_conv' as keyof Convention,
+      title: 'Référence',
     },
     {
-      key: "montant_conv" as keyof Convention,
-      title: "Montant",
+      key: 'montant_conv' as keyof Convention,
+      title: 'Montant',
       render: (_: Convention[keyof Convention], convention: Convention) => {
-        return new Intl.NumberFormat("fr-FR", {
-          style: "currency",
-          currency: "XOF",
-        }).format(convention.montant_conv);
+        return new Intl.NumberFormat('fr-FR', {
+          style: 'currency',
+          currency: 'XOF',
+        }).format(convention.montant_conv)
       },
     },
     {
-      key: "date_signature_conv" as keyof Convention,
-      title: "Date signature",
+      key: 'date_signature_conv' as keyof Convention,
+      title: 'Date signature',
       render: (_: Convention[keyof Convention], convention: Convention) => {
         return new Date(convention.date_signature_conv).toLocaleDateString(
-          "fr-FR"
-        );
+          'fr-FR'
+        )
       },
     },
     {
-      key: "etat_conv" as keyof Convention,
-      title: "État",
+      key: 'etat_conv' as keyof Convention,
+      title: 'État',
       render: (_: Convention[keyof Convention], convention: Convention) => {
         const stateColors = {
-          active: "bg-green-100 text-green-800",
-          inactive: "bg-gray-100 text-gray-800",
-          en_cours: "bg-blue-100 text-blue-800",
-          terminee: "bg-purple-100 text-purple-800",
-          suspendue: "bg-yellow-100 text-yellow-800",
-        };
+          active: 'bg-green-100 text-green-800',
+          inactive: 'bg-gray-100 text-gray-800',
+          en_cours: 'bg-blue-100 text-blue-800',
+          terminee: 'bg-purple-100 text-purple-800',
+          suspendue: 'bg-yellow-100 text-yellow-800',
+        }
 
         const colorClass =
           stateColors[convention.etat_conv as keyof typeof stateColors] ||
-          "bg-gray-100 text-gray-800";
+          'bg-gray-100 text-gray-800'
 
         return (
           <span
@@ -92,30 +92,30 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
           >
             {convention.etat_conv}
           </span>
-        );
+        )
       },
     },
     {
-      key: "partenaire_conv" as keyof Convention,
-      title: "Partenaire",
+      key: 'partenaire_conv' as keyof Convention,
+      title: 'Partenaire',
       render: (_: Convention[keyof Convention], convention: Convention) => {
         if (!convention.partenaire_conv) {
-          return <span className="text-gray-400">Aucun</span>;
+          return <span className="text-gray-400">Aucun</span>
         }
 
-        const acteur = convention.partenaire_conv;
+        const acteur = convention.partenaire_conv
         return acteur ? (
           <span className="text-gray-900">
             {acteur.nom_acteur} ({acteur.code_acteur})
           </span>
         ) : (
           <span className="text-red-500">Acteur introuvable</span>
-        );
+        )
       },
     },
     {
-      key: "actions" as keyof Convention,
-      title: "Actions",
+      key: 'actions' as keyof Convention,
+      title: 'Actions',
       render: (_: Convention[keyof Convention], convention: Convention) => (
         <div className="flex space-x-2">
           <Button
@@ -137,7 +137,7 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
         </div>
       ),
     },
-  ];
+  ]
 
   return (
     <div className="space-y-8">
@@ -147,7 +147,7 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
           <h1 className="text-3xl font-bold text-gray-900">Conventions</h1>
         </div>
         <div className="flex gap-4">
-          <Button variant={"primary"} onClick={onAdd}>
+          <Button variant={'primary'} onClick={onAdd}>
             <Plus size={20} />
             Nouvelle Convention
           </Button>
@@ -160,5 +160,5 @@ export default function ConventionList({ onEdit, onAdd }: ConventionListProps) {
         data={conventions.map((c) => ({ ...c, id: c.id_convention }))}
       />
     </div>
-  );
+  )
 }

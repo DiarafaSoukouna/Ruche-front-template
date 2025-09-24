@@ -1,5 +1,5 @@
 import Button from '../../components/Button'
-import { ArrowLeft, Edit2, PlusIcon, Trash2 } from 'lucide-react'
+import { ArrowLeft, Edit2, PlusIcon, Trash2, Eye } from 'lucide-react'
 import { useProjet } from '../../contexts/ProjetContext'
 
 const HeadZone = () => {
@@ -41,6 +41,10 @@ const HeadZone = () => {
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Modifier des informations
+            </Button>
+            <Button onClick={() => {}}>
+              <Eye className="w-4 h-4 mr-2" />
+              Voir les activités
             </Button>
 
             <Button variant="danger" onClick={() => setopenDeleteModal(true)}>
