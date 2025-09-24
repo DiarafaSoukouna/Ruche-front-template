@@ -22,6 +22,8 @@ import {
   CheckSquare,
   FileIcon,
   TargetIcon,
+  BookIcon,
+  BarChart2Icon,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import ChangeProjectModal from './ChangeProjectModal'
@@ -113,17 +115,17 @@ const Navbar: React.FC = () => {
         {
           name: 'Cadre analytique',
           href: '/cadre_analytique',
-          icon: FileSignature,
+          icon: ChartBarIcon,
         },
         {
           name: 'Cadre stratégique',
           href: '/cadre_strategique',
-          icon: ListTodoIcon,
+          icon: TargetIcon,
         },
         {
           name: 'Actions programme',
           href: '/action_programme',
-          icon: CheckSquare,
+          icon: ListTodoIcon,
         },
       ],
       href: true,
@@ -132,28 +134,27 @@ const Navbar: React.FC = () => {
       name: 'Projets',
       icon: FileIcon,
       children: [
-        { name: 'Liste des projets', href: '/projets', icon: File },
+        { name: 'Liste des projets', href: '/projets', icon: FileIcon },
 
         {
-          name: 'Dictionnaire des indicateurs',
-          href: '/dictionnaire_indicateurs',
+          name: 'Cadre de résultat',
+          href: '/cadre_resultat',
           icon: ListTodoIcon,
         },
-        {
-          name: 'Indicateurs du CMR',
-          href: '/indicateurs_cmr',
-          icon: ChartBarIcon,
-        },
-        { name: 'Cadre résultats ', href: '/projets', icon: File },
         {
           name: 'Indicateurs cadre resultat',
           href: '/indicateur_cadre_resultat',
           icon: ChartBarIcon,
         },
         {
+          name: 'Dictionnaire des indicateurs',
+          href: '/dictionnaire_indicateurs',
+          icon: BookIcon,
+        },
+        {
           name: 'Indicateurs du CMR',
           href: '/indicateurs_cmr',
-          icon: ChartBarIcon,
+          icon: BarChart2Icon,
         },
         {
           name: 'Cibles du CMR',

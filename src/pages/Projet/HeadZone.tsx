@@ -42,12 +42,7 @@ const HeadZone = () => {
               <Edit2 className="w-4 h-4 mr-2" />
               Modifier des informations
             </Button>
-            <Button
-              onClick={() => {
-                setopenForm(true)
-                setIsEdit(true)
-              }}
-            >
+            <Button onClick={() => {}}>
               <Eye className="w-4 h-4 mr-2" />
               Voir les activités
             </Button>

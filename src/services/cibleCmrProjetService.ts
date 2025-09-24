@@ -5,7 +5,7 @@ import type { CibleCmrProjet } from "../types/entities";
 export interface CibleCmrProjetFormData {
   annee: string;
   valeur_cible_indcateur_crp: number;
-  code_indicateur_crp?: number | null;
+  code_indicateur_crp?: string | null;
   code_ug?: string | null;
   code_projet?: string | null;
 }
@@ -14,7 +14,12 @@ export const cibleCmrProjetService = {
   // Récupérer toutes les cibles
   async getAll(): Promise<CibleCmrProjet[]> {
     try {
-      const response = await apiClient.request<CibleCmrProjet[]>("/cible_cmr_projet/");
+      const response = await apiClient.request<CibleCmrProjet[]>(
+        "/cible_cmr_projet/"
+      );
+      response.sort(
+        (a, b) => new Date(a.annee).getTime() - new Date(b.annee).getTime()
+      );
       return response || [];
     } catch (error) {
       toast.error("Erreur lors de la récupération des cibles CMR projet");
@@ -38,10 +43,13 @@ export const cibleCmrProjetService = {
   // Créer une nouvelle cible
   async create(data: CibleCmrProjetFormData): Promise<CibleCmrProjet> {
     try {
-      const response = await apiClient.request<CibleCmrProjet>("/cible_cmr_projet/", {
-        method: "POST",
-        data,
-      });
+      const response = await apiClient.request<CibleCmrProjet>(
+        "/cible_cmr_projet/",
+        {
+          method: "POST",
+          data,
+        }
+      );
       toast.success("Cible CMR projet créée avec succès");
       return response;
     } catch (error) {
@@ -74,9 +82,12 @@ export const cibleCmrProjetService = {
   // Supprimer une cible
   async delete(id_cible_indicateur_crp: number): Promise<void> {
     try {
-      await apiClient.request<void>(`/cible_cmr_projet/${id_cible_indicateur_crp}/`, {
-        method: "DELETE",
-      });
+      await apiClient.request<void>(
+        `/cible_cmr_projet/${id_cible_indicateur_crp}/`,
+        {
+          method: "DELETE",
+        }
+      );
       toast.success("Cible CMR projet supprimée avec succès");
     } catch (error) {
       toast.error("Erreur lors de la suppression de la cible CMR projet");
@@ -98,7 +109,9 @@ export const cibleCmrProjetService = {
   },
 
   // Récupérer les cibles par indicateur
-  async getByIndicateur(code_indicateur_crp: number): Promise<CibleCmrProjet[]> {
+  async getByIndicateur(
+    code_indicateur_crp: number
+  ): Promise<CibleCmrProjet[]> {
     try {
       const response = await apiClient.request<CibleCmrProjet[]>(
         `/cible_cmr_projet/?code_indicateur_crp=${code_indicateur_crp}`
@@ -132,19 +145,6 @@ export const cibleCmrProjetService = {
       return response || [];
     } catch (error) {
       toast.error("Erreur lors de la récupération des cibles par année");
-      throw error;
-    }
-  },
-
-  // Récupérer les cibles ordonnées par année
-  async getAllOrdered(): Promise<CibleCmrProjet[]> {
-    try {
-      const response = await apiClient.request<CibleCmrProjet[]>(
-        "/cible_cmr_projet/?ordering=annee"
-      );
-      return response || [];
-    } catch (error) {
-      toast.error("Erreur lors de la récupération des cibles ordonnées");
       throw error;
     }
   },

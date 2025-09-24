@@ -13,17 +13,17 @@ interface CibleCmrProjetListProps {
   onView: (cible: CibleCmrProjet) => void;
 }
 
-export default function CibleCmrProjetList({ 
-  onEdit, 
+export default function CibleCmrProjetList({
+  onEdit,
   onAdd,
-  onView 
+  onView,
 }: CibleCmrProjetListProps) {
   const queryClient = useQueryClient();
 
   // Fetch cibles data
   const { data: cibles = [] } = useQuery<CibleCmrProjet[]>({
     queryKey: ["cibles-cmr-projet"],
-    queryFn: cibleCmrProjetService.getAllOrdered,
+    queryFn: cibleCmrProjetService.getAll,
   });
 
   const deleteMutation = useMutation({
@@ -38,7 +38,11 @@ export default function CibleCmrProjetList({
   });
 
   const handleDelete = (id: number) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette cible CMR projet ?")) {
+    if (
+      window.confirm(
+        "Êtes-vous sûr de vouloir supprimer cette cible CMR projet ?"
+      )
+    ) {
       deleteMutation.mutate(id);
     }
   };
@@ -71,7 +75,7 @@ export default function CibleCmrProjetList({
     },
     {
       key: "code_ug" as keyof CibleCmrProjet,
-      title: "Code UG",
+      title: "Code UGL",
       render: (value: CibleCmrProjet[keyof CibleCmrProjet]) => (
         <span className="text-gray-600">
           {value ? String(value) : "Non défini"}
@@ -90,7 +94,10 @@ export default function CibleCmrProjetList({
     {
       key: "actions" as keyof CibleCmrProjet,
       title: "Actions",
-      render: (_: CibleCmrProjet[keyof CibleCmrProjet], cible: CibleCmrProjet) => (
+      render: (
+        _: CibleCmrProjet[keyof CibleCmrProjet],
+        cible: CibleCmrProjet
+      ) => (
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -132,9 +139,6 @@ export default function CibleCmrProjetList({
           <h1 className="text-3xl font-bold text-gray-900">
             Cibles CMR Projet
           </h1>
-          <p className="text-gray-600 mt-1">
-            Gérez les cibles des indicateurs de résultat de projet
-          </p>
         </div>
         <div className="flex gap-4">
           <Button onClick={onAdd} className="flex items-center gap-2">

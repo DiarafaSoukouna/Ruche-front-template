@@ -16,6 +16,7 @@ export const niveauCadreStrategiqueService = {
       const response = await apiClient.request<NiveauCadreStrategique[]>(
         "/niveau_cadre_strategique/"
       );
+      response.sort((a, b) => a.nombre_nsc - b.nombre_nsc);
       return response || [];
     } catch (error) {
       toast.error("Erreur lors de la récupération des niveaux");
@@ -112,20 +113,6 @@ export const niveauCadreStrategiqueService = {
       return response || [];
     } catch (error) {
       toast.error("Erreur lors de la récupération des niveaux par type");
-      throw error;
-    }
-  },
-
-  // Récupérer les niveaux ordonnés par nombre
-  async getAllOrdered(): Promise<NiveauCadreStrategique[]> {
-    try {
-      const response = await apiClient.request<NiveauCadreStrategique[]>(
-        "/niveau_cadre_strategique/?ordering=nombre_nsc"
-      );
-      response.sort((a, b) => a.nombre_nsc - b.nombre_nsc);
-      return response || [];
-    } catch (error) {
-      toast.error("Erreur lors de la récupération des niveaux ordonnés");
       throw error;
     }
   },
