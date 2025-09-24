@@ -115,11 +115,6 @@ const Navbar: React.FC = () => {
           icon: ListTodoIcon,
         },
         {
-          name: "Indicateurs du CMR",
-          href: "/indicateurs_cmr",
-          icon: ChartBarIcon,
-        },
-        {
           name: "Cadre analytique",
           href: "/cadre_analytique",
           icon: FileSignature,
@@ -142,6 +137,11 @@ const Navbar: React.FC = () => {
       name: "Projets",
       icon: FileIcon,
       children: [
+        {
+          name: "Cadre de résultat",
+          href: "/cadre_resultat",
+          icon: FileSignature,
+        },
         {
           name: "Indicateurs cadre resultat",
           href: "/indicateur_cadre_resultat",

@@ -66,6 +66,9 @@ export default function IndicateurCmrList({
     {
       key: "unite_cmr" as keyof IndicateurCmr,
       title: "Unité",
+      render: (_: IndicateurCmr[keyof IndicateurCmr], row: IndicateurCmr) => (
+        <span className="text-sm">{row.unite_cmr?.unite_ui}</span>
+      ),
     },
     {
       key: "annee_reference" as keyof IndicateurCmr,
@@ -74,6 +77,15 @@ export default function IndicateurCmrList({
     {
       key: "cible_cmr" as keyof IndicateurCmr,
       title: "Cible",
+    },
+    {
+      key: "fonction_agregat_cmr" as keyof IndicateurCmr,
+      title: "Fonction agrégation",
+      render: (_: IndicateurCmr[keyof IndicateurCmr], row: IndicateurCmr) => (
+        <span className="text-sm">
+          {row.fonction_agregat_cmr || "Non définie"}
+        </span>
+      ),
     },
     {
       key: "responsable_collecte_cmr" as keyof IndicateurCmr,

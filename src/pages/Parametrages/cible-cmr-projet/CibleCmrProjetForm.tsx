@@ -6,12 +6,16 @@ import Input from "../../../components/Input";
 import SelectInput from "../../../components/SelectInput";
 import { cibleCmrProjetService } from "../../../services/cibleCmrProjetService";
 import { indicateurCadreResultatService } from "../../../services/indicateurCadreResultatService";
+import { uglService } from "../../../services/uglService";
 import {
   cibleCmrProjetSchema,
-  getAnneeOptions,
   type CibleCmrProjetFormData,
 } from "../../../schemas/cibleCmrProjetSchema";
-import type { CibleCmrProjet } from "../../../types/entities";
+import type {
+  CibleCmrProjet,
+  IndicateurCadreResultat,
+  UGL,
+} from "../../../types/entities";
 
 interface CibleCmrProjetFormProps {
   cible?: CibleCmrProjet;
@@ -26,9 +30,15 @@ export default function CibleCmrProjetForm({
   const isEdit = !!cible;
 
   // Récupérer les indicateurs pour le select
-  const { data: indicateurs = [] } = useQuery({
+  const { data: indicateurs = [] } = useQuery<IndicateurCadreResultat[]>({
     queryKey: ["indicateurs-cadre-resultat"],
     queryFn: indicateurCadreResultatService.getAll,
+  });
+
+  // Récupérer les UGL pour le select
+  const { data: ugls = [] } = useQuery<UGL[]>({
+    queryKey: ["ugls"],
+    queryFn: uglService.getAll,
   });
 
   const {
@@ -82,16 +92,49 @@ export default function CibleCmrProjetForm({
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
+  // Options pour les années (dernières 10 années + 5 années futures)
+  const getAnneeOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const options = [];
+
+    // Années passées (10 dernières années)
+    for (let i = 10; i >= 0; i--) {
+      const year = currentYear - i;
+      options.push({
+        value: new Date(year, 0, 1).toISOString(),
+        label: year.toString(),
+      });
+    }
+
+    // Années futures (10 prochaines années)
+    for (let i = 1; i <= 10; i++) {
+      const year = currentYear + i;
+      options.push({
+        value: new Date(year, 0, 1).toISOString(),
+        label: year.toString(),
+      });
+    }
+
+    return options;
+  };
 
   // Options pour les années
   const anneeOptions = getAnneeOptions();
 
   // Options pour les indicateurs
   const indicateurOptions = indicateurs
-    .filter((indicateur) => indicateur.id_icr != null)
+    .filter((indicateur) => indicateur.code_indicateur_cr_iop != null)
     .map((indicateur) => ({
-      value: Number(indicateur.id_icr),
-      label: `${indicateur.code_icr} - ${indicateur.libelle_icr}`,
+      value: indicateur.code_indicateur_cr_iop,
+      label: `${indicateur.code_indicateur_cr_iop} - ${indicateur.intitule_indicateur_cr_iop}`,
+    }));
+
+  // Options pour les UGL
+  const uglOptions = ugls
+    .filter((ugl) => ugl.code_ugl != null)
+    .map((ugl) => ({
+      value: ugl.code_ugl,
+      label: `${ugl.code_ugl} - ${ugl.nom_ugl}`,
     }));
 
   return (
@@ -110,8 +153,13 @@ export default function CibleCmrProjetForm({
                 options={anneeOptions}
                 error={errors.annee}
                 required
-                value={anneeOptions.find(option => option.value === field.value) || null}
-                onChange={(selectedOption) => field.onChange(selectedOption?.value || "")}
+                value={
+                  anneeOptions.find((option) => option.value === field.value) ||
+                  null
+                }
+                onChange={(selectedOption) =>
+                  field.onChange(selectedOption?.value || "")
+                }
               />
             )}
           />
@@ -148,28 +196,39 @@ export default function CibleCmrProjetForm({
                 placeholder="Sélectionnez un indicateur (optionnel)"
                 options={indicateurOptions}
                 error={errors.code_indicateur_crp}
-                value={indicateurOptions.find(option => option.value === field.value) || null}
+                value={
+                  indicateurOptions.find(
+                    (option) => option.value === field.value
+                  ) || null
+                }
                 onChange={(selectedOption) =>
-                  field.onChange(selectedOption?.value ? Number(selectedOption.value) : null)
+                  field.onChange(selectedOption?.value || null)
                 }
               />
             )}
           />
         </div>
 
-        {/* Code UG */}
+        {/* Code UGL */}
         <div>
           <Controller
             name="code_ug"
             control={control}
             render={({ field }) => (
-              <Input
+              <SelectInput
                 {...field}
-                label="Code UG"
-                placeholder="Entrez le code UG (optionnel)"
+                label="UGL (Unité de Gestion Locale)"
+                placeholder="Sélectionnez une UGL (optionnel)"
+                options={uglOptions}
                 error={errors.code_ug}
-                value={field.value || ""}
-                onChange={(e) => field.onChange(e.target.value || null)}
+                value={
+                  uglOptions.find((option) => option.value === field.value) ||
+                  null
+                }
+                onChange={(selectedOption) =>
+                  field.onChange(selectedOption?.value || null)
+                }
+                isClearable
               />
             )}
           />

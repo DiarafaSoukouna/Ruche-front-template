@@ -42,6 +42,7 @@ import NiveauCadreAnalytiqueDetail from "./pages/CadreAnalytique/niveau-cadre-an
 import CibleCmrProjetPage from "./pages/Parametrages/cible-cmr-projet/CibleCmrProjetPage";
 import CibleCmrProjetDetail from "./pages/Parametrages/cible-cmr-projet/CibleCmrProjetDetail";
 import Actions from "./pages/Actions";
+import CadreResultatPage from "./pages/Parametrages/cadre-resultat/CadreResultatPage";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -223,6 +224,12 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
+            path="/cadre_resultat"
+            element={
+              isAuthenticated ? <CadreResultatPage /> : <Navigate to="/login" />
+            }
+          />
+          <Route
             path="/cible_cmr_projet"
             element={
               isAuthenticated ? (
@@ -261,7 +268,11 @@ const AppContent: React.FC = () => {
           <Route
             path="/cadre_analytique"
             element={
-              isAuthenticated ? <CadreAnalytique /> : <Navigate to="/login" />
+              isAuthenticated ? (
+                <CadreAnalytique />
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
         </Routes>
