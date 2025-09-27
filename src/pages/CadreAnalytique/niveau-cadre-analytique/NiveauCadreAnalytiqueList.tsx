@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, TrashIcon } from "lucide-react";
+import { Plus, TrashIcon } from "lucide-react";
 import { toast } from "react-toastify";
 import Table from "../../../components/Table";
 import Button from "../../../components/Button";
@@ -14,24 +14,14 @@ export default function NiveauCadreAnalytiqueList() {
 
   // États pour gérer l'affichage
   const [showForm, setShowForm] = useState(false);
-  const [editingNiveau, setEditingNiveau] = useState<
-    NiveauCadreAnalytique | undefined
-  >();
 
   // Fonctions de gestion
   const handleAdd = () => {
-    setEditingNiveau(undefined);
-    setShowForm(true);
-  };
-
-  const handleEdit = (niveau: NiveauCadreAnalytique) => {
-    setEditingNiveau(niveau);
     setShowForm(true);
   };
 
   const handleBack = () => {
     setShowForm(false);
-    setEditingNiveau(undefined);
   };
 
   const handleSuccess = () => {
@@ -61,6 +51,12 @@ export default function NiveauCadreAnalytiqueList() {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ce niveau ?")) {
       deleteMutation.mutate(id);
     }
+  };
+
+  // Fonction pour vérifier si un niveau peut être supprimé (seulement les derniers)
+  const canDeleteNiveau = (niveau: NiveauCadreAnalytique) => {
+    const maxNombre = Math.max(...niveaux.map((n) => n.nombre_nca));
+    return niveau.nombre_nca === maxNombre;
   };
 
   const columns = [
@@ -119,28 +115,20 @@ export default function NiveauCadreAnalytiqueList() {
       render: (
         _: NiveauCadreAnalytique[keyof NiveauCadreAnalytique],
         niveau: NiveauCadreAnalytique
-      ) => (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleEdit(niveau)}
-            className="p-1"
-            title="Modifier"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={() => handleDelete(niveau.id_nca!)}
-            disabled={deleteMutation.isPending}
-            title="Supprimer"
-          >
-            <TrashIcon className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
+      ) =>
+        canDeleteNiveau(niveau) ? (
+          <div className="flex gap-2">
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => handleDelete(niveau.id_nca!)}
+              disabled={deleteMutation.isPending}
+              title="Supprimer"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : null,
     },
   ];
 
@@ -150,7 +138,6 @@ export default function NiveauCadreAnalytiqueList() {
       <NiveauCadreAnalytiqueMultiForm
         onBack={handleBack}
         onSuccess={handleSuccess}
-        editingNiveau={editingNiveau}
       />
     );
   }
@@ -172,6 +159,34 @@ export default function NiveauCadreAnalytiqueList() {
             <Plus className="h-4 w-4" />
             Ajouter un niveau
           </Button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="text-2xl font-bold text-foreground">
+            {niveaux.length}
+          </div>
+          <div className="text-sm text-muted-foreground">Total niveaux</div>
+        </div>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="text-2xl font-bold text-blue-600">
+            {niveaux.filter((n) => Number(n.type_niveau) === 1).length}
+          </div>
+          <div className="text-sm text-muted-foreground">Effet</div>
+        </div>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="text-2xl font-bold text-green-600">
+            {niveaux.filter((n) => Number(n.type_niveau) === 2).length}
+          </div>
+          <div className="text-sm text-muted-foreground">Produit</div>
+        </div>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="text-2xl font-bold text-purple-600">
+            {niveaux.filter((n) => Number(n.type_niveau) === 3).length}
+          </div>
+          <div className="text-sm text-muted-foreground">Impact</div>
         </div>
       </div>
 
