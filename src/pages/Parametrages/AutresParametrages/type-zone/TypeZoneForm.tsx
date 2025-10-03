@@ -1,23 +1,23 @@
-import { Controller, useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Button from "../../../../components/Button";
-import Input from "../../../../components/Input";
-import { typeZoneService } from "../../../../services/typeZoneService";
+import { Controller, useForm } from 'react-hook-form'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { zodResolver } from '@hookform/resolvers/zod'
+import Button from '../../../../components/Button'
+import Input from '../../../../components/Input'
+import { typeZoneService } from '../../../../services/typeZoneService'
 import {
   typeZoneSchema,
   type TypeZoneFormData,
-} from "../../../../schemas/typeZoneSchema";
-import type { TypeZone } from "../../../../types/entities";
+} from '../../../../schemas/typeZoneSchema'
+import type { TypeZone } from '../../../../types/entities'
 
 interface TypeZoneFormProps {
-  typeZone?: TypeZone;
-  onClose: () => void;
+  typeZone?: TypeZone
+  onClose: () => void
 }
 
 export default function TypeZoneForm({ typeZone, onClose }: TypeZoneFormProps) {
-  const queryClient = useQueryClient();
-  const isEdit = !!typeZone;
+  const queryClient = useQueryClient()
+  const isEdit = !!typeZone
 
   const {
     control,
@@ -25,18 +25,18 @@ export default function TypeZoneForm({ typeZone, onClose }: TypeZoneFormProps) {
     formState: { errors },
   } = useForm<TypeZoneFormData>({
     resolver: zodResolver(typeZoneSchema),
-    mode: "onSubmit",
-    reValidateMode: "onChange",
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
     defaultValues: typeZone
       ? {
           code_type_zone: typeZone.code_type_zone,
-          nom_type_zone: typeZone.nom_type_zone || "",
+          nom_type_zone: typeZone.nom_type_zone || '',
         }
       : {
-          code_type_zone: "",
-          nom_type_zone: "",
+          code_type_zone: '',
+          nom_type_zone: '',
         },
-  });
+  })
 
   const mutation = useMutation({
     mutationFn: (data: TypeZoneFormData) =>
@@ -44,14 +44,14 @@ export default function TypeZoneForm({ typeZone, onClose }: TypeZoneFormProps) {
         ? typeZoneService.update(typeZone.id_type_zone!, data)
         : typeZoneService.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/type_zone/"] });
-      onClose();
+      queryClient.invalidateQueries({ queryKey: ['/type_zone/'] })
+      onClose()
     },
-  });
+  })
 
   const onSubmit = (data: TypeZoneFormData) => {
-    mutation.mutate(data);
-  };
+    mutation.mutate(data)
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -88,9 +88,9 @@ export default function TypeZoneForm({ typeZone, onClose }: TypeZoneFormProps) {
           Annuler
         </Button>
         <Button type="submit" disabled={mutation.isPending}>
-          {mutation.isPending ? "Sauvegarde..." : "Sauvegarder"}
+          {mutation.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
         </Button>
       </div>
     </form>
-  );
+  )
 }

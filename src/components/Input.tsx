@@ -1,18 +1,18 @@
-import React from "react";
-import { FieldError } from "react-hook-form";
+import React from 'react'
+import { FieldError } from 'react-hook-form'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: FieldError;
-  placeholder?: string;
-  type?: string;
-  label?: string;
-  required?: boolean;
+  error?: FieldError
+  placeholder?: string
+  type?: string
+  label?: string
+  required?: boolean
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
-      type = "text",
+      type = 'text',
       name,
       label,
       placeholder,
@@ -39,7 +39,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className={`w-full px-3 py-2 border rounded-lg 
             bg-background text-foreground placeholder-muted-foreground border-input
             focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring
-            ${error ? "border-destructive" : ""}
+            ${error ? 'border-destructive' : ''}
           `}
           placeholder={placeholder}
           {...rest}
@@ -48,9 +48,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <p className="mt-1 text-sm text-destructive">{error.message}</p>
         )}
       </div>
-    );
+    )
   }
-);
+)
 
-Input.displayName = "Input";
-export default Input;
+Input.displayName = 'Input'
+export default Input
