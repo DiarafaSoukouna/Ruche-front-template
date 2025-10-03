@@ -42,9 +42,7 @@ import NiveauCadreAnalytiqueDetail from "./pages/CadreAnalytique/niveau-cadre-an
 import CibleCmrProjetDetail from "./pages/Parametrages/indicateur-cmr/cible-cmr-projet/CibleCmrProjetDetail";
 import Actions from "./pages/Actions";
 import CadreResultatPage from "./pages/Parametrages/cadre-resultat/CadreResultatPage";
-import VersionPtbaManager from "./pages/PTBA/version-ptba/VersionPtbaManager";
-import TypeActiviteManager from "./pages/PTBA/type-activite/TypeActiviteManager";
-import PtbaPage from "./pages/PTBA/PtbaPage";
+import IndicateurStrategique from "./pages/Programme/Indicateur_strategique";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -173,6 +171,12 @@ const AppContent: React.FC = () => {
             path="/indicateurs_cmr"
             element={
               isAuthenticated ? <IndicateurCmrPage /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/indicateurs_strategique"
+            element={
+              isAuthenticated ? <IndicateurStrategique /> : <Navigate to="/login" />
             }
           />
           <Route
