@@ -3,18 +3,20 @@ import Button from "../../../components/Button";
 import Table from "../../../components/Table";
 import { indicateurCmrService } from "../../../services/indicateurCmrService";
 import type { IndicateurCmr } from "../../../types/entities";
-import { Edit, Trash2, Eye, Plus } from "lucide-react";
+import { Edit, Trash2, Eye, Plus, TargetIcon } from "lucide-react";
 
 interface IndicateurCmrListProps {
   onEdit: (indicateur: IndicateurCmr) => void;
   onCreate: () => void;
   onView: (indicateurId: number) => void;
+  onOpenCiblesCmr: () => void;
 }
 
 export default function IndicateurCmrList({
   onEdit,
   onCreate,
   onView,
+  onOpenCiblesCmr,
 }: IndicateurCmrListProps) {
   const queryClient = useQueryClient();
 
@@ -137,10 +139,20 @@ export default function IndicateurCmrList({
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Indicateurs CMR</h1>
         </div>
-        <Button onClick={onCreate} className="flex items-center space-x-2">
-          <Plus className="h-4 w-4" />
-          <span>Nouvel indicateur CMR</span>
-        </Button>
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="outline"
+            onClick={onOpenCiblesCmr}
+            className="flex items-center space-x-2"
+          >
+            <TargetIcon className="h-4 w-4" />
+            <span>Cibles CMR</span>
+          </Button>
+          <Button onClick={onCreate} className="flex items-center space-x-2">
+            <Plus className="h-4 w-4" />
+            <span>Nouvel indicateur CMR</span>
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}

@@ -16,7 +16,7 @@ export const niveauCadreStrategiqueService = {
       const response = await apiClient.request<NiveauCadreStrategique[]>(
         "/niveau_cadre_strategique/"
       );
-      response.sort((a, b) => a.nombre_nsc - b.nombre_nsc);
+      response.sort((a, b) => b.nombre_nsc - a.nombre_nsc);
       return response || [];
     } catch (error) {
       toast.error("Erreur lors de la récupération des niveaux");
