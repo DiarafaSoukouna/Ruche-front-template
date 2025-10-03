@@ -127,6 +127,11 @@ const Navbar: React.FC = () => {
           href: '/action_programme',
           icon: ListTodoIcon,
         },
+        {
+          name: 'Indicateurs strategique',
+          href: '/indicateurs_strategique',
+          icon: ChartBarIcon,
+        },
       ],
       href: true,
     },
