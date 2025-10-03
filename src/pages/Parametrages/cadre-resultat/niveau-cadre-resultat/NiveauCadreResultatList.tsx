@@ -4,18 +4,14 @@ import Table from "../../../../components/Table";
 import { niveauCadreResultatService } from "../../../../services/niveauCadreResultatService";
 import { getTypeNiveauLabel } from "../../../../schemas/cadreResultatSchemas";
 import type { NiveauCadreResultat } from "../../../../types/entities";
-import { Edit, Trash2, Eye, Plus } from "lucide-react";
+import { Plus, TrashIcon } from "lucide-react";
 
 interface NiveauCadreResultatListProps {
-  onEdit: (niveau: NiveauCadreResultat) => void;
   onCreate: () => void;
-  onView: (niveauId: number) => void;
 }
 
 export default function NiveauCadreResultatList({
-  onEdit,
   onCreate,
-  onView,
 }: NiveauCadreResultatListProps) {
   const queryClient = useQueryClient();
 
@@ -41,6 +37,12 @@ export default function NiveauCadreResultatList({
     ) {
       deleteMutation.mutate(niveau.id_ncr);
     }
+  };
+
+  // Fonction pour vérifier si un niveau peut être supprimé (seulement les derniers)
+  const canDeleteNiveau = (niveau: NiveauCadreResultat) => {
+    const maxNombre = Math.max(...niveaux.map((n) => n.nombre_ncr));
+    return niveau.nombre_ncr === maxNombre;
   };
 
   const columns = [
@@ -101,35 +103,20 @@ export default function NiveauCadreResultatList({
       render: (
         _: NiveauCadreResultat[keyof NiveauCadreResultat],
         row: NiveauCadreResultat
-      ) => (
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onView(row.id_ncr)}
-            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/20"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onEdit(row)}
-            className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-400 dark:hover:text-amber-300 dark:hover:bg-amber-900/20"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDelete(row)}
-            disabled={deleteMutation.isPending}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
+      ) =>
+        canDeleteNiveau(row) ? (
+          <div className="flex gap-2">
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => handleDelete(row)}
+              disabled={deleteMutation.isPending || !canDeleteNiveau(row)}
+              title="Supprimer"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : null,
     },
   ];
 
@@ -158,19 +145,19 @@ export default function NiveauCadreResultatList({
         </div>
         <div className="bg-card border border-border rounded-lg p-4">
           <div className="text-2xl font-bold text-blue-600">
-            {niveaux.filter((n) => n.type_niveau === 1).length}
+            {niveaux.filter((n) => Number(n.type_niveau) === 1).length}
           </div>
           <div className="text-sm text-muted-foreground">Effet</div>
         </div>
         <div className="bg-card border border-border rounded-lg p-4">
           <div className="text-2xl font-bold text-green-600">
-            {niveaux.filter((n) => n.type_niveau === 2).length}
+            {niveaux.filter((n) => Number(n.type_niveau) === 2).length}
           </div>
           <div className="text-sm text-muted-foreground">Produit</div>
         </div>
         <div className="bg-card border border-border rounded-lg p-4">
           <div className="text-2xl font-bold text-purple-600">
-            {niveaux.filter((n) => n.type_niveau === 3).length}
+            {niveaux.filter((n) => Number(n.type_niveau) === 3).length}
           </div>
           <div className="text-sm text-muted-foreground">Impact</div>
         </div>

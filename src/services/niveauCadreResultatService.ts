@@ -1,6 +1,9 @@
 import { toast } from "react-toastify";
 import { apiClient } from "../lib/api";
-import type { NiveauCadreResultat, NiveauCadreResultatFormData } from "../types/entities";
+import type {
+  NiveauCadreResultat,
+  NiveauCadreResultatFormData,
+} from "../types/entities";
 
 export const niveauCadreResultatService = {
   // Get all niveaux
@@ -9,9 +12,13 @@ export const niveauCadreResultatService = {
       const response = await apiClient.request<NiveauCadreResultat[]>(
         "/niveau_cadre_resultat/"
       );
-      return Array.isArray(response) ? response : [];
+      return Array.isArray(response)
+        ? response.sort((a, b) => b.nombre_ncr - a.nombre_ncr)
+        : [];
     } catch (error) {
-      toast.error("Erreur lors de la récupération des niveaux de cadre de résultat");
+      toast.error(
+        "Erreur lors de la récupération des niveaux de cadre de résultat"
+      );
       throw error;
     }
   },
@@ -23,7 +30,9 @@ export const niveauCadreResultatService = {
         `/niveau_cadre_resultat/${id}/`
       );
     } catch (error) {
-      toast.error("Erreur lors de la récupération du niveau de cadre de résultat");
+      toast.error(
+        "Erreur lors de la récupération du niveau de cadre de résultat"
+      );
       throw error;
     }
   },
@@ -36,7 +45,9 @@ export const niveauCadreResultatService = {
       );
       return Array.isArray(response) ? response : [];
     } catch (error) {
-      toast.error("Erreur lors de la récupération des niveaux de cadre de résultat");
+      toast.error(
+        "Erreur lors de la récupération des niveaux de cadre de résultat"
+      );
       throw error;
     }
   },
@@ -49,13 +60,17 @@ export const niveauCadreResultatService = {
       );
       return Array.isArray(response) ? response : [];
     } catch (error) {
-      toast.error("Erreur lors de la recherche des niveaux de cadre de résultat");
+      toast.error(
+        "Erreur lors de la recherche des niveaux de cadre de résultat"
+      );
       throw error;
     }
   },
 
   // Create new niveau
-  create: async (data: NiveauCadreResultatFormData): Promise<NiveauCadreResultat> => {
+  create: async (
+    data: NiveauCadreResultatFormData
+  ): Promise<NiveauCadreResultat> => {
     try {
       const response = await apiClient.request<NiveauCadreResultat>(
         "/niveau_cadre_resultat/",
@@ -88,7 +103,9 @@ export const niveauCadreResultatService = {
       toast.success("Niveau de cadre de résultat mis à jour avec succès");
       return response;
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour du niveau de cadre de résultat");
+      toast.error(
+        "Erreur lors de la mise à jour du niveau de cadre de résultat"
+      );
       throw error;
     }
   },
@@ -101,7 +118,9 @@ export const niveauCadreResultatService = {
       });
       toast.success("Niveau de cadre de résultat supprimé avec succès");
     } catch (error) {
-      toast.error("Erreur lors de la suppression du niveau de cadre de résultat");
+      toast.error(
+        "Erreur lors de la suppression du niveau de cadre de résultat"
+      );
       throw error;
     }
   },
@@ -115,7 +134,9 @@ export const niveauCadreResultatService = {
           method: "PATCH",
         }
       );
-      toast.success("Statut du niveau de cadre de résultat mis à jour avec succès");
+      toast.success(
+        "Statut du niveau de cadre de résultat mis à jour avec succès"
+      );
       return response;
     } catch (error) {
       toast.error(

@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Edit, TrashIcon, Eye } from "lucide-react";
 import { toast } from "react-toastify";
-import Table from "../../../components/Table";
-import Button from "../../../components/Button";
-import { cibleCmrProjetService } from "../../../services/cibleCmrProjetService";
-import { formatValeurCible } from "../../../schemas/cibleCmrProjetSchema";
-import type { CibleCmrProjet } from "../../../types/entities";
+import Table from "../../../../components/Table";
+import Button from "../../../../components/Button";
+import { cibleCmrProjetService } from "../../../../services/cibleCmrProjetService";
+import { formatValeurCible } from "../../../../schemas/cibleCmrProjetSchema";
+import type { CibleCmrProjet } from "../../../../types/entities";
 
 interface CibleCmrProjetListProps {
   onEdit: (cible: CibleCmrProjet) => void;

@@ -1,21 +1,21 @@
 import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import SelectInput from "../../../components/SelectInput";
-import { cibleCmrProjetService } from "../../../services/cibleCmrProjetService";
-import { indicateurCadreResultatService } from "../../../services/indicateurCadreResultatService";
-import { uglService } from "../../../services/uglService";
+import Button from "../../../../components/Button";
+import Input from "../../../../components/Input";
+import SelectInput from "../../../../components/SelectInput";
+import { cibleCmrProjetService } from "../../../../services/cibleCmrProjetService";
+import { indicateurCadreResultatService } from "../../../../services/indicateurCadreResultatService";
+import { uglService } from "../../../../services/uglService";
 import {
   cibleCmrProjetSchema,
   type CibleCmrProjetFormData,
-} from "../../../schemas/cibleCmrProjetSchema";
+} from "../../../../schemas/cibleCmrProjetSchema";
 import type {
   CibleCmrProjet,
   IndicateurCadreResultat,
   UGL,
-} from "../../../types/entities";
+} from "../../../../types/entities";
 
 interface CibleCmrProjetFormProps {
   cible?: CibleCmrProjet;
