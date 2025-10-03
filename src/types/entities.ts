@@ -133,19 +133,19 @@ export interface Fonction extends Record<string, unknown> {
 }
 
 export interface ProjetActivePerso {
-  id_projet: number,
-  code_projet: string,
-  sigle_projet: string,
-  intitule_projet: string,
-  duree_projet: number,
-  date_signature_projet: string,
-  date_demarrage_projet: string,
-  partenaire_projet: number,
-  programme_projet: number,
-  structure_projet: number[],
-  signataires_projet: number[],
-  partenaires_execution_projet: number[],
-  zone_projet: number[],
+  id_projet: number;
+  code_projet: string;
+  sigle_projet: string;
+  intitule_projet: string;
+  duree_projet: number;
+  date_signature_projet: string;
+  date_demarrage_projet: string;
+  partenaire_projet: number;
+  programme_projet: number;
+  structure_projet: number[];
+  signataires_projet: number[];
+  partenaires_execution_projet: number[];
+  zone_projet: number[];
 }
 
 export interface NiveauStructureConfig extends Record<string, unknown> {
@@ -338,4 +338,111 @@ export interface CadreStrategiqueConfig extends Record<string, unknown> {
 
 // Form Data Types for new entities
 export type CadreStrategiqueFormData = Omit<CadreStrategique, "id_cs">;
-export type CadreStrategiqueConfigFormData = Omit<CadreStrategiqueConfig, "id_csc">;
+export type CadreStrategiqueConfigFormData = Omit<
+  CadreStrategiqueConfig,
+  "id_csc"
+>;
+
+// ============================================
+// PTBA ENTITIES
+// ============================================
+
+// Type d'activité
+export interface TypeActivite extends Record<string, unknown> {
+  id_type: number;
+  code_type: string;
+  intutile_type: string;
+  description: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Version PTBA
+export interface VersionPtba extends Record<string, unknown> {
+  id_version_ptba: number; // Identifiant unique
+  annee_ptba: number; // Année du PTBA (requis)
+  version_ptba?: string; // Version du PTBA (string: 30)
+  date_validation: string; // Date de validation (requis)
+  observation?: string; // Observations
+  documentUrl?: string; // URL du document ($uri format)
+  statut_version?: number; // Statut de la version (0: En construction, 1: Validée, 2: Archivée)
+  date_enregistrement: string; // Date d'enregistrement (requis)
+  etat?: string; // État de la version
+  modifier_le: string; // Date de dernière modification (requis)
+  modifier_par?: string; // Qui a modifié
+  projet?: number; // Relation vers Projet (int)
+  id_personnel?: number; // Relation vers Personnel (int)
+}
+
+// Version PTBA Request (pour les POST)
+export interface VersionPtbaRequest {
+  annee_ptba: number; // Année du PTBA (requis)
+  version_ptba?: string; // Version du PTBA
+  date_validation: string; // Date de validation (requis)
+  observation?: string; // Observations
+  documentUrl?: string; // URL du document
+  statut_version?: number; // Statut de la version (0: En construction, 1: Validée, 2: Archivée)
+  etat?: string; // État de la version
+  modifier_par?: string; // Qui a modifié
+  projet?: number; // Relation vers Projet
+  id_personnel?: number; // Relation vers Personnel
+}
+
+// Activité PTBA
+export interface Ptba extends Record<string, unknown> {
+  id_ptba: number;
+  localites_ptba: number[]; // Relations vers entité Localite
+  partenaire_conserne_ptba: number[]; // Relations vers entité Acteur
+  code_activite_ptba: string;
+  intitule_activite_ptba: string; // max 200 chars
+  chronogramme: string; // max 100 chars - mois concernés
+  observation?: string;
+  statut_activite: string; // max 100 chars
+  code_crp?: string; // Code du Cadre stratégique concerné, relation vers CadreStrategique
+  responsable_ptba?: number; // Code du PlanSite responsable
+  code_programme?: string;
+  version_ptba: number; // Relation vers VersionPtba
+  type_activite: number; // Relation vers TypeActivite
+  created_at?: string;
+  updated_at?: string;
+
+  // Relations populées (optionnelles, selon l'API)
+  responsable?: PlanSite; // PlanSite populé pour responsable_ptba
+}
+
+// Tâche d'activité PTBA
+export interface TacheActivitePtba extends Record<string, unknown> {
+  id_groupe_tache: number;
+  intutile_tache_gt: string; // max 200 chars
+  proportion_gt: string; // max 10 chars
+  code_tache_gt: string; // max 200 chars
+  date_debut_gt: string; // date
+  date_fin_gt: string; // date
+  date_reelle_gt: string; // date
+  n_lot_gt: number;
+  valider_gt: string; // max 100 chars
+  observation_gt?: string; // max 200 chars
+  livrable_gt: string; // max 100 chars
+  id_personnel_gt: number;
+  responsable_gt: string; // max 100 chars
+  id_activite: number; // relation vers Ptba
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Request pour TacheActivitePtba
+export interface TacheActivitePtbaRequest {
+  intutile_tache_gt: string;
+  proportion_gt: string;
+  code_tache_gt: string;
+  date_debut_gt: string;
+  date_fin_gt: string;
+  date_reelle_gt: string;
+  n_lot_gt: number;
+  valider_gt: string;
+  observation_gt?: string;
+  livrable_gt: string;
+  id_personnel_gt: number;
+  responsable_gt: string;
+  id_activite: number;
+}

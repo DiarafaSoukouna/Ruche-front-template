@@ -21,7 +21,6 @@ import {
   File,
   CheckSquare,
   FileIcon,
-  TargetIcon,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import ChangeProjectModal from "./ChangeProjectModal";
@@ -152,10 +151,22 @@ const Navbar: React.FC = () => {
           href: "/indicateurs_cmr",
           icon: ChartBarIcon,
         },
+      ],
+      href: true,
+    },
+    {
+      name: "PTBA",
+      icon: FileIcon,
+      children: [
         {
-          name: "Cibles du CMR",
-          href: "/cible_cmr_projet",
-          icon: TargetIcon,
+          name: "Gestion des versions",
+          href: "/ptba",
+          icon: FileSignature,
+        },
+        {
+          name: "Type d'activités",
+          href: "/ptba/type-activite",
+          icon: ChartBarIcon,
         },
       ],
       href: true,
