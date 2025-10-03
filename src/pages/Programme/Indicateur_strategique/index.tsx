@@ -144,6 +144,7 @@ const IndicateurStrategique = () => {
     setTabActive(String(niv))
     setAddBoutonLabel(libelle)
   };
+  
   useEffect(() => {
     fetchCibleIndicStrategiques()
     fetchIndicStrategiques()
