@@ -39,10 +39,12 @@ import CadreStrategiquePage from "./pages/Parametrages/cadre-strategique/CadreSt
 import NiveauCadreStrategiquePage from "./pages/Parametrages/cadre-strategique/niveau-cadre-strategique/NiveauCadreStrategiquePage";
 import NiveauCadreStrategiqueDetail from "./pages/Parametrages/cadre-strategique/niveau-cadre-strategique/NiveauCadreStrategiqueDetail";
 import NiveauCadreAnalytiqueDetail from "./pages/CadreAnalytique/niveau-cadre-analytique/NiveauCadreAnalytiqueDetail";
-import CibleCmrProjetPage from "./pages/Parametrages/cible-cmr-projet/CibleCmrProjetPage";
-import CibleCmrProjetDetail from "./pages/Parametrages/cible-cmr-projet/CibleCmrProjetDetail";
+import CibleCmrProjetDetail from "./pages/Parametrages/indicateur-cmr/cible-cmr-projet/CibleCmrProjetDetail";
 import Actions from "./pages/Actions";
 import CadreResultatPage from "./pages/Parametrages/cadre-resultat/CadreResultatPage";
+import VersionPtbaManager from "./pages/PTBA/version-ptba/VersionPtbaManager";
+import TypeActiviteManager from "./pages/PTBA/type-activite/TypeActiviteManager";
+import PtbaPage from "./pages/PTBA/PtbaPage";
 
 const AppContent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -230,16 +232,6 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
-            path="/cible_cmr_projet"
-            element={
-              isAuthenticated ? (
-                <CibleCmrProjetPage />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route
             path="/cible_cmr_projet/:id"
             element={
               isAuthenticated ? (
@@ -268,8 +260,18 @@ const AppContent: React.FC = () => {
           <Route
             path="/cadre_analytique"
             element={
+              isAuthenticated ? <CadreAnalytique /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/ptba"
+            element={isAuthenticated ? <PtbaPage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/ptba/type-activite"
+            element={
               isAuthenticated ? (
-                <CadreAnalytique />
+                <TypeActiviteManager />
               ) : (
                 <Navigate to="/login" />
               )

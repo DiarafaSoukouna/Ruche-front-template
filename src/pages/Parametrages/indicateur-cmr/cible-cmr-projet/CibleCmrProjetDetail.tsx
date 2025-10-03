@@ -9,11 +9,11 @@ import {
   Building,
   FolderOpen,
 } from "lucide-react";
-import Button from "../../../components/Button";
-import Card from "../../../components/Card";
-import { cibleCmrProjetService } from "../../../services/cibleCmrProjetService";
-import { indicateurCadreResultatService } from "../../../services/indicateurCadreResultatService";
-import { formatValeurCible } from "../../../schemas/cibleCmrProjetSchema";
+import Button from "../../../../components/Button";
+import Card from "../../../../components/Card";
+import { cibleCmrProjetService } from "../../../../services/cibleCmrProjetService";
+import { indicateurCadreResultatService } from "../../../../services/indicateurCadreResultatService";
+import { formatValeurCible } from "../../../../schemas/cibleCmrProjetSchema";
 import { RiseLoader } from "react-spinners";
 
 export default function CibleCmrProjetDetail() {
