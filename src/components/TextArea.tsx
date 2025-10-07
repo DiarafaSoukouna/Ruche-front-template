@@ -1,11 +1,11 @@
-import React from "react";
-import { FieldError } from "react-hook-form";
+import React from 'react'
+import { FieldError } from 'react-hook-form'
 interface InputProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  name?: string;
-  error?: FieldError;
-  placeholder?: string;
-  label?: string;
-  required?: boolean;
+  name?: string
+  error?: FieldError
+  placeholder?: string
+  label?: string
+  required?: boolean
 }
 const TextArea: React.FC<InputProps> = ({
   name,
@@ -42,4 +42,4 @@ const TextArea: React.FC<InputProps> = ({
   );
 };
 
-export default TextArea;
+export default TextArea
