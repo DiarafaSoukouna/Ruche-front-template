@@ -10,7 +10,7 @@ import {
 } from "../../../components/Tabs";
 import CadreResultatForm from "./CadreResultatForm";
 import CadreResultatDetail from "./CadreResultatDetail";
-import NiveauCadreResultatPage from "./niveau-cadre-resultat/NiveauCadreResultatPage";
+import NiveauCadreResultatTableForm from "./NiveauCadreResultatTableForm";
 import { cadreResultatService } from "../../../services/cadreResultatService";
 import { niveauCadreResultatService } from "../../../services/niveauCadreResultatService";
 import type {
@@ -149,7 +149,7 @@ export default function CadreResultatPage() {
         <h1 className="text-3xl font-bold text-gray-900">Cadre de résultat</h1>
         <Button variant="outline" onClick={() => setIsNiveauOpen(true)}>
           <MapPin className="w-4 h-4 mr-2" />
-          Niveaux du cadre de résultat
+          Gestion des niveaux
         </Button>
       </div>
 
@@ -160,7 +160,7 @@ export default function CadreResultatPage() {
         title="Configuration des niveaux du cadre de résultat"
         size="xl"
       >
-        <NiveauCadreResultatPage />
+        <NiveauCadreResultatTableForm />
       </Modal>
 
       {sortedNiveaux.length > 0 && (

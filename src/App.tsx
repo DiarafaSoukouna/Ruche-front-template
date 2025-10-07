@@ -36,12 +36,11 @@ import DictionnaireIndicateurPage from "./pages/Parametrages/dictionnaire-indica
 import IndicateurCmrPage from "./pages/Parametrages/indicateur-cmr/IndicateurCmrPage";
 import IndicateurCadreResultatPage from "./pages/Parametrages/indicateur-cadre-resultat/IndicateurCadreResultatPage";
 import CadreStrategiquePage from "./pages/Parametrages/cadre-strategique/CadreStrategiquePage";
-import NiveauCadreStrategiquePage from "./pages/Parametrages/cadre-strategique/niveau-cadre-strategique/NiveauCadreStrategiquePage";
-import NiveauCadreStrategiqueDetail from "./pages/Parametrages/cadre-strategique/niveau-cadre-strategique/NiveauCadreStrategiqueDetail";
-import NiveauCadreAnalytiqueDetail from "./pages/CadreAnalytique/niveau-cadre-analytique/NiveauCadreAnalytiqueDetail";
 import CibleCmrProjetDetail from "./pages/Parametrages/indicateur-cmr/cible-cmr-projet/CibleCmrProjetDetail";
 import Actions from "./pages/Actions";
 import CadreResultatPage from "./pages/Parametrages/cadre-resultat/CadreResultatPage";
+import TypeActiviteManager from "./pages/PTBA/type-activite/TypeActiviteManager";
+import PtbaPage from "./pages/PTBA/PtbaPage";
 import IndicateurStrategique from "./pages/Programme/Indicateur_strategique";
 
 const AppContent: React.FC = () => {
@@ -194,36 +193,6 @@ const AppContent: React.FC = () => {
             element={
               isAuthenticated ? (
                 <CadreStrategiquePage />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route
-            path="/niveau_cadre_strategique"
-            element={
-              isAuthenticated ? (
-                <NiveauCadreStrategiquePage />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route
-            path="/niveau_cadre_strategique/:id"
-            element={
-              isAuthenticated ? (
-                <NiveauCadreStrategiqueDetail />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route
-            path="/niveau_cadre_analytique/:id"
-            element={
-              isAuthenticated ? (
-                <NiveauCadreAnalytiqueDetail />
               ) : (
                 <Navigate to="/login" />
               )
