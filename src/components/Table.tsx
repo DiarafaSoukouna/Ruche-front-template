@@ -89,8 +89,8 @@ function Table<T extends { id?: string | number }>({
           sortConfig.order === 'asc'
             ? 'desc'
             : sortConfig.order === 'desc'
-            ? null
-            : 'asc',
+              ? null
+              : 'asc',
       })
     } else {
       setSortConfig({ key, order: 'asc' })
@@ -112,22 +112,25 @@ function Table<T extends { id?: string | number }>({
     >
       {/* Barre de recherche */}
       <Card>
-        <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h4 className="text-2xl font-semibold text-foreground">{title}</h4>
+        {title &&
+          <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h4 className="text-2xl font-semibold text-foreground">{title}</h4>
+            </div>
+            <div>
+              <Input
+                type="text"
+                placeholder="Recherche..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value)
+                  setCurrentPage(1)
+                }}
+              />
+            </div>
           </div>
-          <div>
-            <Input
-              type="text"
-              placeholder="Recherche..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value)
-                setCurrentPage(1)
-              }}
-            />
-          </div>
-        </div>
+        }
+
 
         <div className="overflow-x-auto">
           <table className="w-full table-auto">
@@ -148,9 +151,8 @@ function Table<T extends { id?: string | number }>({
               {currentData.map((row, idx) => (
                 <tr
                   key={row.id || idx}
-                  className={`transition-colors duration-150 hover:bg-primary-50 ${
-                    onRowClick ? 'cursor-pointer' : ''
-                  }`}
+                  className={`transition-colors duration-150 hover:bg-primary-50 ${onRowClick ? 'cursor-pointer' : ''
+                    }`}
                   onClick={() => onRowClick && onRowClick(row)}
                 >
                   {columns.map((column) => (
