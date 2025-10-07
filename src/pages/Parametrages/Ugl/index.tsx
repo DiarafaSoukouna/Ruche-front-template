@@ -7,9 +7,9 @@ import Modal from '../../../components/Modal'
 import Table from '../../../components/Table'
 import FormPartFinancier from './form'
 import { allUgl } from '../../../functions/ugl/gets'
-import { deleteUgl } from '../../../functions/ugl/delete'
 import { typeUgl } from '../../../functions/ugl/types'
 import { toast } from 'react-toastify'
+import { deleteUgl } from '../../../functions/nbc/delete'
 
 const Ugls = () => {
   //   const [acteurs, setUgls] = useState([])

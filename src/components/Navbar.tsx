@@ -133,24 +133,54 @@ const Navbar: React.FC = () => {
           href: '/cadre_strategique',
           icon: TargetIcon,
         },
-        {
-          name: 'Indicateurs du CMR',
-          href: '/indicateurs_cmr',
-          icon: BarChart2Icon,
-        },
-        {
-          name: 'Cibles du CMR',
-          href: '/cible_cmr_projet',
-          icon: TargetIcon,
-        },
+        // {
+        //   name: 'Actions programme',
+        //   href: '/action_programme',
+        //   icon: ListTodoIcon,
+        // },
         {
           name: 'Indicateurs strategique',
           href: '/indicateurs_strategique',
           icon: ChartBarIcon,
         },
+        {
+          name: 'Indicateurs du CMR',
+          href: '/indicateurs_cmr',
+          icon: BarChart2Icon,
+        },
       ],
       href: true,
     },
+    // {
+    //   name: 'Projets',
+    //   icon: FileIcon,
+    //   children: [
+    //     { name: 'Liste des projets', href: '/projets', icon: FileIcon },
+
+    //     {
+    //       name: 'Cadre de résultat',
+    //       href: '/cadre_resultat',
+    //       icon: ListTodoIcon,
+    //     },
+    //     {
+    //       name: 'Indicateurs cadre resultat',
+    //       href: '/indicateur_cadre_resultat',
+    //       icon: ChartBarIcon,
+    //     },
+    //     {
+    //       name: 'Dictionnaire des indicateurs',
+    //       href: '/dictionnaire_indicateurs',
+    //       icon: BookIcon,
+    //     },
+
+    //     {
+    //       name: 'Cibles du CMR',
+    //       href: '/cible_cmr_projet',
+    //       icon: TargetIcon,
+    //     },
+    //   ],
+    //   href: true,
+    // },
     {
       name: 'Programmation',
       icon: FileIcon,
