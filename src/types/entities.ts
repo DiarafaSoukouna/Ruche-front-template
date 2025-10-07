@@ -370,7 +370,7 @@ export interface VersionPtba extends Record<string, unknown> {
   etat?: string; // État de la version
   modifier_le: string; // Date de dernière modification (requis)
   modifier_par?: string; // Qui a modifié
-  projet?: number; // Relation vers Projet (int)
+  programme?: string | Programme; // Relation vers Projet (int)
   id_personnel?: number; // Relation vers Personnel (int)
 }
 
@@ -384,7 +384,7 @@ export interface VersionPtbaRequest {
   statut_version?: number; // Statut de la version (0: En construction, 1: Validée, 2: Archivée)
   etat?: string; // État de la version
   modifier_par?: string; // Qui a modifié
-  projet?: number; // Relation vers Projet
+  programme?: string; // Relation vers Projet
   id_personnel?: number; // Relation vers Personnel
 }
 

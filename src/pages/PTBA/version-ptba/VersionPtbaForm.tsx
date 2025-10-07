@@ -10,9 +10,10 @@ import {
   VersionPtbaFormData,
   versionPtbaSchema,
 } from "../../../schemas/ptbaSchemas";
-import type { VersionPtba } from "../../../types/entities";
+import type { Programme, VersionPtba } from "../../../types/entities";
 import Input from "../../../components/Input";
 import TextArea from "../../../components/TextArea";
+import { useRoot } from "../../../contexts/RootContext";
 
 interface VersionPtbaFormProps {
   version?: VersionPtba;
@@ -27,9 +28,11 @@ export default function VersionPtbaForm({
 }: VersionPtbaFormProps) {
   const isEditing = !!version;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { currentProgramme }: { currentProgramme: Programme } = useRoot();
 
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<VersionPtbaFormData>({
@@ -44,9 +47,16 @@ export default function VersionPtbaForm({
       statut_version: version?.statut_version ?? 0,
       etat: version?.etat || "",
       modifier_par: version?.modifier_par || "",
-      projet: version?.projet || undefined,
+      programme:
+        typeof version?.programme === "string"
+          ? version?.programme
+          : version?.programme?.code_programme ||
+            currentProgramme?.code_programme ||
+            "",
     },
   });
+
+  console.log(watch().programme);
 
   // Mutations
   const createMutation = useMutation({

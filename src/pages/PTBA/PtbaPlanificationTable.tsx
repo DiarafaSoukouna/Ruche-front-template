@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Edit, Filter, Plus } from "lucide-react";
+import { Calendar, Edit, Filter, Loader2, Plus } from "lucide-react";
 import Button from "../../components/Button";
 import SelectInput from "../../components/SelectInput";
 import {
@@ -44,6 +44,13 @@ export default function PtbaPlanificationTable() {
     queryFn: versionPtbaService.getAll,
   });
 
+  const filteredVersions = versions.filter(
+    (version) =>
+      version.programme === currentProgramme?.code_programme ||
+      (version.programme as Programme)?.code_programme ===
+        currentProgramme?.code_programme
+  );
+
   const { data: plansSites = [] } = useQuery<PlanSite[]>({
     queryKey: ["plans-sites"],
     queryFn: planSiteService.getAll,
@@ -61,12 +68,14 @@ export default function PtbaPlanificationTable() {
 
   // Obtenir les années uniques des versions (ordre ascendant)
   const anneesDisponibles = [
-    ...new Set(versions.map((v) => v.annee_ptba)),
+    ...new Set(filteredVersions.map((v) => v.annee_ptba)),
   ].sort((a, b) => a - b);
 
   // Fonction pour filtrer les activités par année
   const getActivitesByAnnee = (annee: number) => {
-    const versionsDeAnnee = versions.filter((v) => v.annee_ptba === annee);
+    const versionsDeAnnee = filteredVersions.filter(
+      (v) => v.annee_ptba === annee
+    );
     const idsVersionsDeAnnee = versionsDeAnnee.map((v) => v.id_version_ptba);
 
     return activites.filter((activite) => {
@@ -153,7 +162,7 @@ export default function PtbaPlanificationTable() {
   return (
     <div className="space-y-6">
       {/* Tabs des années */}
-      {anneesDisponibles.length > 0 && (
+      {anneesDisponibles.length > 0 ? (
         <Tabs
           defaultValue={anneeParDefaut?.toString() || ""}
           className="w-full"
@@ -453,6 +462,10 @@ export default function PtbaPlanificationTable() {
             </TabsContent>
           ))}
         </Tabs>
+      ) : (
+        <div className="bg-card p-6 flex items-center justify-center h-full">
+          <p className="text-foreground text-xl">Aucune activité trouvée</p>
+        </div>
       )}
 
       <Modal
