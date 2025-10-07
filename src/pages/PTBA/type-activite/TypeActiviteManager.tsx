@@ -134,32 +134,6 @@ export default function TypeActiviteManager() {
         </div>
       )}
 
-      {/* Stats */}
-      {!showForm && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-card border border-border rounded-lg p-4">
-            <div className="text-2xl font-bold text-foreground">
-              {typesActivite.length}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Types d'activités
-            </div>
-          </div>
-          <div className="bg-card border border-border rounded-lg p-4">
-            <div className="text-2xl font-bold text-blue-600">
-              {
-                typesActivite.filter(
-                  (t) => t.description && t.description.length > 0
-                ).length
-              }
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Avec description
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Affichage conditionnel : Table ou Formulaire */}
       {showForm ? (
         <div className="bg-card border border-border rounded-lg p-6">

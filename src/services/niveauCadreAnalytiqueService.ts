@@ -6,7 +6,6 @@ export interface NiveauCadreAnalytiqueFormData {
   nombre_nca: number;
   libelle_nca: string;
   code_number_nca: number;
-  type_niveau: number;
 }
 
 export const niveauCadreAnalytiqueService = {

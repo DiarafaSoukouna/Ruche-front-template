@@ -1,5 +1,7 @@
 // Types pour les entités de paramètres
 
+import { CadreAnalytique } from "../pages/CadreAnalytique/types";
+
 // Niveau Cadre Stratégique
 export interface NiveauCadreStrategique extends Record<string, unknown> {
   id_nsc: number;
@@ -15,7 +17,6 @@ export interface NiveauCadreAnalytique extends Record<string, unknown> {
   nombre_nca: number;
   libelle_nca: string;
   code_number_nca: number;
-  type_niveau: 1 | 2 | 3 | string; // 1 - Effet, 2 - Produit, 3 - Impact
 }
 
 // Cible CMR Projet
@@ -311,13 +312,12 @@ export interface CadreStrategique extends Record<string, unknown> {
   intutile_cs: string;
   abgrege_cs: string;
   niveau_cs: number | string;
-  cout_axe: number;
   date_enregistrement: string;
   date_modification: string;
   etat?: number;
   partenaire_cs?: Acteur | null;
   parent_cs?: CadreStrategique | number | null;
-  projet_cs?: Programme | null;
+  programme_cs?: Programme | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -391,15 +391,17 @@ export interface VersionPtbaRequest {
 // Activité PTBA
 export interface Ptba extends Record<string, unknown> {
   id_ptba: number;
-  localites_ptba: number[]; // Relations vers entité Localite
-  partenaire_conserne_ptba: number[]; // Relations vers entité Acteur
+  localites_ptba: number[] | Localite[]; // Relations vers entité Localite
+  partenaire_conserne_ptba: number[] | Acteur[]; // Relations vers entité Acteur
   code_activite_ptba: string;
   intitule_activite_ptba: string; // max 200 chars
   chronogramme: string; // max 100 chars - mois concernés
   observation?: string;
   statut_activite: string; // max 100 chars
   code_crp?: string; // Code du Cadre stratégique concerné, relation vers CadreStrategique
+  cadre_analytique?: string | CadreAnalytique; // Code du Cadre analytique concerné, relation vers CadreAnalytique via code_ca
   responsable_ptba?: number; // Code du PlanSite responsable
+  direction_ptba?: string; // Code du PlanSite direction, relation vers PlanSite via code_ds
   code_programme?: string;
   version_ptba: number; // Relation vers VersionPtba
   type_activite: number; // Relation vers TypeActivite
@@ -408,6 +410,7 @@ export interface Ptba extends Record<string, unknown> {
 
   // Relations populées (optionnelles, selon l'API)
   responsable?: PlanSite; // PlanSite populé pour responsable_ptba
+  direction?: PlanSite; // PlanSite populé pour direction_ptba
 }
 
 // Tâche d'activité PTBA

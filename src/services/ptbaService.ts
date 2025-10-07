@@ -3,8 +3,13 @@ import { PtbaFormData } from "../schemas/ptbaSchemas";
 import type { Ptba } from "../types/entities";
 
 const ptbaService = {
-  async getAll(): Promise<Ptba[]> {
-    const response = await api.get(`/ptba/`);
+  async getAll(codeProgramme: string): Promise<Ptba[]> {
+    console.log("currentProgramme", codeProgramme);
+    let url = `/ptba/`;
+    if (codeProgramme) {
+      url += `?code_programme=${codeProgramme}`;
+    }
+    const response = await api.get(url);
     return response.data;
   },
 

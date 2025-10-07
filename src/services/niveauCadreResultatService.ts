@@ -71,20 +71,13 @@ export const niveauCadreResultatService = {
   create: async (
     data: NiveauCadreResultatFormData
   ): Promise<NiveauCadreResultat> => {
-    try {
-      const response = await apiClient.request<NiveauCadreResultat>(
-        "/niveau_cadre_resultat/",
-        {
-          method: "POST",
-          data,
-        }
-      );
-      toast.success("Niveau de cadre de résultat créé avec succès");
-      return response;
-    } catch (error) {
-      toast.error("Erreur lors de la création du niveau de cadre de résultat");
-      throw error;
-    }
+    return await apiClient.request<NiveauCadreResultat>(
+      "/niveau_cadre_resultat/",
+      {
+        method: "POST",
+        data,
+      }
+    );
   },
 
   // Update niveau
@@ -92,57 +85,19 @@ export const niveauCadreResultatService = {
     id: number,
     data: Partial<NiveauCadreResultatFormData>
   ): Promise<NiveauCadreResultat> => {
-    try {
-      const response = await apiClient.request<NiveauCadreResultat>(
-        `/niveau_cadre_resultat/${id}/`,
-        {
-          method: "PUT",
-          data,
-        }
-      );
-      toast.success("Niveau de cadre de résultat mis à jour avec succès");
-      return response;
-    } catch (error) {
-      toast.error(
-        "Erreur lors de la mise à jour du niveau de cadre de résultat"
-      );
-      throw error;
-    }
+    return await apiClient.request<NiveauCadreResultat>(
+      `/niveau_cadre_resultat/${id}/`,
+      {
+        method: "PUT",
+        data,
+      }
+    );
   },
 
   // Delete niveau
   delete: async (id: number): Promise<void> => {
-    try {
-      await apiClient.request(`/niveau_cadre_resultat/${id}/`, {
-        method: "DELETE",
-      });
-      toast.success("Niveau de cadre de résultat supprimé avec succès");
-    } catch (error) {
-      toast.error(
-        "Erreur lors de la suppression du niveau de cadre de résultat"
-      );
-      throw error;
-    }
-  },
-
-  // Toggle status
-  toggleStatus: async (id: number): Promise<NiveauCadreResultat> => {
-    try {
-      const response = await apiClient.request<NiveauCadreResultat>(
-        `/niveau_cadre_resultat/${id}/toggle_status/`,
-        {
-          method: "PATCH",
-        }
-      );
-      toast.success(
-        "Statut du niveau de cadre de résultat mis à jour avec succès"
-      );
-      return response;
-    } catch (error) {
-      toast.error(
-        "Erreur lors de la mise à jour du statut du niveau de cadre de résultat"
-      );
-      throw error;
-    }
+    await apiClient.request(`/niveau_cadre_resultat/${id}/`, {
+      method: "DELETE",
+    });
   },
 };

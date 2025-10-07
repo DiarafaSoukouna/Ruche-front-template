@@ -111,29 +111,15 @@ export default function VersionPtbaForm({
   };
 
   // Options pour le statut
-  const statutOptions = [
-    { value: 0, label: "En construction" },
-    { value: 1, label: "Validée" },
-    { value: 2, label: "Archivée" },
-  ];
+  // const statutOptions = [
+  //   { value: 0, label: "En construction" },
+  //   { value: 1, label: "Validée" },
+  //   { value: 2, label: "Archivée" },
+  // ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Controller
-          name="version_ptba"
-          control={control}
-          render={({ field }) => (
-            <Input
-              {...field}
-              label="Version PTBA"
-              placeholder="Ex: V1.0"
-              error={errors.version_ptba}
-              required
-            />
-          )}
-        />
-
         <Controller
           name="annee_ptba"
           control={control}
@@ -154,10 +140,23 @@ export default function VersionPtbaForm({
             />
           )}
         />
+        <Controller
+          name="version_ptba"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Version PTBA"
+              placeholder="Ex: V1.0"
+              error={errors.version_ptba}
+              required
+            />
+          )}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Controller
+        {/* <Controller
           name="statut_version"
           control={control}
           render={({ field }) => (
@@ -175,7 +174,7 @@ export default function VersionPtbaForm({
               error={errors.statut_version}
             />
           )}
-        />
+        /> */}
 
         <Controller
           name="date_validation"
