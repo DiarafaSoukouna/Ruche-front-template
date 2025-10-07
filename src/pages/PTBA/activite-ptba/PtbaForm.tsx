@@ -12,12 +12,22 @@ import typeActiviteService from "../../../services/typeActiviteService";
 import { acteurService } from "../../../services/acteurService";
 import { personnelService } from "../../../services/personnelService";
 import { cadreStrategiqueService } from "../../../services/cadreStrategiqueService";
+import { planSiteService } from "../../../services/planSiteService";
 import { PtbaFormData, ptbaSchema } from "../../../schemas/ptbaSchemas";
-import type { Programme, Ptba, VersionPtba } from "../../../types/entities";
+import type {
+  Acteur,
+  Localite,
+  PlanSite,
+  Programme,
+  Ptba,
+  VersionPtba,
+} from "../../../types/entities";
 import ChronogrammeSelector from "./ChronogrammeSelector";
 import { allLocalite } from "../../../functions/localites/gets";
+import { getAllCadreAnalytique } from "../../../functions/cadreAnalytique/gets";
 import { useRoot } from "../../../contexts/RootContext";
 import versionPtbaService from "../../../services/versionPtbaService";
+import { CadreAnalytique } from "../../CadreAnalytique/types";
 
 interface PtbaFormProps {
   activite?: Ptba;
@@ -31,28 +41,6 @@ export default function PtbaForm({
   onSuccess,
 }: PtbaFormProps) {
   const isEditing = !!activite;
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<PtbaFormData>({
-    resolver: zodResolver(ptbaSchema),
-    defaultValues: {
-      localites_ptba: activite?.localites_ptba || [],
-      partenaire_conserne_ptba: activite?.partenaire_conserne_ptba || [],
-      code_activite_ptba: activite?.code_activite_ptba || "",
-      intitule_activite_ptba: activite?.intitule_activite_ptba || "",
-      chronogramme: activite?.chronogramme || "",
-      observation: activite?.observation || "",
-      statut_activite: activite?.statut_activite || "Planifiée",
-      code_crp: activite?.code_crp || "",
-      responsable_ptba: activite?.responsable_ptba || undefined,
-      code_programme: activite?.code_programme || "",
-      version_ptba: activite?.version_ptba,
-      type_activite: activite?.type_activite || 0,
-    },
-  });
 
   // Fetch options
   const { data: versions = [] } = useQuery({
@@ -84,8 +72,57 @@ export default function PtbaForm({
     queryKey: ["cadres-strategiques"],
     queryFn: () => cadreStrategiqueService.getAll(),
   });
+  const { data: plansSites = [] } = useQuery({
+    queryKey: ["plans-sites"],
+    queryFn: planSiteService.getAll,
+  });
 
   const { currentProgramme }: { currentProgramme: Programme } = useRoot();
+
+  const { data: cadresAnalytiques = [] } = useQuery({
+    queryKey: ["cadres-analytiques", currentProgramme?.id_programme],
+    queryFn: () => getAllCadreAnalytique(currentProgramme?.id_programme),
+    enabled: !!currentProgramme,
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<PtbaFormData>({
+    resolver: zodResolver(ptbaSchema),
+    defaultValues: {
+      localites_ptba:
+        typeof activite?.localites_ptba === "object"
+          ? (activite?.localites_ptba as Localite[]).map(
+              (l: Localite) => l.id_loca
+            )
+          : [],
+      partenaire_conserne_ptba:
+        typeof activite?.partenaire_conserne_ptba === "object"
+          ? (activite?.partenaire_conserne_ptba as Acteur[]).map(
+              (p: Acteur) => p.id_acteur
+            )
+          : [],
+      code_activite_ptba: activite?.code_activite_ptba || "",
+      intitule_activite_ptba: activite?.intitule_activite_ptba || "",
+      chronogramme: activite?.chronogramme || "",
+      observation: activite?.observation || "",
+      statut_activite: activite?.statut_activite || "Planifiée",
+      code_crp: activite?.code_crp || "",
+      cadre_analytique:
+        (activite?.cadre_analytique as CadreAnalytique)?.code_ca || "",
+      responsable_ptba: activite?.responsable_ptba || undefined,
+      direction_ptba:
+        typeof activite?.direction_ptba === "object"
+          ? (activite?.direction_ptba as PlanSite)?.code_ds
+          : "",
+      code_programme:
+        activite?.code_programme || currentProgramme?.code_programme,
+      version_ptba: activite?.version_ptba,
+      type_activite: Number(activite?.type_activite) || 0,
+    },
+  });
 
   // Mutations
   const createMutation = useMutation({
@@ -147,20 +184,22 @@ export default function PtbaForm({
     label: cadre.intutile_cs,
   }));
 
+  const cadreAnalytiqueOptions = cadresAnalytiques.map((cadre) => ({
+    value: cadre.code_ca,
+    label: cadre.intutile_ca,
+  }));
+
+  const planSiteOptions = plansSites.map((planSite) => ({
+    value: planSite.code_ds,
+    label: planSite.intutile_ds,
+  }));
+
   const versionPtbaOptions = versions.map((version: VersionPtba) => ({
     value: version.id_version_ptba,
     label: version.version_ptba
       ? version.version_ptba + " - " + version.annee_ptba.toString()
       : version.annee_ptba.toString(),
   }));
-
-  const statutOptions = [
-    { value: "Planifiée", label: "Planifiée" },
-    { value: "En cours", label: "En cours" },
-    { value: "Terminée", label: "Terminée" },
-    { value: "Suspendue", label: "Suspendue" },
-    { value: "Annulée", label: "Annulée" },
-  ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-6">
@@ -253,9 +292,9 @@ export default function PtbaForm({
               <SelectInput
                 label="Localités concernées"
                 options={localiteOptions}
-                value={localiteOptions.filter((opt) =>
-                  field.value?.includes(opt.value)
-                )}
+                value={localiteOptions.filter((opt) => {
+                  return field.value?.includes(opt.value);
+                })}
                 onChange={(selectedOptions) => {
                   const values =
                     selectedOptions && Array.isArray(selectedOptions)
@@ -308,25 +347,6 @@ export default function PtbaForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Controller
-            name="statut_activite"
-            control={control}
-            render={({ field }) => (
-              <SelectInput
-                label="Statut de l'activité"
-                options={statutOptions}
-                value={statutOptions.find((opt) => opt.value === field.value)}
-                onChange={(option) =>
-                  option &&
-                  !Array.isArray(option) &&
-                  field.onChange(option?.value)
-                }
-                error={errors.statut_activite}
-                required
-              />
-            )}
-          />
-
-          <Controller
             name="version_ptba"
             control={control}
             render={({ field }) => {
@@ -352,9 +372,6 @@ export default function PtbaForm({
               );
             }}
           />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Controller
             name="code_crp"
             control={control}
@@ -376,6 +393,34 @@ export default function PtbaForm({
                     field.onChange(option?.value || "")
                   }
                   error={errors.code_crp}
+                />
+              );
+            }}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Controller
+            name="cadre_analytique"
+            control={control}
+            render={({ field }) => {
+              const cadreAnalOptions = [
+                { value: "", label: "Aucun cadre analytique" },
+                ...cadreAnalytiqueOptions,
+              ];
+              return (
+                <SelectInput
+                  label="Cadre analytique"
+                  options={cadreAnalOptions}
+                  value={cadreAnalOptions.find(
+                    (opt) => opt.value === (field.value || "")
+                  )}
+                  onChange={(option) =>
+                    option &&
+                    !Array.isArray(option) &&
+                    field.onChange(option?.value || "")
+                  }
+                  error={errors.cadre_analytique}
                 />
               );
             }}
@@ -402,6 +447,34 @@ export default function PtbaForm({
                     field.onChange(option?.value)
                   }
                   error={errors.responsable_ptba}
+                />
+              );
+            }}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Controller
+            name="direction_ptba"
+            control={control}
+            render={({ field }) => {
+              const directionOptions = [
+                { value: "", label: "Aucune direction" },
+                ...planSiteOptions,
+              ];
+              return (
+                <SelectInput
+                  label="Direction"
+                  options={directionOptions}
+                  value={directionOptions.find(
+                    (opt) => opt.value === (field.value || "")
+                  )}
+                  onChange={(option) =>
+                    option &&
+                    !Array.isArray(option) &&
+                    field.onChange(option?.value || "")
+                  }
+                  error={errors.direction_ptba}
                 />
               );
             }}

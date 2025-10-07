@@ -233,8 +233,10 @@ export default function CadreResultatForm({
                       .find((option) => option.value === field.value)
                   : null
               }
-              onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
+              onChange={(option) => {
+                option &&
+                  !Array.isArray(option) &&
+                  field.onChange(option.value);
               }}
               isClearable
               error={errors.niveau_cr}
@@ -259,8 +261,10 @@ export default function CadreResultatForm({
                       )
                     : null
                 }
-                onChange={(selectedOption) => {
-                  field.onChange(selectedOption ? selectedOption.value : null);
+                onChange={(option) => {
+                  option &&
+                    !Array.isArray(option) &&
+                    field.onChange(option.value);
                 }}
                 isClearable
                 error={errors.parent_cr}
@@ -291,8 +295,10 @@ export default function CadreResultatForm({
                       .find((option) => option.value === field.value)
                   : null
               }
-              onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
+              onChange={(option) => {
+                option &&
+                  !Array.isArray(option) &&
+                  field.onChange(option.value);
               }}
               isClearable
               error={errors.partenaire_cr}
@@ -322,8 +328,10 @@ export default function CadreResultatForm({
                       .find((option) => option.value === field.value)
                   : null
               }
-              onChange={(selectedOption) => {
-                field.onChange(selectedOption ? selectedOption.value : null);
+              onChange={(option) => {
+                option &&
+                  !Array.isArray(option) &&
+                  field.onChange(option.value);
               }}
               isClearable
               error={errors.projet_cr}

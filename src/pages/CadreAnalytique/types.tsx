@@ -1,4 +1,5 @@
 export interface CadreAnalytique {
+  code_ca: string;
   id_loca?: number;
   niveau_loca: number;
   parent_loca?: CadreAnalytique | string | undefined;

@@ -4,13 +4,18 @@ import { z } from "zod";
 export const cadreStrategiqueSchema = z.object({
   id_cs: z.number(),
   code_cs: z.string("Le code est requis").min(1, "Le code est requis").max(50),
-  intutile_cs: z.string("L'intitulé est requis").min(1, "L'intitulé est requis").max(200),
-  abgrege_cs: z.string("L'abrégé est requis").min(1, "L'abrégé est requis").max(100),
+  intutile_cs: z
+    .string("L'intitulé est requis")
+    .min(1, "L'intitulé est requis")
+    .max(200),
+  abgrege_cs: z
+    .string("L'abrégé est requis")
+    .min(1, "L'abrégé est requis")
+    .max(100),
   niveau_cs: z.number("Le niveau est requis").min(1, "Le niveau est requis"),
-  cout_axe: z.number("Le coût est requis").min(0, "Le coût doit être positif"),
   partenaire_cs: z.number().nullable().optional(),
   parent_cs: z.number().nullable().optional(),
-  projet_cs: z.number().nullable().optional(),
+  programme_cs: z.number().nullable().optional(),
 });
 
 export const cadreStrategiqueCreateSchema = cadreStrategiqueSchema.omit({
@@ -30,7 +35,10 @@ export type CadreStrategiqueUpdateData = z.infer<
 export const cadreStrategiqueConfigSchema = z.object({
   id_csc: z.number(),
   nombre: z.number("Le nombre est requis").min(1, "Le nombre est requis"),
-  libelle_csc: z.string("Le libellé est requis").min(1, "Le libellé est requis").max(100),
+  libelle_csc: z
+    .string("Le libellé est requis")
+    .min(1, "Le libellé est requis")
+    .max(100),
   type_csc: z.union([z.literal(1), z.literal(2), z.literal(3)], {
     message: "Le type doit être 1 (Effet), 2 (Produit) ou 3 (Impact)",
   }),
