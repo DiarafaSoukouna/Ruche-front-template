@@ -9,8 +9,9 @@ import {
   getStatutVersionLabel,
   getStatutVersionColor,
 } from "../../../schemas/ptbaSchemas";
-import type { VersionPtba } from "../../../types/entities";
+import type { Programme, VersionPtba } from "../../../types/entities";
 import VersionPtbaForm from "./VersionPtbaForm";
+import { useRoot } from "../../../contexts/RootContext";
 
 export default function VersionPtbaManager() {
   const queryClient = useQueryClient();
@@ -19,11 +20,20 @@ export default function VersionPtbaManager() {
     VersionPtba | undefined
   >();
 
+  const { currentProgramme }: { currentProgramme: Programme } = useRoot();
+
   // Fetch versions
   const { data: versions = [] } = useQuery<VersionPtba[]>({
     queryKey: ["versions-ptba"],
     queryFn: versionPtbaService.getAll,
   });
+
+  const filteredVersions = versions.filter(
+    (version) =>
+      version.programme === currentProgramme?.code_programme ||
+      (version.programme as Programme)?.code_programme ===
+        currentProgramme?.code_programme
+  );
 
   // Mutations
   const deleteMutation = useMutation({
@@ -247,7 +257,10 @@ export default function VersionPtbaManager() {
           <Table<VersionPtba & { id: string | number }>
             title="Liste des versions PTBA"
             columns={columns}
-            data={versions.map((v) => ({ ...v, id: v.id_version_ptba }))}
+            data={filteredVersions.map((v) => ({
+              ...v,
+              id: v.id_version_ptba,
+            }))}
           />
         </div>
       )}

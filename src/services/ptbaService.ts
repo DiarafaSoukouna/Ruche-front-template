@@ -4,7 +4,6 @@ import type { Ptba } from "../types/entities";
 
 const ptbaService = {
   async getAll(codeProgramme: string): Promise<Ptba[]> {
-    console.log("currentProgramme", codeProgramme);
     let url = `/ptba/`;
     if (codeProgramme) {
       url += `?code_programme=${codeProgramme}`;

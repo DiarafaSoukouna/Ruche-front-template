@@ -105,7 +105,6 @@ const CadreAnalytique: React.FC = () => {
   const getCadreAnalytiques = async () => {
     setLoading(true);
     try {
-      console.log("currentProgramme", currentProgramme?.id_programme);
       const res = await getAllCadreAnalytique(currentProgramme?.id_programme);
       setCadreAnalytiques(res);
       setLoading(false);
