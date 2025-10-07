@@ -19,7 +19,12 @@ import { typeIndicStrategique } from '../../../functions/indicateurStrategique/t
 import { allIndicStrategique } from '../../../functions/indicateurStrategique/gets'
 import { cadreStrategiqueConfigService } from '../../../services/cadreStrategiqueConfigService'
 import { CadreStrategiqueConfig } from '../../../types/entities'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/Tabs'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '../../../components/Tabs'
 import { useRoot } from '../../../contexts/RootContext'
 import FormIndicateurStrategique from './form'
 import ConfirmModal from '../../../components/ConfirModal'
@@ -33,49 +38,69 @@ const IndicateurStrategique = () => {
   // const [acteurs, set]
   const { currentProgramme } = useRoot()
   const [showModal, setShowModal] = useState(false)
-  const [IndicStrategiques, setIndicStrategiques] = useState<typeIndicStrategique[]>([])
-  const [cibleIndicStrategiques, setCibleIndicStrategiques] = useState<any[]>([])
-  const [cibleByIndicateurs, setcibleByIndicateurs] = useState<typeCibleIndicStrategique[]>([])
+  const [IndicStrategiques, setIndicStrategiques] = useState<
+    typeIndicStrategique[]
+  >([])
+  const [cibleIndicStrategiques, setCibleIndicStrategiques] = useState<any[]>(
+    []
+  )
+  const [cibleByIndicateurs, setcibleByIndicateurs] = useState<
+    typeCibleIndicStrategique[]
+  >([])
   const [addBoutonLabel, setAddBoutonLabel] = useState<string>('')
   const [tabActive, setTabActive] = useState<string>('1')
-  const [cadreStrategiques, setCadreStrategiques] = useState<CadreStrategiqueConfig[]>([])
+  const [cadreStrategiques, setCadreStrategiques] = useState<
+    CadreStrategiqueConfig[]
+  >([])
   const [isDelete, setIsDelete] = useState(false)
   const [showModalCible, setShowModalCible] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [IndicStrategique, setIndicStrategique] = useState<typeIndicStrategique>({
-    id_indicateur_str: 0,
-    niveau_istr: 0,
-    code_indicateur_istr: '',
-    code_istr: '',
-    intitule_indicateur_istr: '',
-    periodicite_iop: '',
-    source_istr: '',
-    responsable_istr: '',
-    description_istr: '',
-    structure_istr: '',
-    programme_istr: 0
-  })
+  const [IndicStrategique, setIndicStrategique] =
+    useState<typeIndicStrategique>({
+      id_indicateur_str: 0,
+      niveau_istr: 0,
+      code_indicateur_istr: '',
+      code_istr: '',
+      intitule_indicateur_istr: '',
+      periodicite_iop: '',
+      source_istr: '',
+      responsable_istr: '',
+      description_istr: '',
+      structure_istr: '',
+      programme_istr: 0,
+    })
 
   const loadCible = (row: any) => {
     setIndicStrategique(row)
-    const cible_indic = cibleIndicStrategiques.filter((cible) => cible.code_indicateur_istr.code_indicateur_istr === row.code_indicateur_istr)
-    setcibleByIndicateurs(cible_indic);
-    console.log('cibleByIndicateur', cible_indic, 'cibleIndicStrategiques', cibleIndicStrategiques)
+    const cible_indic = cibleIndicStrategiques.filter(
+      (cible) =>
+        cible.code_indicateur_istr.code_indicateur_istr ===
+        row.code_indicateur_istr
+    )
+    setcibleByIndicateurs(cible_indic)
+    console.log(
+      'cibleByIndicateur',
+      cible_indic,
+      'cibleIndicStrategiques',
+      cibleIndicStrategiques
+    )
     setShowModalCible(true)
   }
   const getValeurCibleByIndic = (code_indicateur_istr: string) => {
-    let somme = 0;
-    cibleIndicStrategiques.forEach((cible) => { 
-      if (cible.code_indicateur_istr.code_indicateur_istr === code_indicateur_istr) {
+    let somme = 0
+    cibleIndicStrategiques.forEach((cible) => {
+      if (
+        cible.code_indicateur_istr.code_indicateur_istr === code_indicateur_istr
+      ) {
         console.log('valeur', cible.valeur_cible_indcateur_istr)
-        somme += Number(cible.valeur_cible_indcateur_istr ) ;
+        somme += Number(cible.valeur_cible_indcateur_istr)
       }
     })
-    return somme;
-  } 
-  const onEdit = (row: typeIndicStrategique) => { 
-    setIndicStrategique(row);
-    setShowModal(true);
+    return somme
+  }
+  const onEdit = (row: typeIndicStrategique) => {
+    setIndicStrategique(row)
+    setShowModal(true)
   }
 
   const fetchIndicStrategiques = async () => {
@@ -110,19 +135,18 @@ const IndicateurStrategique = () => {
       setLoading(true)
       const res = await cadreStrategiqueConfigService.getAll()
 
-      const filteredCad: any = res.filter(
-        (cadre: any) => cadre.programme === currentProgramme.id_programme
-      )
+      // const filteredCad: any = res.filter(
+      //   (cadre: any) => cadre.programme === currentProgramme.code_programme
+      // )
 
-      const niveau =
-        filteredCad.length > 0
-          ? filteredCad[0].libelle_csc.split(',')
-          : []
+      // const niveau =
+      //   filteredCad.length > 0 ? filteredCad[0].libelle_csc.split(',') : []
 
-      setCadreStrategiques(niveau)
+      setCadreStrategiques(res)
 
       setLoading(false)
-      console.log('cadre strategique', cadreStrategiques)
+
+      console.log('cadre strategique', res)
     } catch (error) {
       console.error(error)
     } finally {
@@ -143,8 +167,8 @@ const IndicateurStrategique = () => {
   const handleTabClick = async (niv: number, libelle: string) => {
     setTabActive(String(niv))
     setAddBoutonLabel(libelle)
-  };
-  
+  }
+
   useEffect(() => {
     fetchCibleIndicStrategiques()
     fetchIndicStrategiques()
@@ -241,7 +265,9 @@ const IndicateurStrategique = () => {
       {/* Header avec contrôles */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Indicateurs strategiques</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Indicateurs strategiques
+          </h1>
         </div>
         <div className="flex gap-4">
           <Button
@@ -275,7 +301,11 @@ const IndicateurStrategique = () => {
       <Modal
         isOpen={showModalCible}
         onClose={() => setShowModalCible(false)}
-        title={IndicStrategique.code_indicateur_istr + " " + IndicStrategique.intitule_indicateur_istr}
+        title={
+          IndicStrategique.code_indicateur_istr +
+          ' ' +
+          IndicStrategique.intitule_indicateur_istr
+        }
         size="xl"
       >
         <CibleIndicateur
@@ -287,35 +317,28 @@ const IndicateurStrategique = () => {
         onClose={() => setIsDelete(false)}
         title={'Supprimer cet indicateur'}
         size="md"
-        confimationButon={() => DeleteIndicateurStrategique(IndicStrategique.id_indicateur_str)}
-      >
-      </ConfirmModal>
+        confimationButon={() =>
+          DeleteIndicateurStrategique(IndicStrategique.id_indicateur_str)
+        }
+      ></ConfirmModal>
       <Tabs defaultValue={`1`}>
         <div className="mt-2 mb-2 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
             <TabsList className="flex space-x-2">
-              {cadreStrategiques.length ? (
-                cadreStrategiques.map((stratConfig: any, index) => (
-                  <div
-                    key={index + 1}
-                    onClick={() =>
-                      handleTabClick(
-                        index + 1,
-                        stratConfig
-                      )
-                    }
-                  >
-                    <TabsTrigger
+              {cadreStrategiques.length
+                ? cadreStrategiques.map((stratConfig: any, index) => (
+                    <div
                       key={index + 1}
-                      value={String(index + 1)}
+                      onClick={() =>
+                        handleTabClick(index + 1, stratConfig.libelle_nsc)
+                      }
                     >
-                      {stratConfig}
-                    </TabsTrigger>
-                  </div>
-                ))
-              ) : (
-                "Niveau localité non disponible"
-              )}
+                      <TabsTrigger key={index + 1} value={String(index + 1)}>
+                        {stratConfig.libelle_nsc}
+                      </TabsTrigger>
+                    </div>
+                  ))
+                : 'Niveau localité non disponible'}
             </TabsList>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
@@ -339,27 +362,29 @@ const IndicateurStrategique = () => {
           </div>
         </div>
 
-        {loading ? <div className="text-center"><RiseLoader color="green" /></div> :
-          cadreStrategiques.length ?
-            cadreStrategiques.map((cadreStrat: any, index) =>
-            (
-              <div key={index + 1}>
-
-                <TabsContent value={String(index + 1)}>
-
-                  <div className="overflow-x-auto rounded-lg border border-gray-200">
-                    <Table
-                      columns={columns}
-                      data={IndicStrategiques.filter((indic) => indic.niveau_istr == index + 1)}
-                      itemsPerPage={5}
-                    />
-                  </div>
-                </TabsContent>
-              </div>
-            )
-            )
-            : "Niveau cadre strategique indisponible"
-        }
+        {loading ? (
+          <div className="text-center">
+            <RiseLoader color="green" />
+          </div>
+        ) : cadreStrategiques.length ? (
+          cadreStrategiques.map((cadreStrat: any, index) => (
+            <div key={index + 1}>
+              <TabsContent value={String(index + 1)}>
+                <div className="overflow-x-auto rounded-lg border border-gray-200">
+                  <Table
+                    columns={columns}
+                    data={IndicStrategiques.filter(
+                      (indic) => indic.niveau_istr == index + 1
+                    )}
+                    itemsPerPage={5}
+                  />
+                </div>
+              </TabsContent>
+            </div>
+          ))
+        ) : (
+          'Niveau cadre strategique indisponible'
+        )}
       </Tabs>
     </div>
   )

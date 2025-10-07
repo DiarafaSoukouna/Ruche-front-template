@@ -48,7 +48,7 @@ export const versionPtbaSchema = z.object({
     .optional(),
   responsable_ptba: z.string().optional(),
   id_personnel: z.number().optional(),
-  projet: z.number().optional(),
+  programme: z.string().optional(),
 });
 
 // Schéma pour les mois du chronogramme
