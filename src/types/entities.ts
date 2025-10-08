@@ -5,12 +5,12 @@ import { ProgrammeTypes } from './programme'
 
 // Niveau Cadre Stratégique
 export interface NiveauCadreStrategique extends Record<string, unknown> {
-  id_nsc: number;
-  nombre_nsc: number;
-  libelle_nsc: string;
-  code_number_nsc: number;
-  type_niveau: 1 | 2 | 3 | string; // 1 - Effet, 2 - Produit, 3 - Impact
-  programme?: string | Programme;
+  id_nsc: number
+  nombre_nsc: number
+  libelle_nsc: string
+  code_number_nsc: number
+  type_niveau: 1 | 2 | 3 | string // 1 - Effet, 2 - Produit, 3 - Impact
+  programme?: string | Programme
 }
 
 // Niveau Cadre Analytique
@@ -36,6 +36,12 @@ export interface CibleCmrProjet extends Record<string, unknown> {
 }
 
 export interface TitrePersonnel extends Record<string, unknown> {
+  id_titre: number
+  libelle_titre: string
+  description_titre?: string
+}
+
+export interface TitrePersonnel {
   id_titre: number
   libelle_titre: string
   description_titre?: string
@@ -150,6 +156,12 @@ export interface ProjetActivePerso {
   signataires_projet: number[]
   partenaires_execution_projet: number[]
   zone_projet: number[]
+}
+
+export interface Fonction extends Record<string, unknown> {
+  id_fonction?: number
+  nom_fonction: string
+  description_fonction: string
 }
 
 export interface NiveauStructureConfig extends Record<string, unknown> {

@@ -33,7 +33,6 @@ export default function NiveauStructureConfigForm({
     });
 
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors },
@@ -79,37 +78,54 @@ export default function NiveauStructureConfigForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Input
-          {...register("nombre_nsc", { valueAsNumber: true })}
-          type="number"
-          label="Niveau hiérarchique"
-          placeholder="ex: 1, 2, 3..."
-          defaultValue={1}
-          min="1"
-          max="99"
-          error={errors.nombre_nsc}
-          required
+        <Controller
+          name="nombre_nsc"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="number"
+              label="Niveau hiérarchique"
+              placeholder="ex: 1, 2, 3..."
+              defaultValue={1}
+              min="1"
+              max="99"
+              error={errors.nombre_nsc}
+              required
+            />
+          )}
         />
-
-        <Input
-          {...register("code_number_nsc")}
-          type="text"
-          label="Code numérique"
-          placeholder="ex: MIN, DIR, SRV"
-          maxLength={20}
-          error={errors.code_number_nsc}
-          required
+        <Controller
+          name="code_number_nsc"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="text"
+              label="Code numérique"
+              placeholder="ex: MIN, DIR, SRV"
+              maxLength={20}
+              error={errors.code_number_nsc}
+              required
+            />
+          )}
         />
       </div>
 
-      <Input
-        {...register("libelle_nsc")}
-        type="text"
-        label="Libellé"
-        placeholder="ex: Ministère, Direction, Service, Sous-service"
-        maxLength={100}
-        error={errors.libelle_nsc}
-        required
+      <Controller
+        name="libelle_nsc"
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            type="text"
+            label="Libellé"
+            placeholder="ex: Ministère, Direction, Service, Sous-service"
+            maxLength={100}
+            error={errors.libelle_nsc}
+            required
+          />
+        )}
       />
 
       <Controller
@@ -122,9 +138,8 @@ export default function NiveauStructureConfigForm({
             required
             options={programmeOptions}
             value={
-              programmeOptions.find(
-                (option) => option.value === field.value
-              ) || null
+              programmeOptions.find((option) => option.value === field.value) ||
+              null
             }
             onChange={(selectedOption) => {
               field.onChange(selectedOption?.value || 0);
