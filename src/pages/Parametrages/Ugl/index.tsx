@@ -226,7 +226,12 @@ const Ugls = () => {
           <RiseLoader color="green" />
         </div>
       ) : (
-        <Table title='Liste des unités de gestion' columns={columns} data={ugls} itemsPerPage={5} />
+        <Table
+          title="Liste des unités de gestion"
+          columns={columns}
+          data={ugls}
+          itemsPerPage={5}
+        />
       )}
     </div>
   )

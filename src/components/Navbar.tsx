@@ -96,8 +96,8 @@ const Navbar: React.FC = () => {
         },
         { name: 'Zone de Collecte', href: '/zone-collecte', icon: MapPinIcon },
 
-        { name: 'Plans de Site', href: '/plan_sites', icon: Building2 },
         { name: 'Conventions', href: '/conventions', icon: FileSignature },
+        { name: 'Plans de Site', href: '/plan_sites', icon: Building2 },
 
         { name: 'Zone de Collecte', href: '/zone-collecte', icon: MapPinIcon },
         {
@@ -133,58 +133,54 @@ const Navbar: React.FC = () => {
           href: '/cadre_strategique',
           icon: TargetIcon,
         },
-        {
-          name: 'Actions programme',
-          href: '/action_programme',
-          icon: ListTodoIcon,
-        },
+        // {
+        //   name: 'Actions programme',
+        //   href: '/action_programme',
+        //   icon: ListTodoIcon,
+        // },
         {
           name: 'Indicateurs strategique',
           href: '/indicateurs_strategique',
           icon: ChartBarIcon,
-        },
-      ],
-      href: true,
-    },
-    {
-      name: 'Projets',
-      icon: FileIcon,
-      children: [
-        { name: 'Liste des projets', href: '/projets', icon: FileIcon },
-
-        {
-          name: 'Cadre de résultat',
-          href: '/cadre_resultat',
-          icon: ListTodoIcon,
-        },
-        {
-          name: 'Indicateurs cadre resultat',
-          href: '/indicateur_cadre_resultat',
-          icon: ChartBarIcon,
-        },
-        {
-          name: 'Dictionnaire des indicateurs',
-          href: '/dictionnaire_indicateurs',
-          icon: BookIcon,
         },
         {
           name: 'Indicateurs du CMR',
           href: '/indicateurs_cmr',
           icon: BarChart2Icon,
         },
-        {
-          name: 'Cibles du CMR',
-          href: '/cible_cmr_projet',
-          icon: TargetIcon,
-        },
-                {
-          name: 'Indicateurs strategique',
-          href: '/indicateurs_strategique',
-          icon: ChartBarIcon,
-        },
       ],
       href: true,
     },
+    // {
+    //   name: 'Projets',
+    //   icon: FileIcon,
+    //   children: [
+    //     { name: 'Liste des projets', href: '/projets', icon: FileIcon },
+
+    //     {
+    //       name: 'Cadre de résultat',
+    //       href: '/cadre_resultat',
+    //       icon: ListTodoIcon,
+    //     },
+    //     {
+    //       name: 'Indicateurs cadre resultat',
+    //       href: '/indicateur_cadre_resultat',
+    //       icon: ChartBarIcon,
+    //     },
+    //     {
+    //       name: 'Dictionnaire des indicateurs',
+    //       href: '/dictionnaire_indicateurs',
+    //       icon: BookIcon,
+    //     },
+
+    //     {
+    //       name: 'Cibles du CMR',
+    //       href: '/cible_cmr_projet',
+    //       icon: TargetIcon,
+    //     },
+    //   ],
+    //   href: true,
+    // },
     {
       name: 'Programmation',
       icon: FileIcon,
