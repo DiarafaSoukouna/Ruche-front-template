@@ -1,21 +1,21 @@
-import { toast } from "react-toastify";
-import { apiClient } from "../lib/api";
+import { toast } from 'react-toastify'
+import { apiClient } from '../lib/api'
 import type {
   CadreStrategiqueConfig,
   CadreStrategiqueConfigFormData,
-} from "../types/entities";
+} from '../types/entities'
 
 export const cadreStrategiqueConfigService = {
   // Get all configurations
   getAll: async (): Promise<CadreStrategiqueConfig[]> => {
     try {
       const response = await apiClient.request<CadreStrategiqueConfig[]>(
-        "/cadre_strategique_config/"
-      );
-      return Array.isArray(response) ? response : [];
+        '/niveau_cadre_strategique/'
+      )
+      return Array.isArray(response) ? response : []
     } catch (error) {
-      toast.error("Erreur lors de la récupération des configurations");
-      throw error;
+      toast.error('Erreur lors de la récupération des configurations')
+      throw error
     }
   },
 
@@ -23,11 +23,11 @@ export const cadreStrategiqueConfigService = {
   getById: async (id: number): Promise<CadreStrategiqueConfig> => {
     try {
       return await apiClient.request<CadreStrategiqueConfig>(
-        `/cadre_strategique_config/${id}/`
-      );
+        `/niveau_cadre_strategique/${id}/`
+      )
     } catch (error) {
-      toast.error("Erreur lors de la récupération de la configuration");
-      throw error;
+      toast.error('Erreur lors de la récupération de la configuration')
+      throw error
     }
   },
 
@@ -35,56 +35,64 @@ export const cadreStrategiqueConfigService = {
   getByType: async (type: 1 | 2 | 3): Promise<CadreStrategiqueConfig[]> => {
     try {
       const response = await apiClient.request<CadreStrategiqueConfig[]>(
-        `/cadre_strategique_config/?type_csc=${type}`
-      );
-      return Array.isArray(response) ? response : [];
+        `/niveau_cadre_strategique/?type_csc=${type}`
+      )
+      return Array.isArray(response) ? response : []
     } catch (error) {
-      toast.error("Erreur lors de la récupération des configurations par type");
-      throw error;
+      toast.error('Erreur lors de la récupération des configurations par type')
+      throw error
     }
   },
 
   // Get configurations by programme
-  getByProgramme: async (programmeId: number): Promise<CadreStrategiqueConfig[]> => {
+  getByProgramme: async (
+    programmeId: number
+  ): Promise<CadreStrategiqueConfig[]> => {
     try {
       const response = await apiClient.request<CadreStrategiqueConfig[]>(
-        `/cadre_strategique_config/?programme=${programmeId}`
-      );
-      return Array.isArray(response) ? response : [];
+        `/niveau_cadre_strategique/?programme=${programmeId}`
+      )
+      return Array.isArray(response) ? response : []
     } catch (error) {
-      toast.error("Erreur lors de la récupération des configurations par programme");
-      throw error;
+      toast.error(
+        'Erreur lors de la récupération des configurations par programme'
+      )
+      throw error
     }
   },
 
   // Search by libelle
-  searchByLibelle: async (libelle: string): Promise<CadreStrategiqueConfig[]> => {
+  searchByLibelle: async (
+    libelle: string
+  ): Promise<CadreStrategiqueConfig[]> => {
     try {
       const response = await apiClient.request<CadreStrategiqueConfig[]>(
-        `/cadre_strategique_config/?libelle_csc__icontains=${libelle}`
-      );
-      return Array.isArray(response) ? response : [];
+        `/niveau_cadre_strategique/?libelle_csc__icontains=${libelle}`
+      )
+      return Array.isArray(response) ? response : []
     } catch (error) {
-      toast.error("Erreur lors de la recherche par libellé");
-      throw error;
+      toast.error('Erreur lors de la recherche par libellé')
+      throw error
     }
   },
 
   // Create new configuration
-  create: async (data: CadreStrategiqueConfigFormData): Promise<CadreStrategiqueConfig> => {
+  create: async (
+    data: CadreStrategiqueConfigFormData
+  ): Promise<CadreStrategiqueConfig> => {
     try {
       const response = await apiClient.request<CadreStrategiqueConfig>(
-        "/cadre_strategique_config/",
+        '/niveau_cadre_strategique/',
         {
-          method: "POST",
+          method: 'POST',
           data,
         }
-      );
-      toast.success("Configuration créée avec succès");
-      return response;
+      )
+      toast.success('Configuration créée avec succès')
+      return response
     } catch (error) {
-      toast.error("Erreur lors de la création de la configuration");
-      throw error;
+      toast.error('Erreur lors de la création de la configuration')
+      throw error
     }
   },
 
@@ -95,30 +103,30 @@ export const cadreStrategiqueConfigService = {
   ): Promise<CadreStrategiqueConfig> => {
     try {
       const response = await apiClient.request<CadreStrategiqueConfig>(
-        `/cadre_strategique_config/${id}/`,
+        `/niveau_cadre_strategique/${id}/`,
         {
-          method: "PUT",
+          method: 'PUT',
           data,
         }
-      );
-      toast.success("Configuration mise à jour avec succès");
-      return response;
+      )
+      toast.success('Configuration mise à jour avec succès')
+      return response
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour de la configuration");
-      throw error;
+      toast.error('Erreur lors de la mise à jour de la configuration')
+      throw error
     }
   },
 
   // Delete configuration
   delete: async (id: number): Promise<void> => {
     try {
-      await apiClient.request(`/cadre_strategique_config/${id}/`, {
-        method: "DELETE",
-      });
-      toast.success("Configuration supprimée avec succès");
+      await apiClient.request(`/niveau_cadre_strategique/${id}/`, {
+        method: 'DELETE',
+      })
+      toast.success('Configuration supprimée avec succès')
     } catch (error) {
-      toast.error("Erreur lors de la suppression de la configuration");
-      throw error;
+      toast.error('Erreur lors de la suppression de la configuration')
+      throw error
     }
   },
 
@@ -126,50 +134,53 @@ export const cadreStrategiqueConfigService = {
   toggleStatus: async (id: number): Promise<CadreStrategiqueConfig> => {
     try {
       const response = await apiClient.request<CadreStrategiqueConfig>(
-        `/cadre_strategique_config/${id}/toggle_status/`,
+        `/niveau_cadre_strategique/${id}/toggle_status/`,
         {
-          method: "PATCH",
+          method: 'PATCH',
         }
-      );
-      toast.success("Statut de la configuration mis à jour avec succès");
-      return response;
+      )
+      toast.success('Statut de la configuration mis à jour avec succès')
+      return response
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour du statut");
-      throw error;
+      toast.error('Erreur lors de la mise à jour du statut')
+      throw error
     }
   },
 
   // Validate libelle uniqueness
-  validateLibelle: async (libelle: string, excludeId?: number): Promise<boolean> => {
+  validateLibelle: async (
+    libelle: string,
+    excludeId?: number
+  ): Promise<boolean> => {
     try {
       const response = await apiClient.request<{ isUnique: boolean }>(
-        "/cadre_strategique_config/validate_libelle/",
+        '/niveau_cadre_strategique/validate_libelle/',
         {
-          method: "POST",
+          method: 'POST',
           data: { libelle_csc: libelle, exclude_id: excludeId },
         }
-      );
-      return response.isUnique;
+      )
+      return response.isUnique
     } catch (error) {
-      console.error("Erreur lors de la validation du libellé:", error);
-      return false;
+      console.error('Erreur lors de la validation du libellé:', error)
+      return false
     }
   },
 
   // Get statistics
   getStats: async (): Promise<{
-    total: number;
-    byType: Record<1 | 2 | 3, number>;
+    total: number
+    byType: Record<1 | 2 | 3, number>
   }> => {
     try {
       const response = await apiClient.request<{
-        total: number;
-        byType: Record<1 | 2 | 3, number>;
-      }>("/cadre_strategique_config/stats/");
-      return response;
+        total: number
+        byType: Record<1 | 2 | 3, number>
+      }>('/niveau_cadre_strategique/stats/')
+      return response
     } catch (error) {
-      toast.error("Erreur lors de la récupération des statistiques");
-      throw error;
+      toast.error('Erreur lors de la récupération des statistiques')
+      throw error
     }
   },
-};
+}

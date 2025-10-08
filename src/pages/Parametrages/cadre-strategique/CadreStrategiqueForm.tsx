@@ -1,31 +1,31 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
-import { z } from "zod";
-import Button from "../../../components/Button";
-import Input from "../../../components/Input";
-import SelectInput from "../../../components/SelectInput";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useMemo } from 'react'
+import { z } from 'zod'
+import Button from '../../../components/Button'
+import Input from '../../../components/Input'
+import SelectInput from '../../../components/SelectInput'
 import {
   cadreStrategiqueCreateSchema,
   type CadreStrategiqueCreateData,
-} from "../../../schemas/cadreStrategiqueSchemas";
+} from '../../../schemas/cadreStrategiqueSchemas'
 import type {
   CadreStrategique,
   Acteur,
   NiveauCadreStrategique,
-} from "../../../types/entities";
-import { cadreStrategiqueService } from "../../../services/cadreStrategiqueService";
-import { acteurService } from "../../../services/acteurService";
-import { niveauCadreStrategiqueService } from "../../../services/niveauCadreStrategiqueService";
-import { useRoot } from "../../../contexts/RootContext";
+} from '../../../types/entities'
+import { cadreStrategiqueService } from '../../../services/cadreStrategiqueService'
+import { acteurService } from '../../../services/acteurService'
+import { niveauCadreStrategiqueService } from '../../../services/niveauCadreStrategiqueService'
+import { useRoot } from '../../../contexts/RootContext'
 
 interface CadreStrategiqueFormProps {
-  onClose: () => void;
-  niveau: number;
-  editRow: CadreStrategique | null;
-  cadreByNiveau: () => void;
-  dataCadreStrategique: CadreStrategique[];
+  onClose: () => void
+  niveau: number
+  editRow: CadreStrategique | null
+  cadreByNiveau: () => void
+  dataCadreStrategique: CadreStrategique[]
 }
 
 export default function CadreStrategiqueForm({
@@ -35,47 +35,51 @@ export default function CadreStrategiqueForm({
   cadreByNiveau,
   dataCadreStrategique,
 }: CadreStrategiqueFormProps) {
-  const queryClient = useQueryClient();
-  const { currentProgramme } = useRoot();
+  const queryClient = useQueryClient()
+  const { currentProgramme } = useRoot()
 
   // Fetch related data
   const { data: acteurs = [] } = useQuery<Acteur[]>({
-    queryKey: ["acteurs"],
+    queryKey: ['acteurs'],
     queryFn: acteurService.getAll,
-  });
+  })
 
   // Récupérer les niveaux pour la validation de la taille du code
   const { data: niveauxCadreStrategique = [] } = useQuery<
     NiveauCadreStrategique[]
   >({
-    queryKey: ["niveauxCadreStrategique"],
+    queryKey: ['niveauxCadreStrategique'],
     queryFn: niveauCadreStrategiqueService.getAll,
-  });
+  })
 
   // Calculer la taille fixe du code selon le niveau
   const fixedCodeLength = useMemo(() => {
     const niveauConfig = niveauxCadreStrategique.find(
-      (n) => Number(n.code_number_nsc) === niveau
-    );
-    return Number(niveauConfig?.nombre_nsc) || 2; // Valeur par défaut si pas trouvé
-  }, [niveauxCadreStrategique, niveau]);
+      (n) => n.nombre_nsc === niveau
+    )
+    return Number(niveauConfig?.code_number_nsc) || 2 // Valeur par défaut si pas trouvé
+  }, [niveauxCadreStrategique, niveau])
 
   // Créer un schéma de validation dynamique avec la taille fixe du code
   const dynamicSchema = useMemo(() => {
     return cadreStrategiqueCreateSchema.extend({
       code_cs: z
-        .string("Le code est requis")
+        .string('Le code est requis')
         .length(
           fixedCodeLength,
           `Le code doit contenir exactement ${fixedCodeLength} caractère(s) selon la configuration du niveau ${niveau}`
         ),
-    });
-  }, [fixedCodeLength, niveau]);
+    })
+  }, [fixedCodeLength, niveau])
 
   // Get parent cadres (previous level)
   const parentCadres = dataCadreStrategique.filter(
     (cadre) => Number(cadre.niveau_cs) === niveau - 1
-  );
+  )
+
+  const currentNiveau = niveauxCadreStrategique.find(
+    (n) => n.nombre_nsc === niveau
+  )
 
   const {
     handleSubmit,
@@ -83,87 +87,87 @@ export default function CadreStrategiqueForm({
     formState: { errors },
   } = useForm<CadreStrategiqueCreateData>({
     resolver: zodResolver(dynamicSchema),
-    mode: "onSubmit",
-    reValidateMode: "onChange",
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
     defaultValues: editRow
       ? {
-          code_cs: editRow.code_cs || "",
-          intutile_cs: editRow.intutile_cs || "",
-          abgrege_cs: editRow.abgrege_cs || "",
+          code_cs: editRow.code_cs || '',
+          intutile_cs: editRow.intutile_cs || '',
+          abgrege_cs: editRow.abgrege_cs || '',
           niveau_cs: Number(editRow.niveau_cs) || niveau,
           partenaire_cs: editRow.partenaire_cs?.id_acteur || null,
           parent_cs:
-            typeof editRow.parent_cs === "object"
+            typeof editRow.parent_cs === 'object'
               ? editRow.parent_cs?.id_cs
               : editRow.parent_cs,
           programme_cs: currentProgramme?.id_programme || null,
         }
       : {
-          code_cs: "",
-          intutile_cs: "",
-          abgrege_cs: "",
-          niveau_cs: niveau,
+          code_cs: '',
+          intutile_cs: '',
+          abgrege_cs: '',
+          niveau_cs: Number(currentNiveau?.code_number_nsc),
           partenaire_cs: null,
           parent_cs: null,
           programme_cs: currentProgramme?.id_programme || null,
         },
-  });
+  })
 
   const createMutation = useMutation({
     mutationFn: cadreStrategiqueService.create,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cadresStrategiques"] });
-      cadreByNiveau();
-      onClose();
+      queryClient.invalidateQueries({ queryKey: ['cadresStrategiques'] })
+      cadreByNiveau()
+      onClose()
     },
-  });
+  })
 
   const updateMutation = useMutation({
     mutationFn: (data: CadreStrategiqueCreateData) =>
       cadreStrategiqueService.update(editRow!.id_cs, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cadresStrategiques"] });
-      cadreByNiveau();
-      onClose();
+      queryClient.invalidateQueries({ queryKey: ['cadresStrategiques'] })
+      cadreByNiveau()
+      onClose()
     },
-  });
+  })
 
   const onSubmit = (data: CadreStrategiqueCreateData) => {
     // Vérifier que les niveaux sont configurés
     if (niveauxCadreStrategique.length === 0) {
       alert(
         "Veuillez d'abord configurer les niveaux du cadre stratégique avant d'ajouter des éléments."
-      );
-      return;
+      )
+      return
     }
 
     // Vérifier que le niveau actuel est configuré
     const niveauConfig = niveauxCadreStrategique.find(
-      (n) => Number(n.code_number_nsc) === niveau
-    );
+      (n) => n.nombre_nsc === niveau
+    )
     if (!niveauConfig) {
       alert(
         `Le niveau ${niveau} n'est pas configuré. Veuillez configurer les niveaux du cadre stratégique.`
-      );
-      return;
+      )
+      return
     }
 
     // Vérifier la taille exacte du code
     if (data.code_cs.length !== fixedCodeLength) {
       alert(
         `Le code doit contenir exactement ${fixedCodeLength} caractère(s) selon la configuration du niveau ${niveau}.`
-      );
-      return;
+      )
+      return
     }
 
     if (editRow) {
-      updateMutation.mutate(data);
+      updateMutation.mutate(data)
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(data)
     }
-  };
+  }
 
-  const isLoading = createMutation.isPending || updateMutation.isPending;
+  const isLoading = createMutation.isPending || updateMutation.isPending
 
   return (
     <form
@@ -189,7 +193,7 @@ export default function CadreStrategiqueForm({
                   placeholder={`Code de ${fixedCodeLength} caractère(s) exactement`}
                 />
               </div>
-            );
+            )
           }}
         />
 
@@ -247,9 +251,7 @@ export default function CadreStrategiqueForm({
                   : null
               }
               onChange={(option) => {
-                option &&
-                  !Array.isArray(option) &&
-                  field.onChange(option.value);
+                option && !Array.isArray(option) && field.onChange(option.value)
               }}
               isClearable
               placeholder="Sélectionner un partenaire..."
@@ -262,38 +264,43 @@ export default function CadreStrategiqueForm({
           <Controller
             name="parent_cs"
             control={control}
-            render={({ field }) => (
-              <SelectInput
-                {...field}
-                label={`${
-                  niveauxCadreStrategique[niveau - 2]?.libelle_nsc ||
-                  "Cadre parent"
-                }`}
-                options={parentCadres.map((cadreParent) => ({
-                  value: cadreParent.id_cs,
-                  label: `${cadreParent.intutile_cs} (${cadreParent.code_cs})`,
-                }))}
-                value={
-                  field.value
-                    ? parentCadres
-                        .map((cadreParent) => ({
-                          value: cadreParent.id_cs,
-                          label: `${cadreParent.intutile_cs} (${cadreParent.code_cs})`,
-                        }))
-                        .find((option) => option.value === field.value)
-                    : null
-                }
-                onChange={(option) => {
-                  option &&
-                    !Array.isArray(option) &&
-                    field.onChange(option.value);
-                }}
-                isClearable
-                placeholder="Sélectionner un cadre parent..."
-                error={errors.parent_cs}
-                required={niveau > 1}
-              />
-            )}
+            render={({ field }) => {
+              const libelleParent =
+                Array.isArray(niveauxCadreStrategique) &&
+                niveauxCadreStrategique[niveau - 2]?.libelle_nsc
+                  ? niveauxCadreStrategique[niveau - 2].libelle_nsc
+                  : 'Cadre parent'
+
+              return (
+                <SelectInput
+                  {...field}
+                  label={libelleParent}
+                  options={parentCadres.map((cadreParent) => ({
+                    value: cadreParent.id_cs,
+                    label: `${cadreParent.intutile_cs} (${cadreParent.code_cs})`,
+                  }))}
+                  value={
+                    field.value
+                      ? parentCadres
+                          .map((cadreParent) => ({
+                            value: cadreParent.id_cs,
+                            label: `${cadreParent.intutile_cs} (${cadreParent.code_cs})`,
+                          }))
+                          .find((option) => option.value === field.value)
+                      : null
+                  }
+                  onChange={(option) => {
+                    option &&
+                      !Array.isArray(option) &&
+                      field.onChange(option.value)
+                  }}
+                  isClearable
+                  placeholder="Sélectionner un cadre parent..."
+                  error={errors.parent_cs}
+                  required={niveau > 1}
+                />
+              )
+            }}
           />
         )}
       </div>
@@ -309,12 +316,12 @@ export default function CadreStrategiqueForm({
         </Button>
         <Button type="submit" disabled={isLoading}>
           {isLoading
-            ? "Enregistrement..."
+            ? 'Enregistrement...'
             : editRow
-            ? "Mettre à jour"
-            : "Créer"}
+            ? 'Mettre à jour'
+            : 'Créer'}
         </Button>
       </div>
     </form>
-  );
+  )
 }
