@@ -1,91 +1,90 @@
-import React, { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import Button from "../../components/Button";
-import Input from "../../components/Input";
-import SelectInput from "../../components/SelectInput";
-import { CadreAnalytiqueType } from "../../types/cadreAnalytique";
-import type { Acteur, Programme } from "../../types/entities";
-import { toast } from "react-toastify";
-import { addCadreAnalytique } from "../../functions/cadreAnalytique/post";
-import { updateCadreAnalytique } from "../../functions/cadreAnalytique/put";
-import { useRoot } from "../../contexts/RootContext";
+import React, { useEffect } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import Button from '../../components/Button'
+import Input from '../../components/Input'
+import SelectInput from '../../components/SelectInput'
+import { CadreAnalytiqueType } from '../../types/cadreAnalytique'
+import type { Acteur, Programme } from '../../types/entities'
+import { toast } from 'react-toastify'
+import { addCadreAnalytique } from '../../functions/cadreAnalytique/post'
+import { updateCadreAnalytique } from '../../functions/cadreAnalytique/put'
+import { useRoot } from '../../contexts/RootContext'
 
 // Schéma de validation Zod
 const cadreAnalytiqueSchema = z.object({
-  code_ca: z.string().min(1, "Le code est obligatoire"),
+  code_ca: z.string().min(1, 'Le code est obligatoire'),
   intutile_ca: z.string().min(1, "L'intitulé est obligatoire"),
-  cout_axe: z.number().min(0, "Le coût doit être positif"),
+  cout_axe: z.number().min(0, 'Le coût doit être positif'),
   abgrege_ca: z.string(),
   parent_ca: z.number().nullable().optional(),
   partenaire_ca: z.number().nullable().optional(),
-});
+})
 
-type FormData = z.infer<typeof cadreAnalytiqueSchema>;
+type FormData = z.infer<typeof cadreAnalytiqueSchema>
 
 type FormCadreAnalytiqueProps = {
-  onClose: () => void;
-  niveau: number;
-  currentId: number;
-  niveauCadreAnalytique: { libelle_nca: string }[];
-  dataCadreAnalytique: CadreAnalytiqueType[];
-  editRow: CadreAnalytiqueType | null;
-  cadreByNiveau: () => void;
-  acteurs?: Acteur[];
-};
+  onClose: () => void
+  niveau: number
+  currentId: number
+  niveauCadreAnalytique: { libelle_nca: string }[]
+  dataCadreAnalytique: CadreAnalytiqueType[]
+  editRow: CadreAnalytiqueType | null
+  cadreByNiveau: () => void
+  acteurs?: Acteur[]
+}
 
 const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
   onClose,
   niveau,
   currentId,
-  niveauCadreAnalytique,
   editRow,
   dataCadreAnalytique,
   cadreByNiveau,
   acteurs = [],
 }) => {
   const { currentProgramme }: { currentProgramme: Programme | undefined } =
-    useRoot();
+    useRoot()
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    resolver: zodResolver(cadreAnalytiqueSchema),
+    resolver: zodResolver(dynamicSchema),
     defaultValues: {
-      code_ca: "",
-      intutile_ca: "",
+      code_ca: '',
+      intutile_ca: '',
       cout_axe: 0,
-      abgrege_ca: "",
+      abgrege_ca: '',
       parent_ca: null,
       partenaire_ca: null,
     },
-  });
+  })
 
   // Réinitialiser le formulaire quand editRow change
   useEffect(() => {
     if (editRow) {
       reset({
-        code_ca: editRow.code_ca || "",
-        intutile_ca: editRow.intutile_ca || "",
+        code_ca: editRow.code_ca || '',
+        intutile_ca: editRow.intutile_ca || '',
         cout_axe: editRow.cout_axe || 0,
-        abgrege_ca: editRow.abgrege_ca || "",
+        abgrege_ca: editRow.abgrege_ca || '',
         parent_ca: editRow.parent_ca || null,
         partenaire_ca: editRow.partenaire_ca || null,
-      });
+      })
     } else {
       reset({
-        code_ca: "",
-        intutile_ca: "",
+        code_ca: '',
+        intutile_ca: '',
         cout_axe: 0,
-        abgrege_ca: "",
+        abgrege_ca: '',
         parent_ca: null,
         partenaire_ca: null,
-      });
+      })
     }
-  }, [editRow, reset]);
+  }, [editRow, reset])
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -93,28 +92,28 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
         code_ca: data.code_ca,
         intutile_ca: data.intutile_ca,
         cout_axe: data.cout_axe,
-        abgrege_ca: data.abgrege_ca || "",
+        abgrege_ca: data.abgrege_ca || '',
         parent_ca: data.parent_ca || null,
         partenaire_ca: data.partenaire_ca || null,
         id_ca: editRow?.id_ca || currentId,
         niveau_ca: niveau,
         programme_ca: currentProgramme?.id_programme ?? null,
-      };
+      }
 
       if (editRow) {
-        await updateCadreAnalytique(formData);
-        toast.success("Cadre analytique mis à jour avec succès");
+        await updateCadreAnalytique(formData)
+        toast.success('Cadre analytique mis à jour avec succès')
       } else {
-        await addCadreAnalytique(formData);
-        toast.success("Cadre analytique ajouté avec succès");
+        await addCadreAnalytique(formData)
+        toast.success('Cadre analytique ajouté avec succès')
       }
-      onClose();
-      cadreByNiveau();
+      onClose()
+      cadreByNiveau()
     } catch (error) {
-      console.error(error);
-      toast.error("Erreur lors de la sauvegarde du cadre analytique");
+      console.error(error)
+      toast.error('Erreur lors de la sauvegarde du cadre analytique')
     }
-  };
+  }
 
   // Options pour le select parent
   const parentOptions = dataCadreAnalytique
@@ -122,13 +121,19 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
     .map((niv) => ({
       value: niv.id_ca!,
       label: niv.intutile_ca,
-    }));
+    }))
 
   // Options pour le select acteur/partenaire
   const acteurOptions = acteurs.map((acteur) => ({
     value: acteur.id_acteur,
     label: `${acteur.nom_acteur} (${acteur.code_acteur})`,
-  }));
+  }))
+
+  const libelleParent =
+    Array.isArray(niveauCadreAnalytique) &&
+    niveauCadreAnalytique[niveau - 2]?.libelle_nca
+      ? niveauCadreAnalytique[niveau - 2].libelle_nca
+      : 'Parent'
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -139,8 +144,9 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
         render={({ field }) => (
           <Input
             {...field}
-            label="Code"
-            placeholder="Entrez le code"
+            label={`Code du cadre (exactement ${fixedCodeLength} caractères)`}
+            placeholder={`Code de ${fixedCodeLength} caractères`}
+            maxLength={fixedCodeLength}
             error={errors.code_ca}
             required
           />
@@ -154,7 +160,7 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
         render={({ field }) => (
           <Input
             {...field}
-            label="Intitulé"
+            label={`Intitulé`}
             placeholder="Entrez l'intitulé"
             error={errors.intutile_ca}
             required
@@ -194,17 +200,14 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
       />
 
       {/* Parent (si applicable) */}
-      {niveau > 1 && parentOptions.length > 0 && (
+      {niveau > 1 && (
         <Controller
           name="parent_ca"
           control={control}
           render={({ field }) => (
             <SelectInput
               {...field}
-              label={
-                niveauCadreAnalytique[niveau > 1 ? niveau - 2 : 0]
-                  ?.libelle_nca || "Parent"
-              }
+              label={libelleParent}
               placeholder="-- Choisir --"
               options={parentOptions}
               error={errors.parent_ca}
@@ -254,14 +257,14 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
         </Button>
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting
-            ? "Enregistrement..."
+            ? 'Enregistrement...'
             : editRow
-            ? "Mettre à jour"
-            : "Ajouter"}
+            ? 'Mettre à jour'
+            : 'Ajouter'}
         </Button>
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default FormCadreAnalytique;
+export default FormCadreAnalytique

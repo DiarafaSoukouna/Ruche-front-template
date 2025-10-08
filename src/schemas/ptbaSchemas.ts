@@ -48,7 +48,7 @@ export const versionPtbaSchema = z.object({
     .optional(),
   responsable_ptba: z.string().optional(),
   id_personnel: z.number().optional(),
-  projet: z.number().optional(),
+  programme: z.string().optional(),
 });
 
 // Schéma pour les mois du chronogramme
@@ -111,9 +111,17 @@ export const ptbaSchema = z.object({
     .string()
     .max(50, "Le code CRP ne peut pas dépasser 50 caractères")
     .optional(),
+  cadre_analytique: z
+    .string()
+    .max(50, "Le code cadre analytique ne peut pas dépasser 50 caractères")
+    .optional(),
   responsable_ptba: z
     .number()
     .positive("Le responsable doit être sélectionné")
+    .optional(),
+  direction_ptba: z
+    .string()
+    .max(50, "Le code direction ne peut pas dépasser 50 caractères")
     .optional(),
   code_programme: z
     .string()

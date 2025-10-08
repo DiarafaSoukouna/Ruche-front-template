@@ -16,9 +16,12 @@ const TextArea: React.FC<InputProps> = ({
   ...rest
 }) => {
   return (
-    <>
+    <div className="mt-2">
       {label && (
-        <label htmlFor={name}>
+        <label
+          htmlFor={name}
+          className="block text-sm font-medium text-foreground mb-1"
+        >
           {label} {required && <span className="text-destructive">*</span>}
         </label>
       )}
@@ -35,8 +38,8 @@ const TextArea: React.FC<InputProps> = ({
           {error.message}
         </p>
       )}
-    </>
-  )
-}
+    </div>
+  );
+};
 
 export default TextArea

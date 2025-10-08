@@ -10,9 +10,10 @@ import {
   VersionPtbaFormData,
   versionPtbaSchema,
 } from "../../../schemas/ptbaSchemas";
-import type { VersionPtba } from "../../../types/entities";
+import type { Programme, VersionPtba } from "../../../types/entities";
 import Input from "../../../components/Input";
 import TextArea from "../../../components/TextArea";
+import { useRoot } from "../../../contexts/RootContext";
 
 interface VersionPtbaFormProps {
   version?: VersionPtba;
@@ -27,9 +28,11 @@ export default function VersionPtbaForm({
 }: VersionPtbaFormProps) {
   const isEditing = !!version;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { currentProgramme }: { currentProgramme: Programme } = useRoot();
 
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<VersionPtbaFormData>({
@@ -44,9 +47,16 @@ export default function VersionPtbaForm({
       statut_version: version?.statut_version ?? 0,
       etat: version?.etat || "",
       modifier_par: version?.modifier_par || "",
-      projet: version?.projet || undefined,
+      programme:
+        typeof version?.programme === "string"
+          ? version?.programme
+          : version?.programme?.code_programme ||
+            currentProgramme?.code_programme ||
+            "",
     },
   });
+
+  console.log(watch().programme);
 
   // Mutations
   const createMutation = useMutation({
@@ -111,29 +121,15 @@ export default function VersionPtbaForm({
   };
 
   // Options pour le statut
-  const statutOptions = [
-    { value: 0, label: "En construction" },
-    { value: 1, label: "Validée" },
-    { value: 2, label: "Archivée" },
-  ];
+  // const statutOptions = [
+  //   { value: 0, label: "En construction" },
+  //   { value: 1, label: "Validée" },
+  //   { value: 2, label: "Archivée" },
+  // ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Controller
-          name="version_ptba"
-          control={control}
-          render={({ field }) => (
-            <Input
-              {...field}
-              label="Version PTBA"
-              placeholder="Ex: V1.0"
-              error={errors.version_ptba}
-              required
-            />
-          )}
-        />
-
         <Controller
           name="annee_ptba"
           control={control}
@@ -154,10 +150,23 @@ export default function VersionPtbaForm({
             />
           )}
         />
+        <Controller
+          name="version_ptba"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Version PTBA"
+              placeholder="Ex: V1.0"
+              error={errors.version_ptba}
+              required
+            />
+          )}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Controller
+        {/* <Controller
           name="statut_version"
           control={control}
           render={({ field }) => (
@@ -175,7 +184,7 @@ export default function VersionPtbaForm({
               error={errors.statut_version}
             />
           )}
-        />
+        /> */}
 
         <Controller
           name="date_validation"
@@ -192,7 +201,7 @@ export default function VersionPtbaForm({
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Controller
           name="etat"
           control={control}
@@ -218,7 +227,7 @@ export default function VersionPtbaForm({
             />
           )}
         />
-      </div>
+      </div> */}
 
       <Controller
         name="observation"
@@ -271,7 +280,7 @@ export default function VersionPtbaForm({
           Annuler
         </Button>
         <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
-          {isEditing ? "Modifier" : "Créer"}
+          {isSubmitting ? "En cours..." : isEditing ? "Modifier" : "Créer"}
         </Button>
       </div>
     </form>

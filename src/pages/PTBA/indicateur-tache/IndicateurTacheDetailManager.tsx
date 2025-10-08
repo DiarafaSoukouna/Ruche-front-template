@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { X, BarChart3, Target, TrendingUp, Calendar } from "lucide-react";
+import { X, BarChart3, Target, Calendar } from "lucide-react";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import type { IndicateurTache } from "../../../types/indicateurTache";
@@ -29,7 +29,7 @@ export default function IndicateurTacheDetailManager({
   onClose,
 }: IndicateurTacheDetailManagerProps) {
   const [activeTab, setActiveTab] = useState<string>("Janvier");
-  
+
   // Mois de l'année
   const moisOptions = [
     { value: "Janvier", label: "Janvier", abbr: "Jan" },
@@ -47,12 +47,12 @@ export default function IndicateurTacheDetailManager({
   ];
 
   const [valeursCibles, setValeursCibles] = useState<ValeurCible[]>(
-    moisOptions.map(mois => ({
+    moisOptions.map((mois) => ({
       mois: mois.value,
       valeur_cible: 0,
       valeur_realisee: 0,
       anag: "",
-      type_indicateur: "Oui/Non"
+      type_indicateur: "Oui/Non",
     }))
   );
 
@@ -65,7 +65,8 @@ export default function IndicateurTacheDetailManager({
   });
 
   const unite = unites.find(
-    (u: UniteIndicateur) => String(u.id_unite) === String(indicateur.unite_ind_tache)
+    (u: UniteIndicateur) =>
+      String(u.id_unite) === String(indicateur.unite_ind_tache)
   );
 
   // Mutation pour sauvegarder les valeurs cibles
@@ -82,9 +83,8 @@ export default function IndicateurTacheDetailManager({
       });
     },
     onError: (error: unknown) => {
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : "Erreur lors de la sauvegarde";
+      const errorMessage =
+        error instanceof Error ? error.message : "Erreur lors de la sauvegarde";
       toast.error(errorMessage);
     },
   });
@@ -95,9 +95,7 @@ export default function IndicateurTacheDetailManager({
     value: string | number
   ) => {
     setValeursCibles((prev) =>
-      prev.map((vc) =>
-        vc.mois === mois ? { ...vc, [field]: value } : vc
-      )
+      prev.map((vc) => (vc.mois === mois ? { ...vc, [field]: value } : vc))
     );
   };
 
@@ -106,21 +104,13 @@ export default function IndicateurTacheDetailManager({
   };
 
   const getMoisLabel = (mois: string) => {
-    const moisOption = moisOptions.find(m => m.value === mois);
+    const moisOption = moisOptions.find((m) => m.value === mois);
     return moisOption ? moisOption.label : mois;
   };
 
   const calculateProgress = (valeurRealisee: number, valeurCible: number) => {
     if (valeurCible === 0) return 0;
     return Math.min((valeurRealisee / valeurCible) * 100, 100);
-  };
-
-  const getTotalCible = () => {
-    return valeursCibles.reduce((sum, vc) => sum + vc.valeur_cible, 0);
-  };
-
-  const getTotalRealisee = () => {
-    return valeursCibles.reduce((sum, vc) => sum + (vc.valeur_realisee || 0), 0);
   };
 
   return (
@@ -210,8 +200,8 @@ export default function IndicateurTacheDetailManager({
                   </label>
                   <Input
                     value={
-                      valeursCibles.find((vc) => vc.mois === activeTab)
-                        ?.anag || ""
+                      valeursCibles.find((vc) => vc.mois === activeTab)?.anag ||
+                      ""
                     }
                     onChange={(e) =>
                       handleValeurCibleChange(activeTab, "anag", e.target.value)
@@ -248,7 +238,9 @@ export default function IndicateurTacheDetailManager({
                     )}
 
                     {/* Indicateur Oui/Non */}
-                    {!unite?.definition_ui?.toLowerCase().includes("nombre") && (
+                    {!unite?.definition_ui
+                      ?.toLowerCase()
+                      .includes("nombre") && (
                       <div className="flex items-center gap-4">
                         <label className="flex items-center gap-2">
                           <input
@@ -318,15 +310,19 @@ export default function IndicateurTacheDetailManager({
                         <span className="text-sm font-medium text-gray-700">
                           {getMoisLabel(vc.mois)}
                         </span>
-                        {unite?.definition_ui?.toLowerCase().includes("nombre") && (
+                        {unite?.definition_ui
+                          ?.toLowerCase()
+                          .includes("nombre") && (
                           <span className="text-lg font-bold text-gray-900">
                             {vc.valeur_cible}
                           </span>
                         )}
                       </div>
-                      
+
                       {/* Barre de progression pour les indicateurs numériques */}
-                      {unite?.definition_ui?.toLowerCase().includes("nombre") && (
+                      {unite?.definition_ui
+                        ?.toLowerCase()
+                        .includes("nombre") && (
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs text-gray-600">
                             <span>Réalisé: {vc.valeur_realisee || 0}</span>
@@ -334,7 +330,8 @@ export default function IndicateurTacheDetailManager({
                               {calculateProgress(
                                 vc.valeur_realisee || 0,
                                 vc.valeur_cible
-                              ).toFixed(1)}%
+                              ).toFixed(1)}
+                              %
                             </span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -352,7 +349,9 @@ export default function IndicateurTacheDetailManager({
                       )}
 
                       {/* Affichage pour les indicateurs Oui/Non */}
-                      {!unite?.definition_ui?.toLowerCase().includes("nombre") && (
+                      {!unite?.definition_ui
+                        ?.toLowerCase()
+                        .includes("nombre") && (
                         <div className="flex items-center justify-center">
                           <span
                             className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
@@ -369,49 +368,6 @@ export default function IndicateurTacheDetailManager({
                   ))}
                 </div>
               </div>
-
-              {/* Statistiques globales */}
-              {unite?.definition_ui?.toLowerCase().includes("nombre") && (
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <h5 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4" />
-                    Statistiques globales
-                  </h5>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-blue-50 rounded">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {getTotalCible()}
-                      </div>
-                      <div className="text-sm text-blue-800">Total cible</div>
-                    </div>
-                    <div className="text-center p-3 bg-green-50 rounded">
-                      <div className="text-2xl font-bold text-green-600">
-                        {getTotalRealisee()}
-                      </div>
-                      <div className="text-sm text-green-800">Total réalisé</div>
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <div className="flex justify-between text-sm text-gray-600 mb-1">
-                      <span>Progression globale</span>
-                      <span>
-                        {calculateProgress(getTotalRealisee(), getTotalCible()).toFixed(1)}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-3">
-                      <div
-                        className="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all"
-                        style={{
-                          width: `${calculateProgress(
-                            getTotalRealisee(),
-                            getTotalCible()
-                          )}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>

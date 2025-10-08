@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import versionPtbaService from "../../services/versionPtbaService";
-import type { VersionPtba } from "../../types/entities";
 import VersionPtbaManager from "./version-ptba/VersionPtbaManager";
 import { Settings, Plus } from "lucide-react";
 import Button from "../../components/Button";
@@ -13,12 +10,6 @@ export default function PtbaPage() {
   // États pour les modales
   const [showVersionManager, setShowVersionManager] = useState(false);
   const [showTypeActiviteManager, setShowTypeActiviteManager] = useState(false);
-
-  // Fetch versions PTBA
-  const { data: versions = [] } = useQuery<VersionPtba[]>({
-    queryKey: ["versions-ptba"],
-    queryFn: versionPtbaService.getAll,
-  });
 
   return (
     <div className="space-y-6">
@@ -48,34 +39,6 @@ export default function PtbaPage() {
             <Plus className="h-4 w-4" />
             Types d'activités
           </Button>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-2xl font-bold text-blue-600">
-            {versions.length}
-          </div>
-          <div className="text-sm text-muted-foreground">Versions PTBA</div>
-        </div>
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-2xl font-bold text-green-600">
-            {versions.filter((v) => v.statut_version === 1).length}
-          </div>
-          <div className="text-sm text-muted-foreground">Versions validées</div>
-        </div>
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-2xl font-bold text-orange-600">
-            {versions.filter((v) => v.statut_version === 0).length}
-          </div>
-          <div className="text-sm text-muted-foreground">En construction</div>
-        </div>
-        <div className="bg-card border border-border rounded-lg p-4">
-          <div className="text-2xl font-bold text-purple-600">
-            {new Set(versions.map((v) => v.annee_ptba)).size}
-          </div>
-          <div className="text-sm text-muted-foreground">Années couvertes</div>
         </div>
       </div>
 
