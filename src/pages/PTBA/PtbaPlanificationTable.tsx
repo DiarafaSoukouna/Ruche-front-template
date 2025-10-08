@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Calendar, Edit, Filter, Plus } from "lucide-react";
 import Button from "../../components/Button";
@@ -35,6 +35,7 @@ export default function PtbaPlanificationTable() {
   const [selectedActivite, setSelectedActivite] = useState<Ptba | null>(null);
   const [showIndicateurManager, setShowIndicateurManager] =
     useState<boolean>(false);
+  const [tabActive, setTabActive] = useState<string>("");
   const { currentProgramme }: { currentProgramme: Programme } = useRoot();
   const queryClient = useQueryClient();
 
@@ -44,12 +45,19 @@ export default function PtbaPlanificationTable() {
     queryFn: versionPtbaService.getAll,
   });
 
-  const filteredVersions = versions.filter(
-    (version) =>
-      version.programme === currentProgramme?.code_programme ||
-      (version.programme as Programme)?.code_programme ===
-        currentProgramme?.code_programme
-  );
+  const filteredVersions = useMemo(() => {
+    const vs = versions.filter(
+      (version) =>
+        version.programme === currentProgramme?.code_programme ||
+        (version.programme as Programme)?.code_programme ===
+          currentProgramme?.code_programme
+    );
+    vs.sort((a, b) => a.annee_ptba - b.annee_ptba);
+    if (vs.length > 0) {
+      setTabActive(vs[0].id_version_ptba.toString());
+    }
+    return vs;
+  }, [versions, currentProgramme]);
 
   const { data: plansSites = [] } = useQuery<PlanSite[]>({
     queryKey: ["plans-sites"],
@@ -65,11 +73,6 @@ export default function PtbaPlanificationTable() {
     queryKey: ["ptba-types-activites"],
     queryFn: () => typeActiviteService.getAll(),
   });
-
-  // Obtenir les années uniques des versions (ordre ascendant)
-  const anneesDisponibles = [
-    ...new Set(filteredVersions.map((v) => v.annee_ptba)),
-  ].sort((a, b) => a - b);
 
   // Fonction pour filtrer les activités par année
   const getActivitesByAnnee = (annee: number) => {
@@ -90,11 +93,10 @@ export default function PtbaPlanificationTable() {
     });
   };
 
-  // L'année par défaut est la plus récente
-  const anneeParDefaut =
-    anneesDisponibles.length > 0
-      ? anneesDisponibles[anneesDisponibles.length - 1]
-      : null;
+  // Fonction pour gérer le clic sur un onglet
+  const handleTabClick = (versionId: number) => {
+    setTabActive(versionId.toString());
+  };
 
   // Fonctions de gestion du formulaire
   const handleAddActivite = () => {
@@ -162,36 +164,46 @@ export default function PtbaPlanificationTable() {
   return (
     <div className="space-y-6">
       {/* Tabs des années */}
-      {anneesDisponibles.length > 0 ? (
+      {filteredVersions.length > 0 ? (
         <Tabs
-          defaultValue={anneeParDefaut?.toString() || ""}
+          defaultValue={filteredVersions[0].id_version_ptba.toString()}
           className="w-full"
         >
           <TabsList className="flex w-full gap-2 h-auto p-2">
-            {anneesDisponibles.map((annee) => (
-              <TabsTrigger
-                key={annee}
-                value={annee.toString()}
-                className="flex items-center gap-2 px-3 py-2 h-auto text-sm"
+            {filteredVersions.map((version) => (
+              <div
+                key={version.id_version_ptba}
+                onClick={() => handleTabClick(version.id_version_ptba)}
               >
-                <Calendar className="h-4 w-4" />
-                <span className="font-medium">{annee}</span>
-              </TabsTrigger>
+                <TabsTrigger
+                  value={version.id_version_ptba.toString()}
+                  className="flex items-center gap-2 px-3 py-2 h-auto text-sm"
+                >
+                  <Calendar className="h-4 w-4" />
+                  <span className="font-medium">{version.annee_ptba}</span>
+                </TabsTrigger>
+              </div>
             ))}
           </TabsList>
 
-          {anneesDisponibles.map((annee) => (
-            <TabsContent key={annee} value={annee.toString()} className="mt-6">
+          {filteredVersions.map((version) => (
+            <TabsContent
+              key={version.id_version_ptba}
+              value={version.id_version_ptba.toString()}
+              className="mt-6"
+            >
               {/* Header avec bouton nouvelle activité */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-blue-600" />
                   <h3 className="text-lg font-semibold text-gray-900">
-                    Activités PTBA {annee}
+                    Activités PTBA {version.annee_ptba}
                   </h3>
                 </div>
                 <Button
-                  onClick={() => handleAddActivite()}
+                  onClick={() => {
+                    handleAddActivite();
+                  }}
                   className="flex items-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
@@ -204,7 +216,7 @@ export default function PtbaPlanificationTable() {
                 <div className="flex items-center gap-2 mb-4">
                   <Filter className="h-5 w-5 text-gray-500" />
                   <span className="font-medium text-gray-700">
-                    Filtres pour {annee}
+                    Filtres pour {version.annee_ptba}
                   </span>
                 </div>
 
@@ -310,7 +322,7 @@ export default function PtbaPlanificationTable() {
 
                     {/* Corps du tableau */}
                     <tbody className="divide-y divide-gray-200">
-                      {getActivitesByAnnee(annee)
+                      {getActivitesByAnnee(version.annee_ptba)
                         .slice(0, affichage)
                         .map((activite: Ptba) => {
                           return (
@@ -437,7 +449,9 @@ export default function PtbaPlanificationTable() {
                 {/* Footer avec pagination info */}
                 <div className="px-4 py-3 bg-gray-50 border-t text-sm text-gray-600">
                   {(() => {
-                    const activitesAnnee = getActivitesByAnnee(annee);
+                    const activitesAnnee = getActivitesByAnnee(
+                      version.annee_ptba
+                    );
                     return (
                       <>
                         Affichage de 1 à{" "}
@@ -479,6 +493,7 @@ export default function PtbaPlanificationTable() {
         size="xl"
       >
         <PtbaForm
+          version={Number(tabActive)}
           activite={selectedActivite || undefined}
           onClose={handleCloseForm}
           onSuccess={handleFormSuccess}

@@ -11,7 +11,6 @@ import { personnelService } from "../../../services/personnelService";
 import {
   tacheActivitePtbaSchema,
   TacheActivitePtbaFormData,
-  statutValidationOptions,
 } from "../../../schemas/tacheActivitePtbaSchemas";
 import type { Personnel, TacheActivitePtba } from "../../../types/entities";
 
@@ -47,8 +46,14 @@ export default function TacheActivitePtbaForm({
       valider_gt: tache?.valider_gt || "En attente",
       observation_gt: tache?.observation_gt || "",
       livrable_gt: tache?.livrable_gt || "",
-      id_personnel_gt: tache?.id_personnel_gt || 0,
-      responsable_gt: tache?.responsable_gt || "",
+      id_personnel_gt:
+        typeof tache?.id_personnel_gt === "object"
+          ? tache.id_personnel_gt.n_personnel || 0
+          : tache?.id_personnel_gt || 0,
+      responsable_gt:
+        typeof tache?.responsable_gt === "object"
+          ? tache.responsable_gt.n_personnel || 0
+          : tache?.responsable_gt || 0,
       id_activite: idActivite,
     },
   });
@@ -67,19 +72,28 @@ export default function TacheActivitePtbaForm({
       onSuccess();
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Erreur lors de la création");
+      toast.error(
+        error.response?.data?.message || "Erreur lors de la création"
+      );
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<TacheActivitePtbaFormData> }) =>
-      tacheActivitePtbaService.update(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: Partial<TacheActivitePtbaFormData>;
+    }) => tacheActivitePtbaService.update(id, data),
     onSuccess: () => {
       toast.success("Tâche modifiée avec succès");
       onSuccess();
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Erreur lors de la modification");
+      toast.error(
+        error.response?.data?.message || "Erreur lors de la modification"
+      );
     },
   });
 
@@ -213,15 +227,28 @@ export default function TacheActivitePtbaForm({
         <Controller
           name="responsable_gt"
           control={control}
-          render={({ field }) => (
-            <Input
-              {...field}
-              label="Responsable"
-              placeholder="Ex: Chef d'équipe"
-              error={errors.responsable_gt}
-              required
-            />
-          )}
+          render={({ field }) => {
+            const personnelSelectOptions = [
+              { value: 0, label: "Sélectionner un personnel" },
+              ...personnelOptions,
+            ];
+            return (
+              <SelectInput
+                label="Personnel assigné"
+                options={personnelSelectOptions}
+                value={personnelSelectOptions.find(
+                  (opt) => opt.value === field.value
+                )}
+                onChange={(option) =>
+                  option &&
+                  !Array.isArray(option) &&
+                  field.onChange(Number(option.value))
+                }
+                error={errors.id_personnel_gt}
+                required
+              />
+            );
+          }}
         />
 
         <Controller
@@ -236,9 +263,13 @@ export default function TacheActivitePtbaForm({
               <SelectInput
                 label="Personnel assigné"
                 options={personnelSelectOptions}
-                value={personnelSelectOptions.find((opt) => opt.value === field.value)}
+                value={personnelSelectOptions.find(
+                  (opt) => opt.value === field.value
+                )}
                 onChange={(option) =>
-                  option && !Array.isArray(option) && field.onChange(Number(option.value))
+                  option &&
+                  !Array.isArray(option) &&
+                  field.onChange(Number(option.value))
                 }
                 error={errors.id_personnel_gt}
                 required
@@ -250,23 +281,6 @@ export default function TacheActivitePtbaForm({
 
       {/* Statut et livrable */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Controller
-          name="valider_gt"
-          control={control}
-          render={({ field }) => (
-            <SelectInput
-              label="Statut de validation"
-              options={statutValidationOptions}
-              value={statutValidationOptions.find((opt) => opt.value === field.value)}
-              onChange={(option) =>
-                option && !Array.isArray(option) && field.onChange(option.value)
-              }
-              error={errors.valider_gt}
-              required
-            />
-          )}
-        />
-
         <Controller
           name="livrable_gt"
           control={control}
@@ -289,7 +303,7 @@ export default function TacheActivitePtbaForm({
         render={({ field }) => (
           <TextArea
             {...field}
-            label="Observation"
+            label="Observations"
             placeholder="Observations sur la tâche..."
             rows={3}
             error={errors.observation_gt}
@@ -303,11 +317,7 @@ export default function TacheActivitePtbaForm({
           Annuler
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting
-            ? "En cours..."
-            : isEditing
-            ? "Modifier"
-            : "Créer"}
+          {isSubmitting ? "En cours..." : isEditing ? "Modifier" : "Créer"}
         </Button>
       </div>
     </form>

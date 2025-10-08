@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { Plus, Trash2, Save } from "lucide-react";
@@ -6,14 +6,19 @@ import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import SelectInput from "../../../components/SelectInput";
 import { niveauCadreStrategiqueService } from "../../../services/niveauCadreStrategiqueService";
-import type { NiveauCadreStrategique } from "../../../types/entities";
+import { useRoot } from "../../../contexts/RootContext";
+import type {
+  NiveauCadreStrategique,
+  Programme,
+} from "../../../types/entities";
 import { NiveauCadreStrategiqueFormData } from "../../../schemas/niveauCadreStrategiqueSchema";
 
 interface NiveauRow {
   id_nsc?: number;
   libelle_nsc: string;
-  code_number_nsc: number;
+  nombre_nsc: number; // Taille du code (nombre de caractères)
   type_niveau: 1 | 2 | 3;
+  programme: string;
   isNew?: boolean;
 }
 
@@ -26,6 +31,7 @@ const typeNiveauOptions = [
 export default function NiveauCadreStrategiqueTableForm() {
   const [niveaux, setNiveaux] = useState<NiveauRow[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { currentProgramme }: { currentProgramme: Programme } = useRoot();
 
   const queryClient = useQueryClient();
 
@@ -37,16 +43,28 @@ export default function NiveauCadreStrategiqueTableForm() {
     queryFn: niveauCadreStrategiqueService.getAll,
   });
 
+  // Filter niveaux by current programme
+  const niveauxDuProgramme = useMemo(() => {
+    if (!currentProgramme) return existingNiveaux;
+    return existingNiveaux.filter(
+      (niveau) =>
+        niveau.programme === currentProgramme.code_programme ||
+        (niveau.programme as Programme)?.code_programme ===
+          currentProgramme.code_programme
+    );
+  }, [existingNiveaux, currentProgramme]);
+
   // Initialize niveaux from existing data
   useEffect(() => {
-    if (existingNiveaux.length > 0) {
-      const sortedNiveaux = [...existingNiveaux]
-        .sort((a, b) => (a.nombre_nsc as number) - (b.nombre_nsc as number))
+    if (niveauxDuProgramme.length > 0) {
+      const sortedNiveaux = [...niveauxDuProgramme]
+        .sort((a, b) => (a.code_number_nsc as number) - (b.code_number_nsc as number))
         .map((niveau) => ({
           id_nsc: niveau.id_nsc as number,
           libelle_nsc: niveau.libelle_nsc as string,
-          code_number_nsc: niveau.code_number_nsc as number,
+          nombre_nsc: niveau.nombre_nsc as number,
           type_niveau: niveau.type_niveau as 1 | 2 | 3,
+          programme: currentProgramme.code_programme,
           isNew: false,
         }));
       setNiveaux(sortedNiveaux);
@@ -54,13 +72,14 @@ export default function NiveauCadreStrategiqueTableForm() {
       setNiveaux([
         {
           libelle_nsc: "",
-          code_number_nsc: 2,
+          nombre_nsc: 2, // Taille du code par défaut
           type_niveau: 1,
+          programme: currentProgramme.code_programme,
           isNew: true,
         },
       ]);
     }
-  }, [existingNiveaux]);
+  }, [currentProgramme.code_programme, niveauxDuProgramme]);
 
   // Mutations
   const createMutation = useMutation({
@@ -84,8 +103,9 @@ export default function NiveauCadreStrategiqueTableForm() {
   const handleAddRow = () => {
     const newRow: NiveauRow = {
       libelle_nsc: "",
-      code_number_nsc: 2,
+      nombre_nsc: 2, // Taille du code par défaut
       type_niveau: 1,
+      programme: currentProgramme.code_programme,
       isNew: true,
     };
     setNiveaux([...niveaux, newRow]);
@@ -123,15 +143,21 @@ export default function NiveauCadreStrategiqueTableForm() {
   };
 
   const handleSave = async () => {
+    if (!currentProgramme) {
+      toast.error("Aucun programme sélectionné");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const promises = niveaux.map(async (niveau, index) => {
         const niveauData = {
           libelle_nsc: niveau.libelle_nsc,
-          nombre_nsc: index + 1,
-          code_number_nsc: niveau.code_number_nsc,
+          code_number_nsc: index + 1, // Numéro du niveau (1, 2, 3...)
+          nombre_nsc: niveau.nombre_nsc, // Taille du code
           type_niveau: niveau.type_niveau,
+          programme: niveau.programme,
         };
 
         if (niveau.isNew && niveau.libelle_nsc.trim()) {
@@ -221,11 +247,11 @@ export default function NiveauCadreStrategiqueTableForm() {
                     type="number"
                     min="1"
                     max="10"
-                    value={niveau.code_number_nsc}
+                    value={niveau.nombre_nsc}
                     onChange={(e) =>
                       handleFieldChange(
                         index,
-                        "code_number_nsc",
+                        "nombre_nsc",
                         Number(e.target.value)
                       )
                     }

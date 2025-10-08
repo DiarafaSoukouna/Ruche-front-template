@@ -39,7 +39,6 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
   onClose,
   niveau,
   currentId,
-  niveauCadreAnalytique,
   editRow,
   dataCadreAnalytique,
   cadreByNiveau,
@@ -53,7 +52,7 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    resolver: zodResolver(cadreAnalytiqueSchema),
+    resolver: zodResolver(dynamicSchema),
     defaultValues: {
       code_ca: '',
       intutile_ca: '',
@@ -145,8 +144,9 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
         render={({ field }) => (
           <Input
             {...field}
-            label="Code"
-            placeholder="Entrez le code"
+            label={`Code du cadre (exactement ${fixedCodeLength} caractères)`}
+            placeholder={`Code de ${fixedCodeLength} caractères`}
+            maxLength={fixedCodeLength}
             error={errors.code_ca}
             required
           />
