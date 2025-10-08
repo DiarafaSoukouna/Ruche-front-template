@@ -9,6 +9,7 @@ export interface NiveauCadreStrategique extends Record<string, unknown> {
   libelle_nsc: string;
   code_number_nsc: number;
   type_niveau: 1 | 2 | 3 | string; // 1 - Effet, 2 - Produit, 3 - Impact
+  programme?: string | Programme;
 }
 
 // Niveau Cadre Analytique
@@ -17,6 +18,7 @@ export interface NiveauCadreAnalytique extends Record<string, unknown> {
   nombre_nca: number;
   libelle_nca: string;
   code_number_nca: number;
+  programme?: string | Programme;
 }
 
 // Cible CMR Projet
@@ -426,8 +428,8 @@ export interface TacheActivitePtba extends Record<string, unknown> {
   valider_gt: string; // max 100 chars
   observation_gt?: string; // max 200 chars
   livrable_gt: string; // max 100 chars
-  id_personnel_gt: number;
-  responsable_gt: string; // max 100 chars
+  id_personnel_gt: number | Personnel;
+  responsable_gt?: number | Personnel; // max 100 chars
   id_activite: number; // relation vers Ptba
   created_at?: string;
   updated_at?: string;
@@ -446,6 +448,6 @@ export interface TacheActivitePtbaRequest {
   observation_gt?: string;
   livrable_gt: string;
   id_personnel_gt: number;
-  responsable_gt: string;
+  responsable_gt: number;
   id_activite: number;
 }

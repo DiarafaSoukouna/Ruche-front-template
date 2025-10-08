@@ -1,16 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import SelectInput from "../../components/SelectInput";
 import { CadreAnalytiqueType } from "../../types/cadreAnalytique";
-import type { Acteur, Programme } from "../../types/entities";
+import type {
+  Acteur,
+  Programme,
+  NiveauCadreAnalytique,
+} from "../../types/entities";
 import { toast } from "react-toastify";
 import { addCadreAnalytique } from "../../functions/cadreAnalytique/post";
 import { updateCadreAnalytique } from "../../functions/cadreAnalytique/put";
 import { useRoot } from "../../contexts/RootContext";
+import { niveauCadreAnalytiqueService } from "../../services/niveauCadreAnalytiqueService";
 
 // Schéma de validation Zod
 const cadreAnalytiqueSchema = z.object({
@@ -28,7 +34,6 @@ type FormCadreAnalytiqueProps = {
   onClose: () => void;
   niveau: number;
   currentId: number;
-  niveauCadreAnalytique: { libelle_nca: string }[];
   dataCadreAnalytique: CadreAnalytiqueType[];
   editRow: CadreAnalytiqueType | null;
   cadreByNiveau: () => void;
@@ -39,7 +44,6 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
   onClose,
   niveau,
   currentId,
-  niveauCadreAnalytique,
   editRow,
   dataCadreAnalytique,
   cadreByNiveau,
@@ -47,13 +51,47 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
 }) => {
   const { currentProgramme }: { currentProgramme: Programme | undefined } =
     useRoot();
+
+  // Récupérer les niveaux pour la validation de la taille du code
+  const { data: niveauxCadreAnalytique = [] } = useQuery<
+    NiveauCadreAnalytique[]
+  >({
+    queryKey: ["niveauxCadreAnalytique"],
+    queryFn: niveauCadreAnalytiqueService.getAll,
+  });
+
+  // Calculer la taille fixe du code selon le niveau
+  const fixedCodeLength = useMemo(() => {
+    const niveauConfig = niveauxCadreAnalytique.find(
+      (n) => Number(n.code_number_nca) === niveau
+    );
+    return Number(niveauConfig?.nombre_nca) || 2; // Valeur par défaut si pas trouvé
+  }, [niveauxCadreAnalytique, niveau]);
+
+  // Créer un schéma de validation dynamique avec la taille fixe du code
+  const dynamicSchema = useMemo(() => {
+    return cadreAnalytiqueSchema.extend({
+      code_ca: z
+        .string("Le code est requis")
+        .length(
+          fixedCodeLength,
+          `Le code doit contenir exactement ${fixedCodeLength} caractère(s) selon la configuration du niveau ${niveau}`
+        ),
+    });
+  }, [fixedCodeLength, niveau]);
+
+  // Get parent cadres (previous level)
+  const parentCadres = dataCadreAnalytique.filter(
+    (cadre) => Number(cadre.niveau_ca) === niveau - 1
+  );
+
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    resolver: zodResolver(cadreAnalytiqueSchema),
+    resolver: zodResolver(dynamicSchema),
     defaultValues: {
       code_ca: "",
       intutile_ca: "",
@@ -117,12 +155,10 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
   };
 
   // Options pour le select parent
-  const parentOptions = dataCadreAnalytique
-    .filter((n) => n.niveau_ca === niveau - 1)
-    .map((niv) => ({
-      value: niv.id_ca!,
-      label: niv.intutile_ca,
-    }));
+  const parentOptions = parentCadres.map((cadre) => ({
+    value: cadre.id_ca!,
+    label: `${cadre.code_ca} - ${cadre.intutile_ca}`,
+  }));
 
   // Options pour le select acteur/partenaire
   const acteurOptions = acteurs.map((acteur) => ({
@@ -139,8 +175,9 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
         render={({ field }) => (
           <Input
             {...field}
-            label="Code"
-            placeholder="Entrez le code"
+            label={`Code du cadre (exactement ${fixedCodeLength} caractères)`}
+            placeholder={`Code de ${fixedCodeLength} caractères`}
+            maxLength={fixedCodeLength}
             error={errors.code_ca}
             required
           />
@@ -194,29 +231,37 @@ const FormCadreAnalytique: React.FC<FormCadreAnalytiqueProps> = ({
       />
 
       {/* Parent (si applicable) */}
-      {niveau > 1 && parentOptions.length > 0 && (
+      {niveau > 1 && (
         <Controller
           name="parent_ca"
           control={control}
-          render={({ field }) => (
-            <SelectInput
-              {...field}
-              label={
-                niveauCadreAnalytique[niveau > 1 ? niveau - 2 : 0]
-                  ?.libelle_nca || "Parent"
-              }
-              placeholder="-- Choisir --"
-              options={parentOptions}
-              error={errors.parent_ca}
-              value={
-                parentOptions.find((option) => option.value === field.value) ||
-                null
-              }
-              onChange={(selectedOption) =>
-                field.onChange(selectedOption?.value || null)
-              }
-            />
-          )}
+          render={({ field }) => {
+            const parentNiveau = niveauxCadreAnalytique.find(
+              (n) => Number(n.code_number_nca) === niveau - 1
+            );
+            return (
+              <SelectInput
+                {...field}
+                label={parentNiveau?.libelle_nca || "Parent"}
+                placeholder={
+                  parentOptions.length > 0
+                    ? "-- Choisir un parent --"
+                    : "Aucun parent disponible"
+                }
+                options={parentOptions}
+                error={errors.parent_ca}
+                value={
+                  parentOptions.find(
+                    (option) => option.value === field.value
+                  ) || null
+                }
+                onChange={(selectedOption) =>
+                  field.onChange(selectedOption?.value || null)
+                }
+                isDisabled={parentOptions.length === 0}
+              />
+            );
+          }}
         />
       )}
 

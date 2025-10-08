@@ -55,9 +55,9 @@ export default function CadreStrategiqueForm({
   // Calculer la taille fixe du code selon le niveau
   const fixedCodeLength = useMemo(() => {
     const niveauConfig = niveauxCadreStrategique.find(
-      (n) => n.nombre_nsc === niveau
+      (n) => Number(n.code_number_nsc) === niveau
     );
-    return Number(niveauConfig?.code_number_nsc) || 2; // Valeur par défaut si pas trouvé
+    return Number(niveauConfig?.nombre_nsc) || 2; // Valeur par défaut si pas trouvé
   }, [niveauxCadreStrategique, niveau]);
 
   // Créer un schéma de validation dynamique avec la taille fixe du code
@@ -75,10 +75,6 @@ export default function CadreStrategiqueForm({
   // Get parent cadres (previous level)
   const parentCadres = dataCadreStrategique.filter(
     (cadre) => Number(cadre.niveau_cs) === niveau - 1
-  );
-
-  const currentNiveau = niveauxCadreStrategique.find(
-    (n) => n.nombre_nsc === niveau
   );
 
   const {
@@ -106,7 +102,7 @@ export default function CadreStrategiqueForm({
           code_cs: "",
           intutile_cs: "",
           abgrege_cs: "",
-          niveau_cs: Number(currentNiveau?.code_number_nsc),
+          niveau_cs: niveau,
           partenaire_cs: null,
           parent_cs: null,
           programme_cs: currentProgramme?.id_programme || null,
@@ -143,7 +139,7 @@ export default function CadreStrategiqueForm({
 
     // Vérifier que le niveau actuel est configuré
     const niveauConfig = niveauxCadreStrategique.find(
-      (n) => n.nombre_nsc === niveau
+      (n) => Number(n.code_number_nsc) === niveau
     );
     if (!niveauConfig) {
       alert(

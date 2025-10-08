@@ -20,33 +20,27 @@ import type {
   PlanSite,
   Programme,
   Ptba,
-  VersionPtba,
 } from "../../../types/entities";
 import ChronogrammeSelector from "./ChronogrammeSelector";
 import { allLocalite } from "../../../functions/localites/gets";
 import { getAllCadreAnalytique } from "../../../functions/cadreAnalytique/gets";
 import { useRoot } from "../../../contexts/RootContext";
-import versionPtbaService from "../../../services/versionPtbaService";
 import { CadreAnalytique } from "../../CadreAnalytique/types";
 
 interface PtbaFormProps {
+  version?: number;
   activite?: Ptba;
   onClose: () => void;
   onSuccess: () => void;
 }
 
 export default function PtbaForm({
+  version,
   activite,
   onClose,
   onSuccess,
 }: PtbaFormProps) {
   const isEditing = !!activite;
-
-  // Fetch options
-  const { data: versions = [] } = useQuery({
-    queryKey: ["versions"],
-    queryFn: versionPtbaService.getAll,
-  });
 
   const { data: typesActivite = [] } = useQuery({
     queryKey: ["types-activite"],
@@ -119,7 +113,7 @@ export default function PtbaForm({
           : "",
       code_programme:
         activite?.code_programme || currentProgramme?.code_programme,
-      version_ptba: activite?.version_ptba,
+      version_ptba: activite?.version_ptba || version,
       type_activite: Number(activite?.type_activite) || 0,
     },
   });
@@ -192,13 +186,6 @@ export default function PtbaForm({
   const planSiteOptions = plansSites.map((planSite) => ({
     value: planSite.code_ds,
     label: planSite.intutile_ds,
-  }));
-
-  const versionPtbaOptions = versions.map((version: VersionPtba) => ({
-    value: version.id_version_ptba,
-    label: version.version_ptba
-      ? version.version_ptba + " - " + version.annee_ptba.toString()
-      : version.annee_ptba.toString(),
   }));
 
   return (
@@ -347,32 +334,6 @@ export default function PtbaForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Controller
-            name="version_ptba"
-            control={control}
-            render={({ field }) => {
-              const versionOptions = [
-                { value: "", label: "Aucune version" },
-                ...versionPtbaOptions,
-              ];
-              return (
-                <SelectInput
-                  label="Version PTBA"
-                  options={versionOptions}
-                  value={versionOptions.find(
-                    (opt) => opt.value === (field.value || "")
-                  )}
-                  onChange={(option) =>
-                    option &&
-                    !Array.isArray(option) &&
-                    field.onChange(option?.value || "")
-                  }
-                  error={errors.version_ptba}
-                  required
-                />
-              );
-            }}
-          />
-          <Controller
             name="code_crp"
             control={control}
             render={({ field }) => {
@@ -397,9 +358,7 @@ export default function PtbaForm({
               );
             }}
           />
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Controller
             name="cadre_analytique"
             control={control}
@@ -425,7 +384,9 @@ export default function PtbaForm({
               );
             }}
           />
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Controller
             name="responsable_ptba"
             control={control}
@@ -451,9 +412,7 @@ export default function PtbaForm({
               );
             }}
           />
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Controller
             name="direction_ptba"
             control={control}

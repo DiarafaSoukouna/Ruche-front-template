@@ -1,22 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { Plus, Trash2, Save } from "lucide-react";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import { niveauCadreAnalytiqueService } from "../../services/niveauCadreAnalytiqueService";
-import type { NiveauCadreAnalytique } from "../../types/entities";
+import { useRoot } from "../../contexts/RootContext";
+import type { NiveauCadreAnalytique, Programme } from "../../types/entities";
 
 interface NiveauRow {
   id_nca?: number;
   libelle_nca: string;
-  code_number_nca: number;
+  nombre_nca: number; // Taille du code (nombre de caractères)
+  programme: string;
   isNew?: boolean;
 }
 
 export default function NiveauCadreAnalytiqueTableForm() {
   const [niveaux, setNiveaux] = useState<NiveauRow[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { currentProgramme }: { currentProgramme: Programme } = useRoot();
 
   const queryClient = useQueryClient();
 
@@ -28,15 +31,30 @@ export default function NiveauCadreAnalytiqueTableForm() {
     queryFn: niveauCadreAnalytiqueService.getAll,
   });
 
+  // Filter niveaux by current programme
+  const niveauxDuProgramme = useMemo(() => {
+    if (!currentProgramme) return existingNiveaux;
+    return existingNiveaux.filter(
+      (niveau) =>
+        niveau.programme === currentProgramme.code_programme ||
+        (niveau.programme as Programme)?.code_programme ===
+          currentProgramme.code_programme
+    );
+  }, [existingNiveaux, currentProgramme]);
+
   // Initialize niveaux from existing data
   useEffect(() => {
-    if (existingNiveaux.length > 0) {
-      const sortedNiveaux = [...existingNiveaux]
-        .sort((a, b) => (a.nombre_nca as number) - (b.nombre_nca as number))
+    if (niveauxDuProgramme.length > 0) {
+      const sortedNiveaux = [...niveauxDuProgramme]
+        .sort(
+          (a, b) =>
+            (a.code_number_nca as number) - (b.code_number_nca as number)
+        )
         .map((niveau) => ({
           id_nca: niveau.id_nca as number,
           libelle_nca: niveau.libelle_nca as string,
-          code_number_nca: niveau.code_number_nca as number,
+          nombre_nca: niveau.nombre_nca as number,
+          programme: currentProgramme.code_programme,
           isNew: false,
         }));
       setNiveaux(sortedNiveaux);
@@ -44,12 +62,13 @@ export default function NiveauCadreAnalytiqueTableForm() {
       setNiveaux([
         {
           libelle_nca: "",
-          code_number_nca: 2,
+          nombre_nca: 2, // Taille du code par défaut
+          programme: currentProgramme.code_programme,
           isNew: true,
         },
       ]);
     }
-  }, [existingNiveaux]);
+  }, [currentProgramme.code_programme, niveauxDuProgramme]);
 
   // Mutations
   const createMutation = useMutation({
@@ -68,7 +87,8 @@ export default function NiveauCadreAnalytiqueTableForm() {
   const handleAddRow = () => {
     const newRow: NiveauRow = {
       libelle_nca: "",
-      code_number_nca: 2,
+      nombre_nca: 2, // Taille du code par défaut
+      programme: currentProgramme.code_programme,
       isNew: true,
     };
     setNiveaux([...niveaux, newRow]);
@@ -106,14 +126,20 @@ export default function NiveauCadreAnalytiqueTableForm() {
   };
 
   const handleSave = async () => {
+    if (!currentProgramme) {
+      toast.error("Aucun programme sélectionné");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const promises = niveaux.map(async (niveau, index) => {
         const niveauData = {
           libelle_nca: niveau.libelle_nca,
-          nombre_nca: index + 1,
-          code_number_nca: niveau.code_number_nca,
+          code_number_nca: index + 1, // Numéro du niveau (1, 2, 3...)
+          nombre_nca: niveau.nombre_nca, // Taille du code
+          programme: niveau.programme,
         };
 
         if (niveau.isNew && niveau.libelle_nca.trim()) {
@@ -200,11 +226,11 @@ export default function NiveauCadreAnalytiqueTableForm() {
                     type="number"
                     min="1"
                     max="10"
-                    value={niveau.code_number_nca}
+                    value={niveau.nombre_nca}
                     onChange={(e) =>
                       handleFieldChange(
                         index,
-                        "code_number_nca",
+                        "nombre_nca",
                         Number(e.target.value)
                       )
                     }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   EditIcon,
   MapPinIcon,
@@ -19,13 +19,17 @@ import {
 import { toast } from "react-toastify";
 import ConfirmModal from "../../../components/ConfirModal";
 import type {
+  Acteur,
   CadreStrategique,
   NiveauCadreStrategique,
+  Programme,
 } from "../../../types/entities";
 import { cadreStrategiqueService } from "../../../services/cadreStrategiqueService";
 import { niveauCadreStrategiqueService } from "../../../services/niveauCadreStrategiqueService";
 import CadreStrategiqueForm from "./CadreStrategiqueForm";
 import { useRoot } from "../../../contexts/RootContext";
+import { acteurService } from "../../../services/acteurService";
+import { useQuery } from "@tanstack/react-query";
 
 const CadreStrategiquePage: React.FC = () => {
   const [niveauCadreStrategiques, setNiveauCadreStrategiques] = useState<
@@ -44,6 +48,20 @@ const CadreStrategiquePage: React.FC = () => {
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [_, setCurrentId] = useState(0);
   const { currentProgramme } = useRoot();
+  const filteredNiveauCadreStrategiques = useMemo(() => {
+    if (!currentProgramme) return niveauCadreStrategiques;
+    return niveauCadreStrategiques.filter(
+      (niveau) =>
+        niveau.programme === currentProgramme.code_programme ||
+        (niveau.programme as Programme)?.code_programme ===
+          currentProgramme.code_programme
+    );
+  }, [niveauCadreStrategiques, currentProgramme]);
+
+  const { data: acteurs = [] } = useQuery<Acteur[]>({
+    queryKey: ["acteurs"],
+    queryFn: acteurService.getAll,
+  });
 
   const AllNiveau = useCallback(async () => {
     setLoadingNiv(true);
@@ -165,9 +183,9 @@ const CadreStrategiquePage: React.FC = () => {
         >
           <div className="mt-2 mb-2 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <TabsList className="flex space-x-2">
-              {niveauCadreStrategiques.length > 0
-                ? niveauCadreStrategiques.map(
-                    (nivLib: NiveauCadreStrategique, index: number) => (
+              {filteredNiveauCadreStrategiques.length > 0
+                ? filteredNiveauCadreStrategiques.map(
+                    (nivLib: NiveauCadreStrategique) => (
                       <div
                         key={nivLib.id_nsc}
                         onClick={() =>
@@ -178,7 +196,7 @@ const CadreStrategiquePage: React.FC = () => {
                           )
                         }
                       >
-                        <TabsTrigger value={String(index + 1)}>
+                        <TabsTrigger value={String(nivLib.code_number_nsc)}>
                           {nivLib.libelle_nsc}
                         </TabsTrigger>
                       </div>
@@ -213,9 +231,12 @@ const CadreStrategiquePage: React.FC = () => {
               <RiseLoader color="green" />
             </div>
           ) : (
-            niveauCadreStrategiques.map(
-              (nivLib: NiveauCadreStrategique, index: number) => (
-                <TabsContent key={nivLib.id_nsc} value={String(index + 1)}>
+            filteredNiveauCadreStrategiques.map(
+              (nivLib: NiveauCadreStrategique) => (
+                <TabsContent
+                  key={nivLib.id_nsc}
+                  value={String(nivLib.code_number_nsc)}
+                >
                   <div className="overflow-x-auto rounded-lg border border-gray-200">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-100">
@@ -225,6 +246,9 @@ const CadreStrategiquePage: React.FC = () => {
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                             Libellé
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
+                            Abrégé
                           </th>
                           {niveauCadreStrategiques
                             .slice(0, Number(tabActive) - 1)
@@ -262,6 +286,9 @@ const CadreStrategiquePage: React.FC = () => {
                                   </td>
                                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                     {cadre.intutile_cs}
+                                  </td>
+                                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                    {cadre.abgrege_cs}
                                   </td>
                                   {niveauCadreStrategiques
                                     .slice(0, Number(tabActive) - 1)

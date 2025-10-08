@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   EditIcon,
   MapPinIcon,
@@ -51,6 +51,17 @@ const CadreAnalytique: React.FC = () => {
   const { currentProgramme }: { currentProgramme: Programme | undefined } =
     useRoot();
 
+  // Filter niveaux by current programme
+  const niveauxDuProgramme = useMemo(() => {
+    if (!currentProgramme) return niveauCadreAnalytiques;
+    return niveauCadreAnalytiques.filter(
+      (niveau) =>
+        niveau.programme === currentProgramme.code_programme ||
+        (niveau.programme as Programme)?.code_programme ===
+          currentProgramme.code_programme
+    );
+  }, [niveauCadreAnalytiques, currentProgramme]);
+
   const AllNiveau = async () => {
     setLoadingNiv(true);
     try {
@@ -102,7 +113,7 @@ const CadreAnalytique: React.FC = () => {
     // await OneNiveau(id)
   };
 
-  const getCadreAnalytiques = async () => {
+  const getCadreAnalytiques = useCallback(async () => {
     setLoading(true);
     try {
       const res = await getAllCadreAnalytique(currentProgramme?.id_programme);
@@ -113,23 +124,23 @@ const CadreAnalytique: React.FC = () => {
       console.log("error", error);
       setLoading(false);
     }
-  };
+  }, [currentProgramme]);
 
   useEffect(() => {
     AllNiveau();
     getCadreAnalytiques();
     getActeurs();
-  }, [currentProgramme]); // Exécuter seulement au montage du composant
+  }, [currentProgramme, getCadreAnalytiques]); // Exécuter seulement au montage du composant
 
   // Effet séparé pour définir le premier niveau par défaut
   useEffect(() => {
-    if (niveauCadreAnalytiques.length > 0 && tabActive === "") {
-      const firstNiveau = niveauCadreAnalytiques[0];
+    if (niveauxDuProgramme.length > 0 && tabActive === "") {
+      const firstNiveau = niveauxDuProgramme[0];
       setTabActive(String(firstNiveau.code_number_nca));
       setAddBoutonLabel(firstNiveau.libelle_nca ?? "");
       setCurrentId(firstNiveau.id_nca!);
     }
-  }, [niveauCadreAnalytiques, tabActive]);
+  }, [niveauxDuProgramme, tabActive]);
 
   const handleAddForm = (bool: boolean) => {
     setShowForm(bool);
@@ -160,17 +171,17 @@ const CadreAnalytique: React.FC = () => {
         <NiveauCadreAnalytiqueTableForm />
       </Modal>
 
-      {niveauCadreAnalytiques.length > 0 && (
+      {niveauxDuProgramme.length > 0 && (
         <Tabs
-          key={niveauCadreAnalytiques.length}
+          key={niveauxDuProgramme.length}
           defaultValue={
-            tabActive || String(niveauCadreAnalytiques[0].code_number_nca)
+            tabActive || String(niveauxDuProgramme[0].code_number_nca)
           }
         >
           <div className="mt-2 mb-2 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <TabsList className="flex space-x-2">
-              {niveauCadreAnalytiques.length > 0
-                ? niveauCadreAnalytiques.map(
+              {niveauxDuProgramme.length > 0
+                ? niveauxDuProgramme.map(
                     (nivLib: NiveauCadreAnalytique) => (
                       <div
                         key={nivLib.id_nca}
@@ -215,7 +226,7 @@ const CadreAnalytique: React.FC = () => {
               <RiseLoader color="green" />
             </div>
           ) : (
-            niveauCadreAnalytiques.map((nivLib: NiveauCadreAnalytique) => (
+            niveauxDuProgramme.map((nivLib: NiveauCadreAnalytique) => (
               <TabsContent
                 key={nivLib.id_nca}
                 value={String(nivLib.code_number_nca)}
@@ -358,7 +369,7 @@ const CadreAnalytique: React.FC = () => {
         </Tabs>
       )}
 
-      {niveauCadreAnalytiques.length === 0 && !loadingNiv && (
+      {niveauxDuProgramme.length === 0 && !loadingNiv && (
         <div className="text-center py-12">
           <div className="text-muted-foreground mb-4">
             Aucun niveau de cadre analytique configuré
@@ -382,7 +393,6 @@ const CadreAnalytique: React.FC = () => {
           onClose={() => setShowForm(false)}
           niveau={Number(tabActive)}
           currentId={currentId}
-          niveauCadreAnalytique={niveauCadreAnalytiques}
           editRow={editRow || null}
           cadreByNiveau={getCadreAnalytiques}
           dataCadreAnalytique={cadreAnalytiques}
