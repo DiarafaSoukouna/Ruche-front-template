@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, Edit, Filter, Loader2, Plus } from "lucide-react";
+import { Calendar, Edit, Filter, Plus } from "lucide-react";
 import Button from "../../components/Button";
 import SelectInput from "../../components/SelectInput";
 import {
