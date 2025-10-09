@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { Edit, Trash2, Plus, BarChart3, Eye } from "lucide-react";
+import { Edit, Trash2, Plus, BarChart3 } from "lucide-react";
 import Button from "../../../components/Button";
 import indicateurTacheService from "../../../services/indicateurTacheService";
 import type { IndicateurTache } from "../../../types/indicateurTache";
