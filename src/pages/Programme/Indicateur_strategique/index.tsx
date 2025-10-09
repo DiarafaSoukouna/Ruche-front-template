@@ -32,6 +32,7 @@ import { deleteIndicStrategique } from '../../../functions/indicateurStrategique
 import { allCibleIndicStrategique } from '../../../functions/cibleIndicateurStrategique/gets'
 import { typeCibleIndicStrategique } from '../../../functions/cibleIndicateurStrategique/types'
 import CibleIndicateur from './cible/index'
+import { set } from 'zod'
 
 const IndicateurStrategique = () => {
   //   const [acteurs, setIndicStrategiques] = useState([])
@@ -69,7 +70,23 @@ const IndicateurStrategique = () => {
       structure_istr: '',
       programme_istr: 0,
     })
-
+  const clean = () => {
+    setIndicStrategique({
+      id_indicateur_str: 0,
+      niveau_istr: 0,
+      code_indicateur_istr: '',
+      code_istr: '',
+      intitule_indicateur_istr: '',
+      periodicite_iop: '',
+      source_istr: '',
+      responsable_istr: '',
+      description_istr: '',
+      structure_istr: '',
+      programme_istr: 0,
+    })
+    setIsEdit(false)
+    setShowModal(false)
+  }
   const loadCible = (row: any) => {
     setIndicStrategique(row)
     const cible_indic = cibleIndicStrategiques.filter(
@@ -285,7 +302,7 @@ const IndicateurStrategique = () => {
 
       <Modal
         isOpen={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={() => clean()}
         title={isEdit ? "Modifier l'indicateur" : 'Nouvel indicateur'}
         size="xl"
       >
@@ -294,7 +311,7 @@ const IndicateurStrategique = () => {
           niveau={tabActive}
           all={fetchIndicStrategiques}
           isEdit={isEdit}
-          onClose={() => setShowModal(false)}
+          onClose={() => clean()}
         />
       </Modal>
 

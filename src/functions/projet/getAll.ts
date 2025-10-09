@@ -8,5 +8,6 @@ export default async () => {
     return data as Projet[]
   } catch (error) {
     console.error(error)
+    return []
   }
 }

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query'
 import {
   Calendar,
   Code,
@@ -8,28 +8,28 @@ import {
   FolderTree,
   Briefcase,
   Info,
-} from "lucide-react";
-import type { CadreStrategique } from "../../../types/entities";
-import { cadreStrategiqueService } from "../../../services/cadreStrategiqueService";
+} from 'lucide-react'
+import type { CadreStrategique } from '../../../types/entities'
+import { cadreStrategiqueService } from '../../../services/cadreStrategiqueService'
 
 interface CadreStrategiqueDetailProps {
-  cadreId: number;
+  cadreId: number
 }
 
 export default function CadreStrategiqueDetail({
   cadreId,
 }: CadreStrategiqueDetailProps) {
   const { data: cadre, isLoading } = useQuery<CadreStrategique>({
-    queryKey: ["cadreStrategique", cadreId],
+    queryKey: ['cadreStrategique', cadreId],
     queryFn: () => cadreStrategiqueService.getById(cadreId),
-  });
+  })
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
-    );
+    )
   }
 
   if (!cadre) {
@@ -37,14 +37,14 @@ export default function CadreStrategiqueDetail({
       <div className="text-center p-8">
         <p className="text-muted-foreground">Cadre stratégique non trouvé</p>
       </div>
-    );
+    )
   }
 
   const getEtatColor = (etat?: number) => {
     return etat === 1
-      ? "text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/20"
-      : "text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/20";
-  };
+      ? 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/20'
+      : 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/20'
+  }
 
   return (
     <div className="space-y-6">
@@ -63,7 +63,7 @@ export default function CadreStrategiqueDetail({
                 cadre.etat
               )}`}
             >
-              {cadre.etat === 1 ? "Actif" : "Inactif"}
+              {cadre.etat === 1 ? 'Actif' : 'Inactif'}
             </span>
           </div>
         </div>
@@ -103,9 +103,9 @@ export default function CadreStrategiqueDetail({
                 Coût de l'axe
               </h4>
               <p className="text-sm text-muted-foreground font-medium">
-                {new Intl.NumberFormat("fr-FR", {
-                  style: "currency",
-                  currency: "XOF",
+                {new Intl.NumberFormat('fr-FR', {
+                  style: 'currency',
+                  currency: 'XOF',
                 }).format(cadre.cout_axe)}
               </p>
             </div>
@@ -136,11 +136,11 @@ export default function CadreStrategiqueDetail({
                   Cadre parent
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  {typeof cadre.parent_cs === "object"
+                  {typeof cadre.parent_cs === 'object'
                     ? cadre.parent_cs.intutile_cs
-                    : cadre.parent_cs}{" "}
+                    : cadre.parent_cs}{' '}
                   (
-                  {typeof cadre.parent_cs === "object"
+                  {typeof cadre.parent_cs === 'object'
                     ? cadre.parent_cs.code_cs
                     : cadre.parent_cs}
                   )
@@ -180,7 +180,7 @@ export default function CadreStrategiqueDetail({
               </div>
               <div className="text-sm font-medium text-foreground">
                 {new Date(cadre.date_enregistrement).toLocaleDateString(
-                  "fr-FR"
+                  'fr-FR'
                 )}
               </div>
             </div>
@@ -190,7 +190,7 @@ export default function CadreStrategiqueDetail({
             <div>
               <div className="text-xs text-muted-foreground">Modification</div>
               <div className="text-sm font-medium text-foreground">
-                {new Date(cadre.date_modification).toLocaleDateString("fr-FR")}
+                {new Date(cadre.date_modification).toLocaleDateString('fr-FR')}
               </div>
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function CadreStrategiqueDetail({
         <div className="border border-border rounded-lg p-3">
           <div className="text-xs text-muted-foreground">État</div>
           <div className="text-sm font-medium text-foreground">
-            {cadre.etat === 1 ? "Actif" : "Inactif"}
+            {cadre.etat === 1 ? 'Actif' : 'Inactif'}
           </div>
         </div>
         <div className="border border-border rounded-lg p-3">
@@ -248,5 +248,5 @@ export default function CadreStrategiqueDetail({
         </div>
       </div>
     </div>
-  );
+  )
 }
