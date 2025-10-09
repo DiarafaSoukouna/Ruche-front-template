@@ -24,10 +24,7 @@ export default function TacheActivitePtbaManager({
   });
 
   const filteredTaches = useMemo(() => {
-    const vs = taches.filter(
-      (tache) =>
-        tache.id_activite === activite.id_ptba
-    );
+    const vs = taches.filter((tache) => tache.id_activite === activite.id_ptba);
     return vs;
   }, [taches, activite.id_ptba]);
 

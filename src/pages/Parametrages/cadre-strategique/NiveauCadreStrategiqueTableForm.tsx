@@ -58,7 +58,10 @@ export default function NiveauCadreStrategiqueTableForm() {
   useEffect(() => {
     if (niveauxDuProgramme.length > 0) {
       const sortedNiveaux = [...niveauxDuProgramme]
-        .sort((a, b) => (a.code_number_nsc as number) - (b.code_number_nsc as number))
+        .sort(
+          (a, b) =>
+            (a.code_number_nsc as number) - (b.code_number_nsc as number)
+        )
         .map((niveau) => ({
           id_nsc: niveau.id_nsc as number,
           libelle_nsc: niveau.libelle_nsc as string,

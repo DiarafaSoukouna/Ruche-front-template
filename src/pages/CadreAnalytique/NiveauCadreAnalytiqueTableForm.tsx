@@ -1,35 +1,35 @@
-import { useState, useEffect } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'react-toastify'
-import { Plus, Trash2, Save } from 'lucide-react'
-import Button from '../../components/Button'
-import Input from '../../components/Input'
-import { niveauCadreAnalytiqueService } from '../../services/niveauCadreAnalytiqueService'
-import type { NiveauCadreAnalytique } from '../../types/entities'
-import { useRoot } from '../../contexts/RootContext'
-import { useRef } from 'react'
+import { useState, useEffect, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { Plus, Trash2, Save } from "lucide-react";
+import Button from "../../components/Button";
+import Input from "../../components/Input";
+import { niveauCadreAnalytiqueService } from "../../services/niveauCadreAnalytiqueService";
+import { useRoot } from "../../contexts/RootContext";
+import type { NiveauCadreAnalytique, Programme } from "../../types/entities";
 
 interface NiveauRow {
-  id_nca?: number
-  libelle_nca: string
-  code_number_nca: number
-  isNew?: boolean
+  id_nca?: number;
+  libelle_nca: string;
+  nombre_nca: number; // Taille du code (nombre de caractères)
+  programme: string;
+  isNew?: boolean;
 }
 
 export default function NiveauCadreAnalytiqueTableForm() {
-  const [niveaux, setNiveaux] = useState<NiveauRow[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [niveaux, setNiveaux] = useState<NiveauRow[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { currentProgramme }: { currentProgramme: Programme } = useRoot();
 
-  const queryClient = useQueryClient()
-  const { currentProgramme } = useRoot()
+  const queryClient = useQueryClient();
 
   // Fetch existing niveaux
   const { data: existingNiveaux = [], isLoading } = useQuery<
     NiveauCadreAnalytique[]
   >({
-    queryKey: ['niveauxCadreAnalytique'],
+    queryKey: ["niveauxCadreAnalytique"],
     queryFn: niveauCadreAnalytiqueService.getAll,
-  })
+  });
 
   // Filter niveaux by current programme
   const niveauxDuProgramme = useMemo(() => {
@@ -43,149 +43,136 @@ export default function NiveauCadreAnalytiqueTableForm() {
   }, [existingNiveaux, currentProgramme]);
 
   // Initialize niveaux from existing data
-  const initializedRef = useRef(false)
-
   useEffect(() => {
-    // Si aucune donnée existante n'est encore chargée
-    if (!existingNiveaux || existingNiveaux.length === 0) {
-      if (!initializedRef.current) {
-        setNiveaux([
-          {
-            libelle_nca: '',
-            code_number_nca: 2,
-            isNew: true,
-          },
-        ])
-        initializedRef.current = true
-      }
-      return
-    }
-
-    // Trie et formate les données reçues du backend
-    const sortedNiveaux = [...existingNiveaux]
-      .sort((a, b) => (a.nombre_nca as number) - (b.nombre_nca as number))
-      .map((niveau) => ({
-        id_nca: niveau.id_nca as number,
-        libelle_nca: niveau.libelle_nca as string,
-        code_number_nca: niveau.code_number_nca as number,
-        isNew: false,
-      }))
-
-    // Met à jour le state uniquement si les données ont réellement changé
-    setNiveaux((prev) => {
-      const sameData =
-        prev.length === sortedNiveaux.length &&
-        prev.every(
-          (p, i) =>
-            p.id_nca === sortedNiveaux[i].id_nca &&
-            p.libelle_nca === sortedNiveaux[i].libelle_nca &&
-            p.code_number_nca === sortedNiveaux[i].code_number_nca
+    if (niveauxDuProgramme.length > 0) {
+      const sortedNiveaux = [...niveauxDuProgramme]
+        .sort(
+          (a, b) =>
+            (a.code_number_nca as number) - (b.code_number_nca as number)
         )
-
-      if (sameData) return prev // évite le re-render infini
-
-      initializedRef.current = true
-      return sortedNiveaux
-    })
-  }, [existingNiveaux])
+        .map((niveau) => ({
+          id_nca: niveau.id_nca as number,
+          libelle_nca: niveau.libelle_nca as string,
+          nombre_nca: niveau.nombre_nca as number,
+          programme: currentProgramme.code_programme,
+          isNew: false,
+        }));
+      setNiveaux(sortedNiveaux);
+    } else {
+      setNiveaux([
+        {
+          libelle_nca: "",
+          nombre_nca: 2, // Taille du code par défaut
+          programme: currentProgramme.code_programme,
+          isNew: true,
+        },
+      ]);
+    }
+  }, [currentProgramme.code_programme, niveauxDuProgramme]);
 
   // Mutations
   const createMutation = useMutation({
     mutationFn: niveauCadreAnalytiqueService.create,
-  })
+  });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: any }) =>
       niveauCadreAnalytiqueService.update(id, data),
-  })
+  });
 
   const deleteMutation = useMutation({
     mutationFn: niveauCadreAnalytiqueService.delete,
-  })
+  });
 
   const handleAddRow = () => {
     const newRow: NiveauRow = {
-      libelle_nca: '',
-      code_number_nca: 2,
+      libelle_nca: "",
+      nombre_nca: 2, // Taille du code par défaut
+      programme: currentProgramme.code_programme,
       isNew: true,
-    }
-    setNiveaux([...niveaux, newRow])
-  }
+    };
+    setNiveaux([...niveaux, newRow]);
+  };
 
   const handleRemoveRow = async (index: number) => {
-    const niveau = niveaux[index]
+    const niveau = niveaux[index];
 
     if (niveau.id_nca) {
-      if (window.confirm('Êtes-vous sûr de vouloir supprimer ce niveau ?')) {
+      if (window.confirm("Êtes-vous sûr de vouloir supprimer ce niveau ?")) {
         try {
-          await deleteMutation.mutateAsync(niveau.id_nca)
-          setNiveaux(niveaux.filter((_, i) => i !== index))
-          toast.success('Niveau supprimé avec succès')
+          await deleteMutation.mutateAsync(niveau.id_nca);
+          setNiveaux(niveaux.filter((_, i) => i !== index));
+          toast.success("Niveau supprimé avec succès");
         } catch {
-          toast.error('Erreur lors de la suppression')
+          toast.error("Erreur lors de la suppression");
         }
       }
     } else {
-      setNiveaux(niveaux.filter((_, i) => i !== index))
+      setNiveaux(niveaux.filter((_, i) => i !== index));
     }
-  }
+  };
 
   const handleFieldChange = (
     index: number,
     field: keyof NiveauRow,
     value: string | number
   ) => {
-    const updatedNiveaux = [...niveaux]
+    const updatedNiveaux = [...niveaux];
     updatedNiveaux[index] = {
       ...updatedNiveaux[index],
       [field]: value,
-    }
-    setNiveaux(updatedNiveaux)
-  }
+    };
+    setNiveaux(updatedNiveaux);
+  };
 
   const handleSave = async () => {
-    setIsSubmitting(true)
+    if (!currentProgramme) {
+      toast.error("Aucun programme sélectionné");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const promises = niveaux.map(async (niveau, index) => {
         const niveauData = {
           libelle_nca: niveau.libelle_nca,
-          nombre_nca: index + 1,
-          code_number_nca: niveau.code_number_nca,
-          programme: currentProgramme.code_programme,
-        }
+          code_number_nca: index + 1, // Numéro du niveau (1, 2, 3...)
+          nombre_nca: niveau.nombre_nca, // Taille du code
+          programme: niveau.programme,
+        };
 
         if (niveau.isNew && niveau.libelle_nca.trim()) {
-          return createMutation.mutateAsync(niveauData)
+          return createMutation.mutateAsync(niveauData);
         } else if (niveau.id_nca && niveau.libelle_nca.trim()) {
           return updateMutation.mutateAsync({
             id: niveau.id_nca,
             data: niveauData,
-          })
+          });
         }
-      })
+      });
 
-      await Promise.all(promises.filter(Boolean))
-      toast.success('Niveaux sauvegardés avec succès')
+      await Promise.all(promises.filter(Boolean));
+      toast.success("Niveaux sauvegardés avec succès");
 
-      queryClient.invalidateQueries({ queryKey: ['niveauxCadreAnalytique'] })
+      queryClient.invalidateQueries({ queryKey: ["niveauxCadreAnalytique"] });
     } catch {
-      toast.error('Erreur lors de la sauvegarde')
+      toast.error("Erreur lors de la sauvegarde");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const canDeleteLevel = (index: number) => {
-    return index === niveaux.length - 1
-  }
+    return index === niveaux.length - 1;
+  };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-gray-500">Chargement...</div>
       </div>
-    )
+    );
   }
 
   return (
@@ -227,7 +214,7 @@ export default function NiveauCadreAnalytiqueTableForm() {
                   <Input
                     value={niveau.libelle_nca}
                     onChange={(e) =>
-                      handleFieldChange(index, 'libelle_nca', e.target.value)
+                      handleFieldChange(index, "libelle_nca", e.target.value)
                     }
                     placeholder="Ex: Objectif analytique"
                     className="w-full"
@@ -243,7 +230,7 @@ export default function NiveauCadreAnalytiqueTableForm() {
                     onChange={(e) =>
                       handleFieldChange(
                         index,
-                        'code_number_nca',
+                        "nombre_nca",
                         Number(e.target.value)
                       )
                     }
@@ -262,8 +249,8 @@ export default function NiveauCadreAnalytiqueTableForm() {
                     className="p-2"
                     title={
                       !canDeleteLevel(index)
-                        ? 'Seul le dernier niveau peut être supprimé'
-                        : 'Supprimer ce niveau'
+                        ? "Seul le dernier niveau peut être supprimé"
+                        : "Supprimer ce niveau"
                     }
                   >
                     <Trash2 className="h-4 w-4" />
@@ -281,9 +268,9 @@ export default function NiveauCadreAnalytiqueTableForm() {
           disabled={isSubmitting || niveaux.every((n) => !n.libelle_nca.trim())}
         >
           <Save className="h-4 w-4 mr-2" />
-          {isSubmitting ? 'Sauvegarde...' : 'Sauvegarder'}
+          {isSubmitting ? "Sauvegarde..." : "Sauvegarder"}
         </Button>
       </div>
     </div>
-  )
+  );
 }
