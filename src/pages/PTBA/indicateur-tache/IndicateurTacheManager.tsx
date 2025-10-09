@@ -33,9 +33,9 @@ export default function IndicateurTacheManager({
     queryFn: () => indicateurTacheService.getByActivite(activite.id_ptba),
   });
 
-  const filteredIndicateurs = useMemo(()=>{
-return indicateurs.filter((i)=> i.id_activite === activite.id_ptba)
-  }, [activite.id_ptba, indicateurs])
+  const filteredIndicateurs = useMemo(() => {
+    return indicateurs.filter((i) => i.id_activite === activite.id_ptba);
+  }, [activite.id_ptba, indicateurs]);
 
   const handleAdd = () => {
     setEditingIndicateur(undefined);

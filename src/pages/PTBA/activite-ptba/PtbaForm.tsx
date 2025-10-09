@@ -6,7 +6,6 @@ import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import SelectInput from "../../../components/SelectInput";
 import TextArea from "../../../components/TextArea";
-// MultiSelectInput est maintenant SelectInput avec isMulti={true}
 import ptbaService from "../../../services/ptbaService";
 import typeActiviteService from "../../../services/typeActiviteService";
 import { acteurService } from "../../../services/acteurService";

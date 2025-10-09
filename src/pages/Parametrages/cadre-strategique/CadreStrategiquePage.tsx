@@ -1,144 +1,161 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   EditIcon,
   MapPinIcon,
   PlusIcon,
   SearchIcon,
   TrashIcon,
-} from 'lucide-react'
-import NiveauCadreStrategiqueTableForm from './NiveauCadreStrategiqueTableForm'
-import Button from '../../../components/Button'
-import Modal from '../../../components/Modal'
-import { RiseLoader } from 'react-spinners'
+} from "lucide-react";
+import NiveauCadreStrategiqueTableForm from "./NiveauCadreStrategiqueTableForm";
+import Button from "../../../components/Button";
+import Modal from "../../../components/Modal";
+import { RiseLoader } from "react-spinners";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '../../../components/Tabs'
-import { toast } from 'react-toastify'
-import ConfirmModal from '../../../components/ConfirModal'
+} from "../../../components/Tabs";
+import { toast } from "react-toastify";
+import ConfirmModal from "../../../components/ConfirModal";
 import type {
   Acteur,
   CadreStrategique,
   NiveauCadreStrategique,
-} from '../../../types/entities'
-import { cadreStrategiqueService } from '../../../services/cadreStrategiqueService'
-import { niveauCadreStrategiqueService } from '../../../services/niveauCadreStrategiqueService'
-import CadreStrategiqueForm from './CadreStrategiqueForm'
-import { useRoot } from '../../../contexts/RootContext'
+  Programme,
+} from "../../../types/entities";
+import { cadreStrategiqueService } from "../../../services/cadreStrategiqueService";
+import { niveauCadreStrategiqueService } from "../../../services/niveauCadreStrategiqueService";
+import CadreStrategiqueForm from "./CadreStrategiqueForm";
+import { useRoot } from "../../../contexts/RootContext";
+import { acteurService } from "../../../services/acteurService";
+import { useQuery } from "@tanstack/react-query";
 
 const CadreStrategiquePage: React.FC = () => {
   const [niveauCadreStrategiques, setNiveauCadreStrategiques] = useState<
     NiveauCadreStrategique[]
-  >([])
+  >([]);
   const [cadreStrategiques, setCadreStrategiques] = useState<
     CadreStrategique[]
-  >([])
-  const [loading, setLoading] = useState<boolean>(true)
-  const [, setLoadingNiv] = useState(false)
-  const [showForm, setShowForm] = useState<boolean>(false)
-  const [editRow, setEditRow] = useState<CadreStrategique>()
-  const [addBoutonLabel, setAddBoutonLabel] = useState<string>('')
-  const [tabActive, setTabActive] = useState<string>('')
-  const [loadNiveau, setLoadNiveau] = useState<boolean>(false)
-  const [isDelete, setIsDelete] = useState<boolean>(false)
-  const [_, setCurrentId] = useState(0)
-  const { currentProgramme } = useRoot()
+  >([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [, setLoadingNiv] = useState(false);
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [editRow, setEditRow] = useState<CadreStrategique>();
+  const [addBoutonLabel, setAddBoutonLabel] = useState<string>("");
+  const [tabActive, setTabActive] = useState<string>("");
+  const [loadNiveau, setLoadNiveau] = useState<boolean>(false);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [_, setCurrentId] = useState(0);
+  const { currentProgramme } = useRoot();
+  const filteredNiveauCadreStrategiques = useMemo(() => {
+    if (!currentProgramme) return niveauCadreStrategiques;
+    return niveauCadreStrategiques.filter(
+      (niveau) =>
+        niveau.programme === currentProgramme.code_programme ||
+        (niveau.programme as Programme)?.code_programme ===
+          currentProgramme.code_programme
+    );
+  }, [niveauCadreStrategiques, currentProgramme]);
+
+  const { data: acteurs = [] } = useQuery<Acteur[]>({
+    queryKey: ["acteurs"],
+    queryFn: acteurService.getAll,
+  });
 
   const AllNiveau = useCallback(async () => {
-    setLoadingNiv(true)
+    setLoadingNiv(true);
     try {
-      const res = await niveauCadreStrategiqueService.getAll()
-      setNiveauCadreStrategiques(res)
+      const res = await niveauCadreStrategiqueService.getAll();
+      setNiveauCadreStrategiques(res);
       // La sélection du premier niveau par défaut est maintenant gérée dans useEffect
     } catch (error) {
       toast.error(
-        'Erreur lors de la récupération des niveaux du cadre stratégique'
-      )
-      console.log('error', error)
+        "Erreur lors de la récupération des niveaux du cadre stratégique"
+      );
+      console.log("error", error);
     } finally {
-      setLoadingNiv(false)
+      setLoadingNiv(false);
     }
-  }, [])
+  }, []);
 
   const DeleteCadreStrategique = async (id: number) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      await cadreStrategiqueService.delete(id)
-      toast.success('Cadre stratégique supprimé avec succès')
-      setIsDelete(false)
-      getCadreStrategiques()
-      setLoading(false)
+      await cadreStrategiqueService.delete(id);
+      toast.success("Cadre stratégique supprimé avec succès");
+      setIsDelete(false);
+      getCadreStrategiques();
+      setLoading(false);
     } catch (error) {
-      toast.error('Erreur lors de la suppression du cadre stratégique')
-      console.log('error', error)
-      setLoading(false)
+      toast.error("Erreur lors de la suppression du cadre stratégique");
+      console.log("error", error);
+      setLoading(false);
     }
-  }
+  };
 
   const handleTabClick = async (code: number, libelle: string, id: number) => {
-    setTabActive(String(code))
-    setAddBoutonLabel(libelle)
-    setCurrentId(id)
-  }
+    setTabActive(String(code));
+    setAddBoutonLabel(libelle);
+    setCurrentId(id);
+  };
 
   const getCadreStrategiques = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const res = await cadreStrategiqueService.getAll(
         currentProgramme?.id_programme
-      )
-      setCadreStrategiques(res)
-      setLoading(false)
+      );
+      setCadreStrategiques(res);
+      setLoading(false);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_) {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [currentProgramme?.id_programme])
+  }, [currentProgramme?.id_programme]);
 
   useEffect(() => {
-    getCadreStrategiques()
-    AllNiveau()
-  }, [AllNiveau, getCadreStrategiques]) // Exécuter seulement au montage du composant
+    getCadreStrategiques();
+    AllNiveau();
+  }, [AllNiveau, getCadreStrategiques]); // Exécuter seulement au montage du composant
 
   // Effet séparé pour définir le premier niveau par défaut
   useEffect(() => {
-    if (niveauCadreStrategiques.length > 0 && tabActive === '') {
-      const firstNiveau = niveauCadreStrategiques[0]
-      setTabActive('1') // Premier niveau (index + 1)
-      setAddBoutonLabel(firstNiveau.libelle_nsc ?? '')
-      setCurrentId(firstNiveau.id_nsc ?? 0)
+    if (niveauCadreStrategiques.length > 0 && tabActive === "") {
+      const firstNiveau = niveauCadreStrategiques[0];
+      setTabActive("1"); // Premier niveau (index + 1)
+      setAddBoutonLabel(firstNiveau.libelle_nsc ?? "");
+      setCurrentId(firstNiveau.id_nsc ?? 0);
     }
-  }, [niveauCadreStrategiques, tabActive])
+  }, [niveauCadreStrategiques, tabActive]);
 
   const handleAddForm = (bool: boolean) => {
-    setShowForm(bool)
-    setEditRow(undefined)
-  }
+    setShowForm(bool);
+    setEditRow(undefined);
+  };
 
   const handleDelete = (cadre: CadreStrategique) => {
-    setIsDelete(true)
-    setEditRow(cadre)
-  }
+    setIsDelete(true);
+    setEditRow(cadre);
+  };
 
   const getParentHierarchy = (cadre: CadreStrategique) => {
-    const hierarchy = new Set<CadreStrategique | number>()
-    let currentParent = cadre.parent_cs
+    const hierarchy = new Set<CadreStrategique | number>();
+    let currentParent = cadre.parent_cs;
     while (currentParent) {
-      if (typeof currentParent === 'object') {
-        hierarchy.add(currentParent)
-        currentParent = currentParent.parent_cs
+      if (typeof currentParent === "object") {
+        hierarchy.add(currentParent);
+        currentParent = currentParent.parent_cs;
       } else {
-        const parent = cadreStrategiques.find((c) => c.id_cs === currentParent)
+        const parent = cadreStrategiques.find((c) => c.id_cs === currentParent);
         if (parent) {
-          hierarchy.add(parent)
-          currentParent = parent.parent_cs
+          hierarchy.add(parent);
+          currentParent = parent.parent_cs;
         }
       }
     }
-    return hierarchy
-  }
+    return hierarchy;
+  };
 
   return (
     <>
@@ -162,7 +179,7 @@ const CadreStrategiquePage: React.FC = () => {
       {niveauCadreStrategiques.length > 0 && (
         <Tabs
           key={niveauCadreStrategiques.length}
-          defaultValue={tabActive || '1'}
+          defaultValue={tabActive || "1"}
         >
           <div className="mt-2 mb-2 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <TabsList className="flex space-x-2">
@@ -173,7 +190,7 @@ const CadreStrategiquePage: React.FC = () => {
                         key={nivLib.id_nsc}
                         onClick={() =>
                           handleTabClick(
-                            index + 1,
+                            nivLib.code_number_nsc,
                             nivLib.libelle_nsc,
                             nivLib.id_nsc!
                           )
@@ -185,7 +202,7 @@ const CadreStrategiquePage: React.FC = () => {
                       </div>
                     )
                   )
-                : 'Niveaux du cadre stratégique non disponibles'}
+                : "Niveaux du cadre stratégique non disponibles"}
             </TabsList>
 
             <div className="flex gap-3 items-center">
@@ -257,7 +274,7 @@ const CadreStrategiquePage: React.FC = () => {
                                 cadre.niveau_cs === tabActive
                             )
                             .map((cadre) => {
-                              const parentHierarchy = getParentHierarchy(cadre)
+                              const parentHierarchy = getParentHierarchy(cadre);
 
                               return (
                                 <tr
@@ -277,27 +294,27 @@ const CadreStrategiquePage: React.FC = () => {
                                     .slice(0, Number(tabActive) - 1)
                                     .map((niv, i) => {
                                       const parentArray =
-                                        Array.from(parentHierarchy)
+                                        Array.from(parentHierarchy);
                                       return (
                                         <td
                                           key={niv.id_nsc}
                                           className="px-6 py-4 text-sm text-gray-500"
                                         >
                                           {parentArray[i]
-                                            ? typeof parentArray[i] === 'object'
+                                            ? typeof parentArray[i] === "object"
                                               ? parentArray[i]?.intutile_cs
-                                              : '-'
-                                            : '-'}
+                                              : "-"
+                                            : "-"}
                                         </td>
-                                      )
+                                      );
                                     })}
                                   <td className="px-6 py-4 text-sm font-medium space-x-2 whitespace-nowrap">
                                     <Button
                                       variant="outline"
                                       size="sm"
                                       onClick={() => {
-                                        setEditRow(cadre)
-                                        setShowForm(true)
+                                        setEditRow(cadre);
+                                        setShowForm(true);
                                       }}
                                     >
                                       <EditIcon className="w-3 h-3" />
@@ -311,7 +328,7 @@ const CadreStrategiquePage: React.FC = () => {
                                     </Button>
                                   </td>
                                 </tr>
-                              )
+                              );
                             })
                         ) : (
                           <tr>
@@ -345,7 +362,7 @@ const CadreStrategiquePage: React.FC = () => {
       <Modal
         onClose={() => setShowForm(false)}
         isOpen={showForm}
-        title={`${editRow ? "Mise à jour d'un" : 'Ajout'} ${addBoutonLabel}`}
+        title={`${editRow ? "Mise à jour d'un" : "Ajout"} ${addBoutonLabel}`}
         size="lg"
       >
         <CadreStrategiqueForm
@@ -367,7 +384,7 @@ const CadreStrategiquePage: React.FC = () => {
         }
       />
     </>
-  )
-}
+  );
+};
 
-export default CadreStrategiquePage
+export default CadreStrategiquePage;
