@@ -46,27 +46,6 @@ export default function TacheActivitePtbaList({
     }
   };
 
-  // Mois de l'année (abréviations)
-  const moisAbbr = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
-
-  // Fonction pour vérifier si un mois est concerné par la tâche
-  const isMoisConcerne = (
-    tache: TacheActivitePtba,
-    moisIndex: number
-  ): boolean => {
-    const dateDebut = new Date(tache.date_debut_gt);
-    const dateFin = new Date(tache.date_fin_gt);
-
-    // Vérifier si le mois est dans la période de la tâche
-    return (
-      (dateDebut.getMonth() <= moisIndex && dateFin.getMonth() >= moisIndex) ||
-      (dateDebut.getFullYear() < new Date().getFullYear() &&
-        moisIndex <= dateFin.getMonth()) ||
-      (dateFin.getFullYear() > new Date().getFullYear() &&
-        moisIndex >= dateDebut.getMonth())
-    );
-  };
-
   return (
     <div className="space-y-4">
       {/* Header avec bouton d'ajout */}
@@ -103,17 +82,8 @@ export default function TacheActivitePtbaList({
                 <th className="px-2 py-3 text-center font-medium text-gray-900 min-w-[60px]">
                   Resp.
                 </th>
-                <th className="px-2 py-3 text-center font-medium text-gray-900 min-w-[60px]">
-                  Assign.
-                </th>
-                {moisAbbr.map((mois, index) => (
-                  <th
-                    key={index}
-                    className="px-2 py-3 text-center font-medium text-gray-900 min-w-[40px]"
-                  >
-                    {mois}
-                  </th>
-                ))}
+                <th>Date début</th>
+                <th>Date fin</th>
                 <th className="px-2 py-3 text-center font-medium text-gray-900 min-w-[50px]">
                   Lot
                 </th>
@@ -176,30 +146,19 @@ export default function TacheActivitePtbaList({
                       </span>
                     </td>
 
-                    {/* Personnel assigné */}
+                    {/* Colonnes date début */}
                     <td className="px-2 py-3 text-center">
-                      <span className="text-xs font-medium text-gray-700">
-                        {typeof tache.id_personnel_gt === "object"
-                          ? tache.id_personnel_gt?.prenom_perso +
-                            " " +
-                            tache.id_personnel_gt?.nom_perso
-                          : "Non affecté"}
+                      <span className="text-xs text-gray-700">
+                        {new Date(tache.date_debut_gt).toLocaleDateString()}
                       </span>
                     </td>
 
-                    {/* Colonnes des mois */}
-                    {moisAbbr.map((_, moisIndex) => {
-                      const isConcerne = isMoisConcerne(tache, moisIndex);
-                      return (
-                        <td key={moisIndex} className="px-2 py-3 text-center">
-                          <div
-                            className={`w-6 h-6 mx-auto ${
-                              isConcerne ? "bg-gray-400" : "bg-gray-100"
-                            }`}
-                          />
-                        </td>
-                      );
-                    })}
+                    {/* Colonnes date fin */}
+                    <td className="px-2 py-3 text-center">
+                      <span className="text-xs text-gray-700">
+                        {new Date(tache.date_fin_gt).toLocaleDateString()}
+                      </span>
+                    </td>
 
                     {/* Colonne Lot */}
                     <td className="px-2 py-3 text-center">

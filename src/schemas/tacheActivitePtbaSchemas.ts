@@ -8,9 +8,9 @@ export const tacheActivitePtbaSchema = z.object({
     .max(200, "L'intitulé ne peut pas dépasser 200 caractères"),
 
   proportion_gt: z
-    .string()
-    .min(1, "La proportion est requise")
-    .max(10, "La proportion ne peut pas dépasser 10 caractères"),
+    .number("La proportion est requise")
+    .min(0, "La proportion doit être supérieure ou égale à 0")
+    .max(100, "La proportion doit être inférieure ou égale à 100"),
 
   code_tache_gt: z
     .string()

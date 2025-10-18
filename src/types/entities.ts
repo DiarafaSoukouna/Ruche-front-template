@@ -1,15 +1,17 @@
 // Types pour les entités de paramètres
 
 import { CadreAnalytique } from "../pages/CadreAnalytique/types";
+import { ActiviteProgramme } from "./activiteProgramme";
+import { Projet } from "./projet";
 
 // Niveau Cadre Stratégique
 export interface NiveauCadreStrategique extends Record<string, unknown> {
-  id_nsc: number
-  nombre_nsc: number
-  libelle_nsc: string
-  code_number_nsc: number
-  type_niveau: 1 | 2 | 3 | string // 1 - Effet, 2 - Produit, 3 - Impact
-  programme?: string | Programme
+  id_nsc: number;
+  nombre_nsc: number;
+  libelle_nsc: string;
+  code_number_nsc: number;
+  type_niveau: 1 | 2 | 3 | string; // 1 - Effet, 2 - Produit, 3 - Impact
+  programme?: string | Programme;
 }
 
 // Niveau Cadre Analytique
@@ -41,9 +43,9 @@ export interface TitrePersonnel extends Record<string, unknown> {
 }
 
 export interface TitrePersonnel {
-  id_titre: number
-  libelle_titre: string
-  description_titre?: string
+  id_titre: number;
+  libelle_titre: string;
+  description_titre?: string;
 }
 
 export interface Personnel extends Record<string, unknown> {
@@ -158,9 +160,9 @@ export interface ProjetActivePerso {
 }
 
 export interface Fonction extends Record<string, unknown> {
-  id_fonction?: number
-  nom_fonction: string
-  description_fonction: string
+  id_fonction?: number;
+  nom_fonction: string;
+  description_fonction: string;
 }
 
 export interface NiveauStructureConfig extends Record<string, unknown> {
@@ -462,4 +464,67 @@ export interface TacheActivitePtbaRequest {
   id_personnel_gt: number;
   responsable_gt: number;
   id_activite: number;
+}
+
+// ============================================
+// NOUVELLES ENTITÉS PROJET
+// ============================================
+
+// Activité Projet
+// Niveau Activité Projet
+export interface NiveauActiviteProjet extends Record<string, unknown> {
+  id_niveau_activite_projet: number;
+  nombre_niveau_activite_projet: number;
+  libelle_niveau_activite_projet: string;
+  taille_code_niveau_activite_projet: number;
+  code_projet?: string | null;
+}
+
+export interface ActiviteProjet extends Record<string, unknown> {
+  id_activite_projet: number;
+  code_activite_projet: string;
+  intitule_activite_projet: string;
+  niveau_activite_projet: number;
+  parent_activite_projet?: number | ActiviteProjet | null;
+  code_activite_programme?: string | ActiviteProgramme | null;
+  code_projet?: string | Projet | null;
+  // Relations populées
+  parent?: ActiviteProjet | null;
+}
+
+// Indicateur Performance Projet
+export interface IndicateurPerformanceProjet extends Record<string, unknown> {
+  id_indicateur_performance: number;
+  code_indicateur_performance: string;
+  intitule_indicateur_tache: string;
+  code_activite_projet?: string | number | ActiviteProjet | null;
+  unite_indicateur_performance?: number | UniteIndicateur | null;
+  code_projet?: string | Projet | null;
+}
+
+// Indicateur Activité PTBA
+export interface IndicateurActivitePtba extends Record<string, unknown> {
+  id_indicateur_activite: number;
+  code_indicateur_activite: string;
+  intitule_indicateur_tache: string;
+  activite_ptba?: string | Ptba | null;
+  code_indicateur_performance?: string | IndicateurPerformanceProjet | null;
+  abrege_unite?: number | UniteIndicateur | null;
+}
+
+// Suivi Indicateur Activité
+export interface SuiviIndicateurActivite extends Record<string, unknown> {
+  id_suivi_indicateur: number;
+  date_suivi_indicateur: string;
+  valeur_suivi_indicateur: number; // double
+  indicateur_activite?: string | IndicateurActivitePtba | null; // relation via code_indicateur_activite
+  localite?: string | Localite | null; // relation via code_loca
+}
+
+// Observation PTBA
+export interface ObservationPtba extends Record<string, unknown> {
+  id_observation: number;
+  observation: string;
+  date_observation: string;
+  ptba?: string | Ptba | null; // relation via code_activite_ptba
 }
