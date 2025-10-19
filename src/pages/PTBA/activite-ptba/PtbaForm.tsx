@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import SelectInput from "../../../components/SelectInput";
-import TextArea from "../../../components/TextArea";
 import ptbaService from "../../../services/ptbaService";
 import typeActiviteService from "../../../services/typeActiviteService";
 import { acteurService } from "../../../services/acteurService";
@@ -439,21 +438,6 @@ export default function PtbaForm({
           />
         </div>
       </div>
-
-      {/* Observations */}
-      <Controller
-        name="observation"
-        control={control}
-        render={({ field }) => (
-          <TextArea
-            {...field}
-            label="Observations"
-            placeholder="Observations ou commentaires sur l'activité..."
-            rows={4}
-            error={errors.observation}
-          />
-        )}
-      />
 
       <div className="flex justify-end gap-4 pt-4 border-t">
         <Button

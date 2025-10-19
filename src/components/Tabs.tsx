@@ -1,5 +1,5 @@
-import React, { useState, createContext, useContext } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, createContext, useContext } from "react";
+import { motion } from "framer-motion";
 
 // Types pour TypeScript
 interface TabsContextType {
@@ -13,7 +13,7 @@ const TabsContext = createContext<TabsContextType | undefined>(undefined);
 const useTabs = () => {
   const context = useContext(TabsContext);
   if (!context) {
-    throw new Error('useTabs must be used within a TabsProvider');
+    throw new Error("useTabs must be used within a TabsProvider");
   }
   return context;
 };
@@ -25,14 +25,16 @@ interface TabsProps {
   className?: string;
 }
 
-const Tabs: React.FC<TabsProps> = ({ defaultValue, children, className = '' }) => {
+const Tabs: React.FC<TabsProps> = ({
+  defaultValue,
+  children,
+  className = "",
+}) => {
   const [activeTab, setActiveTab] = useState(defaultValue);
 
   return (
     <TabsContext.Provider value={{ activeTab, setActiveTab }}>
-      <div className={`w-full ${className}`}>
-        {children}
-      </div>
+      <div className={`w-full ${className}`}>{children}</div>
     </TabsContext.Provider>
   );
 };
@@ -43,10 +45,12 @@ interface TabsListProps {
   className?: string;
 }
 
-const TabsList: React.FC<TabsListProps> = ({ children, className = '' }) => {
+const TabsList: React.FC<TabsListProps> = ({ children, className = "" }) => {
   return (
     <div className="relative border-b border-gray-200">
-      <div className={`relative flex w-full justify-start bg-transparent p-0 h-auto ${className}`}>
+      <div
+        className={`relative flex w-full justify-start bg-transparent p-0 h-auto ${className}`}
+      >
         {children}
       </div>
     </div>
@@ -60,7 +64,11 @@ interface TabsTriggerProps {
   className?: string;
 }
 
-const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, children, className = '' }) => {
+const TabsTrigger: React.FC<TabsTriggerProps> = ({
+  value,
+  children,
+  className = "",
+}) => {
   const { activeTab, setActiveTab } = useTabs();
 
   return (
@@ -68,9 +76,8 @@ const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, children, className = 
       value={value}
       onClick={() => setActiveTab(value)}
       className={`relative px-6 py-3 text-sm font-medium tracking-wide transition-all 
-        ${activeTab === value 
-          ? 'text-green-600 font-semibold' 
-          : 'text-gray-500'
+        ${
+          activeTab === value ? "text-green-600 font-semibold" : "text-gray-500"
         } bg-transparent rounded-none border-0 ${className}`}
     >
       {children}
@@ -94,15 +101,15 @@ interface TabsContentProps {
   className?: string;
 }
 
-const TabsContent: React.FC<TabsContentProps> = ({ value, children, className = '' }) => {
+const TabsContent: React.FC<TabsContentProps> = ({
+  value,
+  children,
+  className = "",
+}) => {
   const { activeTab } = useTabs();
 
   if (activeTab !== value) return null;
 
-  return (
-    <div className={className}>
-      {children}
-    </div>
-  );
+  return <div className={className}>{children}</div>;
 };
 export { Tabs, TabsList, TabsTrigger, TabsContent };

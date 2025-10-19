@@ -19,9 +19,6 @@ export default function PtbaPage() {
           <h1 className="text-3xl font-bold text-gray-900">
             Plan de Travail et Budget Annuel (PTBA)
           </h1>
-          <p className="text-gray-600 mt-1">
-            Gestion des versions et activités du PTBA
-          </p>
         </div>
         <div className="flex items-center gap-3">
           <Button

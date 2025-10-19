@@ -19,7 +19,6 @@ import {
 import { toast } from "react-toastify";
 import ConfirmModal from "../../../components/ConfirModal";
 import type {
-  Acteur,
   CadreStrategique,
   NiveauCadreStrategique,
   Programme,
@@ -28,8 +27,6 @@ import { cadreStrategiqueService } from "../../../services/cadreStrategiqueServi
 import { niveauCadreStrategiqueService } from "../../../services/niveauCadreStrategiqueService";
 import CadreStrategiqueForm from "./CadreStrategiqueForm";
 import { useRoot } from "../../../contexts/RootContext";
-import { acteurService } from "../../../services/acteurService";
-import { useQuery } from "@tanstack/react-query";
 
 const CadreStrategiquePage: React.FC = () => {
   const [niveauCadreStrategiques, setNiveauCadreStrategiques] = useState<
@@ -46,7 +43,6 @@ const CadreStrategiquePage: React.FC = () => {
   const [tabActive, setTabActive] = useState<string>("");
   const [loadNiveau, setLoadNiveau] = useState<boolean>(false);
   const [isDelete, setIsDelete] = useState<boolean>(false);
-  const [_, setCurrentId] = useState(0);
   const { currentProgramme } = useRoot();
   const filteredNiveauCadreStrategiques = useMemo(() => {
     if (!currentProgramme) return niveauCadreStrategiques;
@@ -57,11 +53,6 @@ const CadreStrategiquePage: React.FC = () => {
           currentProgramme.code_programme
     );
   }, [niveauCadreStrategiques, currentProgramme]);
-
-  const { data: acteurs = [] } = useQuery<Acteur[]>({
-    queryKey: ["acteurs"],
-    queryFn: acteurService.getAll,
-  });
 
   const AllNiveau = useCallback(async () => {
     setLoadingNiv(true);
@@ -94,10 +85,9 @@ const CadreStrategiquePage: React.FC = () => {
     }
   };
 
-  const handleTabClick = async (code: number, libelle: string, id: number) => {
+  const handleTabClick = async (code: number, libelle: string) => {
     setTabActive(String(code));
     setAddBoutonLabel(libelle);
-    setCurrentId(id);
   };
 
   const getCadreStrategiques = useCallback(async () => {
@@ -123,9 +113,7 @@ const CadreStrategiquePage: React.FC = () => {
   useEffect(() => {
     if (niveauCadreStrategiques.length > 0 && tabActive === "") {
       const firstNiveau = niveauCadreStrategiques[0];
-      setTabActive("1"); // Premier niveau (index + 1)
-      setAddBoutonLabel(firstNiveau.libelle_nsc ?? "");
-      setCurrentId(firstNiveau.id_nsc ?? 0);
+      handleTabClick(firstNiveau.code_number_nsc, firstNiveau.libelle_nsc);
     }
   }, [niveauCadreStrategiques, tabActive]);
 
@@ -191,8 +179,7 @@ const CadreStrategiquePage: React.FC = () => {
                         onClick={() =>
                           handleTabClick(
                             nivLib.code_number_nsc,
-                            nivLib.libelle_nsc,
-                            nivLib.id_nsc!
+                            nivLib.libelle_nsc
                           )
                         }
                       >

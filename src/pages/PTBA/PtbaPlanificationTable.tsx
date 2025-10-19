@@ -162,7 +162,56 @@ export default function PtbaPlanificationTable() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
+      {/* Filtres globaux */}
+      {filteredVersions.length > 0 && (
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <SelectInput
+                label="Direction"
+                options={planSiteOptions}
+                value={planSiteOptions.find(
+                  (opt) => opt.value === selectedPlanSite
+                )}
+                onChange={(option) => {
+                  if (option && !Array.isArray(option)) {
+                    setSelectedPlanSite(String(option.value || ""));
+                  } else {
+                    setSelectedPlanSite("");
+                  }
+                }}
+              />
+            </div>
+
+            <div>
+              <SelectInput
+                label="Affichage"
+                options={affichageOptions}
+                value={affichageOptions.find((opt) => opt.value === affichage)}
+                onChange={(option) => {
+                  if (option && !Array.isArray(option)) {
+                    setAffichage(Number(option.value) || 10);
+                  } else {
+                    setAffichage(10);
+                  }
+                }}
+              />
+            </div>
+
+            <div className="flex items-end justify-end">
+              <Button
+                onClick={handleAddActivite}
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Nouvelle activité
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tabs des années */}
       {filteredVersions.length > 0 ? (
         <Tabs
@@ -192,88 +241,6 @@ export default function PtbaPlanificationTable() {
               value={version.id_version_ptba.toString()}
               className="mt-6"
             >
-              {/* Header avec bouton nouvelle activité */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-blue-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Activités PTBA {version.annee_ptba}
-                  </h3>
-                </div>
-                <Button
-                  onClick={() => {
-                    handleAddActivite();
-                  }}
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Nouvelle activité
-                </Button>
-              </div>
-
-              {/* Filtres pour l'année sélectionnée */}
-              <div className="bg-card border border-border rounded-lg p-4 mb-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Filter className="h-5 w-5 text-gray-500" />
-                  <span className="font-medium text-gray-700">
-                    Filtres pour {version.annee_ptba}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Direction
-                    </label>
-                    <SelectInput
-                      options={planSiteOptions}
-                      value={planSiteOptions.find(
-                        (opt) => opt.value === selectedPlanSite
-                      )}
-                      onChange={(option) => {
-                        if (option && !Array.isArray(option)) {
-                          setSelectedPlanSite(String(option.value || ""));
-                        } else {
-                          setSelectedPlanSite("");
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Affichage
-                    </label>
-                    <SelectInput
-                      options={affichageOptions}
-                      value={affichageOptions.find(
-                        (opt) => opt.value === affichage
-                      )}
-                      onChange={(option) => {
-                        if (option && !Array.isArray(option)) {
-                          setAffichage(Number(option.value) || 10);
-                        } else {
-                          setAffichage(10);
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div className="flex items-end">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedPlanSite("");
-                        setAffichage(10);
-                      }}
-                      className="w-full"
-                    >
-                      Réinitialiser
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
               {/* Tableau de planification */}
               <div className="bg-card border border-border rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">

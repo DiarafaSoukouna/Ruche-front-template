@@ -1,8 +1,6 @@
 import { apiClient } from "../lib/api";
-import type {
-  TacheActivitePtba,
-  TacheActivitePtbaRequest,
-} from "../types/entities";
+import { TacheActivitePtbaFormData } from "../schemas/tacheActivitePtbaSchemas";
+import type { TacheActivitePtba } from "../types/entities";
 
 class TacheActivitePtbaService {
   async getAll(): Promise<TacheActivitePtba[]> {
@@ -26,12 +24,12 @@ class TacheActivitePtbaService {
     return response;
   }
 
-  async create(data: TacheActivitePtbaRequest): Promise<TacheActivitePtba> {
+  async create(data: TacheActivitePtbaFormData): Promise<TacheActivitePtba> {
     const response = await apiClient.request<TacheActivitePtba>(
       "/tache_activite_ptba/",
       {
         method: "POST",
-        data,
+        data: { ...data, proportion_gt: data.proportion_gt?.toString() },
       }
     );
     return response;
@@ -39,13 +37,13 @@ class TacheActivitePtbaService {
 
   async update(
     id: number,
-    data: Partial<TacheActivitePtbaRequest>
+    data: Partial<TacheActivitePtbaFormData>
   ): Promise<TacheActivitePtba> {
     const response = await apiClient.request<TacheActivitePtba>(
       `/tache_activite_ptba/${id}/`,
       {
         method: "PUT",
-        data,
+        data: { ...data, proportion_gt: data.proportion_gt?.toString() },
       }
     );
     return response;
