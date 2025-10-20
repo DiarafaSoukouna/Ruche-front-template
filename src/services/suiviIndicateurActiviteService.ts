@@ -1,8 +1,6 @@
 import { api } from "../lib/api";
 import { SuiviIndicateurActiviteFormData } from "../schemas/suiviIndicateurSchemas";
-import type {
-  SuiviIndicateurActivite,
-} from "../types/entities";
+import type { SuiviIndicateurActivite } from "../types/entities";
 
 const suiviIndicateurActiviteService = {
   /**
@@ -27,16 +25,24 @@ const suiviIndicateurActiviteService = {
   async getByIndicateur(
     codeIndicateur: string
   ): Promise<SuiviIndicateurActivite[]> {
-    const response = await api.get("/suivi_indicateur_activite/", {
-      params: { indicateur_activite: codeIndicateur },
-    });
-    return response.data;
+    const response = await this.getAll();
+    const filteredResponse = response.filter(
+      (suivi) =>
+        (typeof suivi.indicateur_activite === "string" &&
+          suivi.indicateur_activite === codeIndicateur) ||
+        (typeof suivi.indicateur_activite === "object" &&
+          suivi.indicateur_activite?.code_indicateur_activite ===
+            codeIndicateur)
+    );
+    return filteredResponse;
   },
 
   /**
    * Récupère tous les suivis pour une localité spécifique
    */
-  async getByLocalite(codeLocalite: string): Promise<SuiviIndicateurActivite[]> {
+  async getByLocalite(
+    codeLocalite: string
+  ): Promise<SuiviIndicateurActivite[]> {
     const response = await api.get("/suivi_indicateur_activite/", {
       params: { localite: codeLocalite },
     });
