@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Edit, TrashIcon } from "lucide-react";
 import type { SuiviIndicateurActivite } from "../../../../types/entities";
 import { toast } from "react-toastify";
@@ -6,23 +6,15 @@ import suiviIndicateurActiviteService from "../../../../services/suiviIndicateur
 import Button from "../../../../components/Button";
 
 interface SuiviIndicateurListProps {
-  indicateurCode: string;
+  suivis: SuiviIndicateurActivite[];
   onEdit: (suivi: SuiviIndicateurActivite) => void;
 }
 
 export default function SuiviIndicateurList({
-  indicateurCode,
+  suivis,
   onEdit,
 }: SuiviIndicateurListProps) {
   const queryClient = useQueryClient();
-
-  // Fetch suivis pour cet indicateur
-  const { data: suivis = [], isLoading } = useQuery<SuiviIndicateurActivite[]>({
-    queryKey: ["suivis-indicateur", indicateurCode],
-    queryFn: () =>
-      suiviIndicateurActiviteService.getByIndicateur(indicateurCode),
-    enabled: !!indicateurCode,
-  });
 
   // Mutation pour supprimer un suivi
   const deleteMutation = useMutation({
@@ -30,7 +22,7 @@ export default function SuiviIndicateurList({
     onSuccess: () => {
       toast.success("Suivi supprimé avec succès");
       queryClient.invalidateQueries({
-        queryKey: ["suivis-indicateur", indicateurCode],
+        queryKey: ["suivis-indicateur", suivis],
       });
     },
     onError: () => {
@@ -43,14 +35,6 @@ export default function SuiviIndicateurList({
       deleteMutation.mutate(id);
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="text-center py-4 text-sm text-gray-500">
-        Chargement des suivis...
-      </div>
-    );
-  }
 
   if (suivis.length === 0) {
     return (

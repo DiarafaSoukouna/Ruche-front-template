@@ -184,6 +184,11 @@ const Navbar: React.FC = () => {
       children: [
         { name: "Liste des projets", href: "/projets", icon: FileIcon },
         { name: "PTBA", href: "/ptba", icon: BriefcaseIcon },
+        {
+          name: "Indicateurs activités PTBA",
+          href: "/indicateurs-activite-ptba",
+          icon: TargetIcon,
+        },
         { name: "Suivi du PTBA", href: "/suivi-ptba", icon: BriefcaseIcon },
         {
           name: "Indicateurs de performance",

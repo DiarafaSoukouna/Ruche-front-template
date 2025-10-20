@@ -43,6 +43,7 @@ import TypeActiviteManager from "./pages/PTBA/type-activite/TypeActiviteManager"
 import PtbaPage from "./pages/PTBA/PtbaPage";
 import IndicateurStrategique from "./pages/Programme/Indicateur_strategique";
 import SuiviPtbaPage from "./pages/PTBA/suivi-ptba/SuiviPtbaPage";
+import IndicateursActivitePtbaPage from "./pages/PTBA/indicateurs-activite/IndicateursActivitePtbaPage";
 import IndicateurPerformanceProjetPage from "./pages/Parametrages/IndicateurPerformanceProjet/IndicateurPerformanceProjetPage";
 import ActiviteProjetPage from "./pages/Parametrages/ActiviteProjet/ActiviteProjetPage";
 import ActiviteProgrammePage from "./pages/Parametrages/ActiviteProgramme/ActiviteProgrammePage";
@@ -151,7 +152,7 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
-            path="/autres-parametrages"
+            path="/autres_parametrages"
             element={
               isAuthenticated ? (
                 <AutresParametrages />
@@ -253,6 +254,16 @@ const AppContent: React.FC = () => {
             element={
               isAuthenticated ? (
                 <TypeActiviteManager />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/indicateurs-activite-ptba"
+            element={
+              isAuthenticated ? (
+                <IndicateursActivitePtbaPage />
               ) : (
                 <Navigate to="/login" />
               )
