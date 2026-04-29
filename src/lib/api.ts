@@ -3,7 +3,7 @@ import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 export const api = axios.create({
   baseURL:
     (import.meta.env.VITE_API_BASE_URL as string) ||
-    "https://adsms.simro-cmr.net/api",
+    "https://test-api.adtpme.com/api",
   timeout: 10000,
 });
 
